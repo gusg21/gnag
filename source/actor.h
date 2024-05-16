@@ -8,6 +8,8 @@ typedef struct
     bool alive;
     C2D_Sprite sprite;
     float x, y;
+
+	void (*update)(void);
 } actor_t;
 
 

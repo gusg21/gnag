@@ -1,0 +1,8 @@
+
+build/
+
+*.smdh
+
+*.3dsx
+
+gnag.elf

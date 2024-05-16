@@ -12,10 +12,6 @@ typedef struct {
 	actor_t actors[GAME_MAX_ACTORS];
 } game_t;
 
-typedef struct {
-    
-} new_actor_params_t;
-
 void Game_Init(game_t* game);
 void Game_Destroy(game_t* game);
 void Game_Draw(game_t* game);

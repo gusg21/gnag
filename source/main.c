@@ -3,6 +3,7 @@
 //   https://kenney.nl/assets/space-shooter-redux
 
 #include <citro2d.h>
+#include <3ds.h>
 
 #include <assert.h>
 #include <stdlib.h>
@@ -33,7 +34,7 @@ int main() {
 	game_t* game = malloc(sizeof(game_t));
 	memset(game, 0, sizeof(game_t));
 
-	// Init game
+	// Init the game
 	Game_Init(game);
 
 	// Try to load tile
@@ -44,14 +45,19 @@ int main() {
 	{
 		hidScanInput();
 
+		u32 bg_col = C2D_Color32f(0.0f, 0.0f, 0.0f, 1.0f);
+
 		u32 kHeld = hidKeysHeld();
+
+		if (kHeld & KEY_A) {
+			bg_col = C2D_Color32f(1.0f, 0.0f, 0.0f, 1.0f);
+		}
 
 		// Render the scene
 		C3D_FrameBegin(C3D_FRAME_SYNCDRAW);
-		C2D_TargetClear(top, C2D_Color32f(0.0f, 0.0f, 0.0f, 1.0f));
+		C2D_TargetClear(top, bg_col);
 		C2D_SceneBegin(top);
 		{
-			
 			Game_Draw(game);
 		}
 		C3D_FrameEnd(0);
