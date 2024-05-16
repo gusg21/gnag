@@ -1,0 +1,30 @@
+{
+    "files.associations": {
+        "*.mal": "clojure",
+        "*.asm": "ca65",
+        "*.json": "jsonc",
+        "*.tsx": "xml",
+        "citro2d.h": "c",
+        "tex3ds.h": "c",
+        "citro3d.h": "c",
+        "mtxstack.h": "c",
+        "maths.h": "c",
+        "types.h": "c",
+        "base.h": "c",
+        "font.h": "c",
+        "sprite.h": "c",
+        "spritesheet.h": "c",
+        "3ds.h": "c",
+        "synchronization.h": "c",
+        "svc.h": "c",
+        "_ansi.h": "c",
+        "newlib.h": "c",
+        "config.h": "c",
+        "string.h": "c",
+        "stdio.h": "c",
+        "stdlib.h": "c",
+        "time.h": "c",
+        "reent.h": "c",
+        "stddef.h": "c"
+    }
+}

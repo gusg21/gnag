@@ -1,0 +1,26 @@
+{
+    "configurations": [
+        {
+            "name": "Win32",
+            "includePath": [
+                "${workspaceFolder}/**",
+                "C:\\devkitPro\\libctru\\include",
+                "C:\\devkitPro\\devkitARM\\arm-none-eabi\\include",
+                "${workspaceFolder}/build/"
+            ],
+            "defines": [
+                "_DEBUG",
+                "UNICODE",
+                "_UNICODE",
+                "__3DS__",
+                "__GNUC__",
+                "__GNU_VISIBLE",
+                "ARM9"
+            ],
+            "windowsSdkVersion": "10.0.19041.0",
+            "compilerPath": "C:\\devkitPro\\devkitARM\\bin\\arm-none-eabi-gcc",
+            "intelliSenseMode": "windows-gcc-x64"
+        }
+    ],
+    "version": 4
+}
