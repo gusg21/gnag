@@ -11,13 +11,11 @@
 #include <stdio.h>
 #include <time.h>
 
+#include "_defs.h"
 #include "game.h"
 #include "sprites.h"
 #include "input.h"
 #include "debugconsole.h"
-
-#define SCREEN_WIDTH  400
-#define SCREEN_HEIGHT 240
 
 int main() {
 	// Init libs
@@ -33,7 +31,8 @@ int main() {
 	C3D_RenderTarget* bottom_screen = C2D_CreateScreenTarget(GFX_BOTTOM, GFX_LEFT);
 
 	// Create debug console
-	DebugConsole_Init(bottom_screen->screen);
+	DebugConsole_Init();
+	DebugConsole_Print("DEBUG CONSOLE");
 
 	// Allocate game data
 	game_t* game = malloc(sizeof(game_t));
@@ -41,6 +40,7 @@ int main() {
 
 	// Init the game
 	Game_Init(game);
+	DebugConsole_Print("game initialized");
 
 	u32 frame_num = 0;
 
@@ -49,9 +49,7 @@ int main() {
 	{
 		hidScanInput();
 
-		if (Input_IsButtonPressed(KEY_L)) {
-			DebugConsole_Print(frame_num % 100 > 50 ? "Howdy!" : "Hallo!");
-		}
+		Game_Update(game, 1.f / 60.f); // Fixed timestep for now
 
 		// Render the scene
 		C3D_FrameBegin(C3D_FRAME_SYNCDRAW);
@@ -59,14 +57,13 @@ int main() {
 		C2D_SceneBegin(top_screen);
 		{
 			Game_Draw(game);
-			DebugConsole_Draw();
 		}
 
 		C2D_TargetClear(bottom_screen, C2D_Color32(223, 246, 245, 255));
 		C2D_SceneBegin(bottom_screen);
 		{
 			// Bottom screen drawing
-
+			DebugConsole_Draw();
 		}
 		C3D_FrameEnd(0);
 
