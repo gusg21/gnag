@@ -28,7 +28,9 @@ int main() {
 	C2D_Prepare();
 
 	// Create screens
-	C3D_RenderTarget* top = C2D_CreateScreenTarget(GFX_TOP, GFX_LEFT);
+	C3D_RenderTarget* top_screen = C2D_CreateScreenTarget(GFX_TOP, GFX_LEFT);
+	C3D_RenderTarget* bottom_screen = C2D_CreateScreenTarget(GFX_BOTTOM, GFX_LEFT);
+	consoleInit(bottom_screen->screen, NULL);
 
 	// Allocate game data
 	game_t* game = malloc(sizeof(game_t));
@@ -48,6 +50,7 @@ int main() {
 		u32 bg_col = C2D_Color32f(0.0f, 0.0f, 0.0f, 1.0f);
 
 		u32 kHeld = hidKeysHeld();
+		printf("%d", kHeld);
 
 		if (kHeld & KEY_A) {
 			bg_col = C2D_Color32f(1.0f, 0.0f, 0.0f, 1.0f);
@@ -55,8 +58,8 @@ int main() {
 
 		// Render the scene
 		C3D_FrameBegin(C3D_FRAME_SYNCDRAW);
-		C2D_TargetClear(top, bg_col);
-		C2D_SceneBegin(top);
+		C2D_TargetClear(top_screen, bg_col);
+		C2D_SceneBegin(top_screen);
 		{
 			Game_Draw(game);
 		}
