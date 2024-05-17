@@ -13,9 +13,9 @@ void ButtonLayout_Init(button_layout_t* button_layout) {
     button_layout->buttons[0].on_pressed = DebugConsole_ToggleEnabled;
 
     // Test buttons
-    Button_InitVec2(&button_layout->buttons[1], (vec2_t){BOTTOM_SCREEN_WIDTH/2, 20}, (vec2_t){96, 32}, C2D_Color32f(1.f, 0.5f, 0.5f, 1.f), true);
-    Button_InitVec2(&button_layout->buttons[2], (vec2_t){BOTTOM_SCREEN_WIDTH/2, 60}, (vec2_t){96, 32}, C2D_Color32f(0.5f, 1.f, 0.5f, 1.f), true);
-    Button_InitVec2(&button_layout->buttons[3], (vec2_t){BOTTOM_SCREEN_WIDTH/2, 100}, (vec2_t){96, 32}, C2D_Color32f(0.5f, 0.5f, 1.f, 1.f), true);
+    Button_InitVec2(&button_layout->buttons[1], (vec2_t){BOTTOM_SCREEN_WIDTH - 148, 20}, (vec2_t){96, 32}, C2D_Color32f(1.f, 0.5f, 0.5f, 1.f), true);
+    Button_InitVec2(&button_layout->buttons[2], (vec2_t){BOTTOM_SCREEN_WIDTH - 148, 60}, (vec2_t){96, 32}, C2D_Color32f(0.5f, 1.f, 0.5f, 1.f), true);
+    Button_InitVec2(&button_layout->buttons[3], (vec2_t){BOTTOM_SCREEN_WIDTH - 148, 100}, (vec2_t){96, 32}, C2D_Color32f(0.5f, 0.5f, 1.f, 1.f), true);
 
     button_layout->buttons[1].on_pressed = Button_TestButton;
     button_layout->buttons[2].on_pressed = Button_TestButton;

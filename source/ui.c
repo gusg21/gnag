@@ -20,9 +20,9 @@ void UI_Draw(ui_t* ui) {
 
     UI_DrawUIImage(ui, uisprites_good_idx, (vec2_t){50, 50}, (vec2_t){0.f, 0.f});
 
-    UI_DrawUIImage(ui, uisprites_star_idx, (vec2_t){BOTTOM_SCREEN_WIDTH/2 + 96, 20}, (vec2_t){0.f, 0.f});
-    UI_DrawUIImage(ui, uisprites_star_idx, (vec2_t){BOTTOM_SCREEN_WIDTH/2 + 96, 60}, (vec2_t){0.f, 0.f});
-    UI_DrawUIImage(ui, uisprites_star_idx, (vec2_t){BOTTOM_SCREEN_WIDTH/2 + 96, 100}, (vec2_t){0.f, 0.f});
+    UI_DrawUIImage(ui, uisprites_star_idx, (vec2_t){BOTTOM_SCREEN_WIDTH - 52, 20}, (vec2_t){0.f, 0.f});
+    UI_DrawUIImage(ui, uisprites_star_idx, (vec2_t){BOTTOM_SCREEN_WIDTH - 52, 60}, (vec2_t){0.f, 0.f});
+    UI_DrawUIImage(ui, uisprites_star_idx, (vec2_t){BOTTOM_SCREEN_WIDTH - 52, 100}, (vec2_t){0.f, 0.f});
 
 }
 
