@@ -21,4 +21,6 @@ void DebugConsole_Init();
 void DebugConsole_Print(const char* text, size_t text_len);
 void DebugConsole_Draw();
 
+void DebugConsole_ToggleEnabled();
+
 #endif // DEBUG_CONSOLE_H

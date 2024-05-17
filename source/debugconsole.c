@@ -43,3 +43,7 @@ void DebugConsole_Draw() {
         }
     }
 }
+
+void DebugConsole_ToggleEnabled() {
+    console.enabled = !console.enabled;
+}
