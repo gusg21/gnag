@@ -3,7 +3,8 @@
 #include "debugconsole.h"
 #include "input.h"
 
-void Button_InitVec2(button_t* button, vec2_t pos, vec2_t size, u32 color, bool pressable) {
+void Button_InitVec2(button_t* button, u32 layout_idx, vec2_t pos, vec2_t size, u32 color, bool pressable) {
+    button->layout_idx = layout_idx;
     button->pos = pos;
     button->size = size;
     button->color = color;
@@ -11,7 +12,8 @@ void Button_InitVec2(button_t* button, vec2_t pos, vec2_t size, u32 color, bool 
     button->initialized = true;
 }
 
-void Button_InitFloat(button_t* button, float pos_x, float pos_y, float size_x, float size_y, u32 color, bool pressable) {
+void Button_InitFloat(button_t* button, u32 layout_idx, float pos_x, float pos_y, float size_x, float size_y, u32 color, bool pressable) {
+    button->layout_idx = layout_idx;
     button->pos.x = pos_x;
     button->pos.y = pos_y;
     button->size.x = size_x;
