@@ -17,3 +17,11 @@ bool Input_IsButtonReleased(u32 button_mask) {
 
     return keys_released & button_mask;
 }
+
+bool Input_IsTouchScreenPressed() { return Input_IsButtonPressed(KEY_TOUCH); }
+
+vec2_t Input_GetTouchPosition() {
+    touchPosition touch_pos;
+    hidTouchRead(&touch_pos);
+    return (vec2_t){.x = touch_pos.px, .y = touch_pos.py};
+}

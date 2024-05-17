@@ -65,5 +65,5 @@ vec2_t Grid_GridPosToWorldPos(grid_t* grid, vec2i_t grid_pos) {
 float Grid_GetIsoDepthForTilePos(grid_t* grid, u32 tile_x, u32 tile_y) {
     // return ((((tile_y - tile_x) / ((float)(grid->tile_w) * 50.f))) * -1.f + 0.1f);
 
-    return 0.f;
+    return (tile_y - tile_x) + (float)(grid->tile_w);
 }
