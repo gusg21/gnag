@@ -18,9 +18,7 @@ void DebugConsole_Init() {
     font = C2D_FontLoadSystem(CFG_REGION_USA);
 }
 
-void DebugConsole_Print(const char* text) {
-    size_t text_len = strlen(text);
-
+void DebugConsole_Print(const char* text, size_t text_len) {
     for (s32 line_index = DEBUG_CONSOLE_LINE_COUNT - 1; line_index > 0; line_index--) {
         size_t next_line_len = strlen(console.lines[line_index - 1]);
         memcpy(console.lines[line_index], console.lines[line_index - 1], next_line_len);

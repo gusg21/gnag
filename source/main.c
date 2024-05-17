@@ -32,7 +32,7 @@ int main() {
 
 	// Create debug console
 	DebugConsole_Init();
-	DebugConsole_Print("DEBUG CONSOLE");
+	DebugConsole_Print("DEBUG CONSOLE", 14);
 
 	// Allocate game data
 	game_t* game = malloc(sizeof(game_t));
@@ -40,7 +40,11 @@ int main() {
 
 	// Init the game
 	Game_Init(game);
-	DebugConsole_Print("game initialized");
+	Game_CreateCharacterAt(game, CHAR_GOOD, 5, 5);
+	Game_CreateCharacterAt(game, CHAR_BAD, 2, 3);
+	Grid_GetTileAt(&game->grid, 0, 0)->is_spikes = true;
+	
+	DebugConsole_Print("game initialized", 17);
 
 	u32 frame_num = 0;
 

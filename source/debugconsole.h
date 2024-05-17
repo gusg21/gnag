@@ -4,7 +4,7 @@
 #include <3ds.h>
 #include <citro2d.h>
 
-#define DEBUG_CONSOLE_LINE_LENGTH 80
+#define DEBUG_CONSOLE_LINE_LENGTH 180
 #define DEBUG_CONSOLE_LINE_COUNT 20
 
 typedef struct {
@@ -18,7 +18,7 @@ typedef struct {
 } debug_console_t;
 
 void DebugConsole_Init();
-void DebugConsole_Print(const char* text);
+void DebugConsole_Print(const char* text, size_t text_len);
 void DebugConsole_Draw();
 
 #endif // DEBUG_CONSOLE_H
