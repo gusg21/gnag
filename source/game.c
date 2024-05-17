@@ -2,14 +2,18 @@
 
 #include "_defs.h"
 #include "input.h"
+#include "panic.h"
 #include "sprites.h"
 
 void Game_Init(game_t* game) {
     game->sheet = C2D_SpriteSheetLoad("romfs:/gfx/sprites.t3x");
-    if (game->sheet == NULL) svcBreak(USERBREAK_PANIC);
+    if (game->sheet == NULL) {
+        Panic_Panic();
+        printf("Failed to load sprite sheet from fs");
+    }
 
     Board_Init(&game->board);
-    Grid_Init(&game->grid, game->sheet, sprites_emptytile_idx, sprites_spikes_idx, 10, 10, GAME_WORLD_CENTER_X, GAME_WORLD_CENTER_Y);
+    Grid_Init(&game->grid, game->sheet, 10, 10, GAME_WORLD_CENTER_X, GAME_WORLD_CENTER_Y);
 
     game->view_x = GAME_WORLD_CENTER_X;
     game->view_y = GAME_WORLD_CENTER_Y;
