@@ -16,6 +16,11 @@
 #include "sprites.h"
 #include "input.h"
 #include "debugconsole.h"
+#include "button.h"
+
+void Button_DoSomething(button_t* button) {
+	DebugConsole_Print("IT DID SOMETHIGN!", 18);
+}
 
 int main() {
 	// Init libs
@@ -46,6 +51,10 @@ int main() {
 	
 	DebugConsole_Print("game initialized", 17);
 
+	button_t cool_awesome_button;
+	Button_InitVec2(&cool_awesome_button, (vec2_t){50, 50}, (vec2_t){100, 25});
+	cool_awesome_button.on_pressed = Button_DoSomething;
+
 	u32 frame_num = 0;
 
 	// Main loop
@@ -54,6 +63,7 @@ int main() {
 		hidScanInput();
 
 		Game_Update(game, 1.f / 60.f); // Fixed timestep for now
+		Button_Update(&cool_awesome_button);
 
 		// Render the scene
 		C3D_FrameBegin(C3D_FRAME_SYNCDRAW);
@@ -67,6 +77,7 @@ int main() {
 		C2D_SceneBegin(bottom_screen);
 		{
 			// Bottom screen drawing
+			Button_Draw(&cool_awesome_button);
 			DebugConsole_Draw();
 		}
 		C3D_FrameEnd(0);

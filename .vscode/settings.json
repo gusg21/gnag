@@ -25,6 +25,7 @@
         "stdlib.h": "c",
         "time.h": "c",
         "reent.h": "c",
-        "stddef.h": "c"
+        "stddef.h": "c",
+        "button.h": "c"
     }
 }

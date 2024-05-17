@@ -40,7 +40,7 @@ void Grid_Draw(grid_t* grid) {
 
             char buf[100] = {0};
             snprintf(buf, 100, "%.2f (x=%ld y=%ld)", tile_depth, xx, yy);
-            DebugConsole_Print(buf, 100);
+            //DebugConsole_Print(buf, 100);
         }
     }
 
