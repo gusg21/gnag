@@ -1,5 +1,6 @@
 #include "ui.h"
 
+#include "_defs.h"
 #include "uisprites.h"
 
 void UI_Init(ui_t* ui) {
@@ -18,6 +19,11 @@ void UI_Draw(ui_t* ui) {
     ButtonLayout_Draw(&ui->button_layout);
 
     UI_DrawUIImage(ui, uisprites_good_idx, (vec2_t){50, 50}, (vec2_t){0.f, 0.f});
+
+    UI_DrawUIImage(ui, uisprites_star_idx, (vec2_t){BOTTOM_SCREEN_WIDTH/2 + 96, 20}, (vec2_t){0.f, 0.f});
+    UI_DrawUIImage(ui, uisprites_star_idx, (vec2_t){BOTTOM_SCREEN_WIDTH/2 + 96, 60}, (vec2_t){0.f, 0.f});
+    UI_DrawUIImage(ui, uisprites_star_idx, (vec2_t){BOTTOM_SCREEN_WIDTH/2 + 96, 100}, (vec2_t){0.f, 0.f});
+
 }
 
 void UI_DrawUIImage(ui_t* ui, u32 sprite_idx, vec2_t pos, vec2_t piv) {
