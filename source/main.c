@@ -17,9 +17,8 @@
 #include "game.h"
 #include "input.h"
 #include "panic.h"
+#include "ui.h"
 #include "sprites.h"
-
-void Button_DoSomething(button_t* button) { DebugConsole_Print("IT DID SOMETHIGN!", 18); }
 
 int main() {
     // Init libs
@@ -50,19 +49,21 @@ int main() {
 	Grid_Build(&game->grid);
 
     DebugConsole_Print("game initialized", 17);
+    
+	// Create and Init Bottom Screen UI
+	ui_t bottom_ui;
+	UI_Init(&bottom_ui);
 
-    button_t cool_awesome_button;
-    Button_InitVec2(&cool_awesome_button, (vec2_t){50, 50}, (vec2_t){100, 25});
-    cool_awesome_button.on_pressed = Button_DoSomething;
+	DebugConsole_Print("ui initialized", 15);
 
-    u32 frame_num = 0;
+	u32 frame_num = 0;
 
     // Main loop
     while (aptMainLoop() && !Panic_IsPanicked()) {
         hidScanInput();
 
         Game_Update(game, 1.f / 60.f);  // Fixed timestep for now
-        Button_Update(&cool_awesome_button);
+        UI_Update(&bottom_ui);
 
         // Render the scene
         C3D_FrameBegin(C3D_FRAME_SYNCDRAW);
@@ -74,7 +75,7 @@ int main() {
         C2D_SceneBegin(bottom_screen);
         {
             // Bottom screen drawing
-            Button_Draw(&cool_awesome_button);
+            UI_Draw(&bottom_ui);
             DebugConsole_Draw();
         }
         C3D_FrameEnd(0);
@@ -98,6 +99,8 @@ int main() {
     Game_Destroy(game);
     free(game);
     game = NULL;
+
+    UI_Destroy(&bottom_ui);
 
     // Deinit libs
     C2D_Fini();

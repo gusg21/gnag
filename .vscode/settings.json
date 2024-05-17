@@ -26,6 +26,7 @@
         "time.h": "c",
         "reent.h": "c",
         "stddef.h": "c",
-        "button.h": "c"
+        "button.h": "c",
+        "uisprites.h": "c"
     }
 }
