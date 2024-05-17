@@ -5,7 +5,7 @@
 
 struct button;
 
-typedef struct button{
+typedef struct button {
     vec2_t pos;
     vec2_t size;
 
