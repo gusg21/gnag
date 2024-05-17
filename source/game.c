@@ -40,7 +40,7 @@ void Game_Update(game_t* game, float delta_secs) {
 
 void Game_Draw(game_t* game) {
     C2D_ViewReset();
-    C2D_ViewTranslate(-game->view_x + SCREEN_WIDTH / 2, -game->view_y + SCREEN_HEIGHT / 2);
+    C2D_ViewTranslate(-game->view_x + TOP_SCREEN_WIDTH / 2, -game->view_y + TOP_SCREEN_HEIGHT / 2);
 
     Grid_Draw(&game->grid);
     Board_Draw(&game->board, &game->grid);
