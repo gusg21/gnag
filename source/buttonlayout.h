@@ -10,7 +10,7 @@ typedef struct {
 
 } button_layout_t;
 
-void ButtonLayout_Init(button_layout_t* button_layout);
+void ButtonLayout_Init(button_layout_t* button_layout, C2D_SpriteSheet sheet);
 void ButtonLayout_Update(button_layout_t* button_layout);
 void ButtonLayout_Draw(button_layout_t* button_layout);
 
