@@ -29,6 +29,7 @@
         "button.h": "c",
         "uisprites.h": "c",
         "input.h": "c",
-        "buttonlayout.h": "c"
+        "buttonlayout.h": "c",
+        "buttondata.h": "c"
     }
 }

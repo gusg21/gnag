@@ -21,7 +21,7 @@ void UI_Update(ui_t* ui) {
     }
     for (u32 i = 0; i < UILAYOUT_MAX_FILL_BAR_COUNT; i++) {
         if (ui->fill_bars[i].data.max_value == 0.f) break;
-        FillBar_Update(&ui->fill_bars[i], 0.75f);
+        FillBar_Update(&ui->fill_bars[i], 0.45f);
     }
 }
 
