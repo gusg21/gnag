@@ -8,7 +8,7 @@
 
 #define GAME_MAX_ACTORS 1024
 
-typedef struct {
+typedef struct game_s {
 	C2D_SpriteSheet sheet;
 	grid_t grid;
 	board_t board;

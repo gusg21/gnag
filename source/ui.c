@@ -4,10 +4,12 @@
 #include "debugconsole.h"
 #include "uiscripts.h"
 #include "uisprites.h"
+#include "game.h"
 
-void UI_Init(ui_t* ui, button_layout_t* button_layout) {
+void UI_Init(ui_t* ui, game_t* game, button_layout_t* button_layout) {
     ui->sheet = C2D_SpriteSheetLoad("romfs:/gfx/uisprites.t3x");
     UI_CreateButtons(ui, button_layout);
+    UIScripts_SetGame(game);
 }
 
 void UI_Destroy(ui_t* ui) { C2D_SpriteSheetFree(ui->sheet); }

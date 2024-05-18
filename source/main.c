@@ -54,7 +54,7 @@ int main() {
     button_layout_t button_layout;
 	ui_t bottom_ui;
     ButtonLayout_Init(&button_layout);
-	UI_Init(&bottom_ui, &button_layout);
+	UI_Init(&bottom_ui, game, &button_layout);
 
 	DebugConsole_Print("ui initialized", 15);
 

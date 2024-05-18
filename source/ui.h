@@ -6,13 +6,15 @@
 #include "buttonlayout.h"
 #include "button.h"
 
+typedef struct game_s game_t;
+
 typedef struct {
     C2D_SpriteSheet sheet;
     button_t buttons[BUTTONLAYOUT_MAX_BUTTON_COUNT];
 
 } ui_t;
 
-void UI_Init(ui_t* ui, button_layout_t* button_layout);
+void UI_Init(ui_t* ui, game_t* game, button_layout_t* button_layout);
 void UI_Destroy(ui_t* ui);
 void UI_Update(ui_t* ui);
 void UI_Draw(ui_t* ui);

@@ -40,19 +40,10 @@ void Game_Update(game_t* game, float delta_secs) {
     }
 
     if (Input_IsButtonPressed(KEY_R)) {
-        character_t* good = Board_GetCharacterByType(&game->board, CHAR_GOOD);
-        Board_EnqueueAction(&game->board, (character_action_t) {
-            .character = good,
-            .duration = 1.f,
-            .initialized = true,
-            .type = ACTION_MOVE,
-            .move_source = good->pos,
-            .move_destination = Vec2_Add(good->pos, (vec2_t){50.f, 0.f})
-        });
+        
     }
 
     if (Input_IsButtonPressed(KEY_A)) {
-        Board_ExecuteQueue(&game->board);
     }
 }
 
