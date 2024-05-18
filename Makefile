@@ -35,6 +35,7 @@ TARGET		:=	$(notdir $(CURDIR))
 BUILD		:=	build
 SOURCES		:=	source
 DATA		:=	data
+INIS		:= 	inis
 INCLUDES	:=	include
 GRAPHICS	:=	gfx
 #GFXBUILD	:=	$(BUILD)
@@ -89,11 +90,14 @@ PICAFILES	:=	$(foreach dir,$(SOURCES),$(notdir $(wildcard $(dir)/*.v.pica)))
 SHLISTFILES	:=	$(foreach dir,$(SOURCES),$(notdir $(wildcard $(dir)/*.shlist)))
 GFXFILES	:=	$(foreach dir,$(GRAPHICS),$(notdir $(wildcard $(dir)/*.t3s)))
 BINFILES	:=	$(foreach dir,$(DATA),$(notdir $(wildcard $(dir)/*.*)))
+INIFILES	:=  $(foreach dir,$(INIS),$(notdir $(wildcard $(dir)/*.*)))
 
 $(info CFILES is $(CFILES))
 $(info CPPFILES is $(CPPFILES))
 $(info SFILES is $(SFILES))
 $(info GFXFILES is $(GFXFILES))
+$(info BINFILES is $(BINFILES))
+$(info INIFILES is $(INIFILES))
 
 #---------------------------------------------------------------------------------
 # use CXX for linking C++ projects, CC for standard C
@@ -166,7 +170,7 @@ endif
 .PHONY: all clean
 
 #---------------------------------------------------------------------------------
-all: $(BUILD) $(GFXBUILD) $(DEPSDIR) $(ROMFS_T3XFILES) $(T3XHFILES)
+all: $(BUILD)  $(GFXBUILD) $(DEPSDIR) inicopy $(ROMFS_T3XFILES) $(T3XHFILES)
 	@$(MAKE) --no-print-directory -C $(BUILD) -f $(CURDIR)/Makefile
 
 $(BUILD):
@@ -181,6 +185,11 @@ ifneq ($(DEPSDIR),$(BUILD))
 $(DEPSDIR):
 	@mkdir -p $@
 endif
+
+inicopy:
+	@rm -rf $(CURDIR)/romfs/inis/
+	@mkdir -p "$(CURDIR)/romfs/inis/"
+	@for u in $(INIFILES); do echo $$u; cp -f $(CURDIR)/$(INIS)/$$u $(CURDIR)/romfs/inis/; done
 
 #---------------------------------------------------------------------------------
 clean:
