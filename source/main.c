@@ -56,6 +56,9 @@ int main() {
 
 	DebugConsole_Print("ui initialized", 15);
 
+	// Panic_Panic();
+	// printf("Test panic");
+
 	u32 frame_num = 0;
 
     // Main loop
@@ -90,7 +93,7 @@ int main() {
 
             C3D_FrameBegin(C3D_FRAME_SYNCDRAW);
             C2D_TargetClear(top_screen, C2D_Color32(223, 246, 245, 255));
-            C2D_SceneBegin(top_screen);
+            C2D_TargetClear(bottom_screen, C2D_Color32(223, 246, 245, 255));
             C3D_FrameEnd(0);
         }
     }
