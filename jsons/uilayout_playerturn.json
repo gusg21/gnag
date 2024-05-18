@@ -70,7 +70,7 @@
             "Size": [150, 35],
             "Sprite Index": 0,
             "Color": [0.2, 0.2, 0.2, 1.0],
-            "Callback": 0
+            "Callback": 1
         },
         {
             "Index": 8,
@@ -89,6 +89,17 @@
             "Sprite Index": 1,
             "Color": [0.0, 1.0, 0.0, 1.0],
             "Callback": 4
+        }
+    ],
+
+    "Fillbars": [
+        {
+            "Index": 0,
+            "Pos": [5, 10],
+            "Size": [310, 15],
+            "Background Color": [0.2, 0.2, 0.2, 1.0],
+            "Fill Color": [0.0, 1.0, 0.0, 1.0],
+            "Max Value": 1.0
         }
     ]
 }

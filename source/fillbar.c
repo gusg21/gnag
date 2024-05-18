@@ -12,5 +12,6 @@ void FillBar_Update(fill_bar_t* bar, float value) {
 }
 
 void FillBar_Draw(fill_bar_t* bar) {
-
+    C2D_DrawRectSolid(bar->data.pos.x, bar->data.pos.y, 0, bar->data.size.x, bar->data.size.y, bar->data.bg_color);
+    C2D_DrawRectSolid(bar->data.pos.x, bar->data.pos.y, 0, bar->data.size.x * (bar->fill_value / bar->data.max_value), bar->data.size.y, bar->data.fill_color);
 }

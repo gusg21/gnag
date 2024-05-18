@@ -11,7 +11,9 @@
 #define UILAYOUT_MAX_FILE_SIZE 8192
 
 void UILayout_InitFromFile(ui_layout_t* layout, const char* filename) {
-    memset(layout->button_datas, 0, sizeof(button_data_t) * 32);
+    memset(layout->button_datas, 0, sizeof(button_data_t) * UILAYOUT_MAX_BUTTON_COUNT);
+    memset(layout->fill_bar_datas, 0, sizeof(fill_bar_data_t) * UILAYOUT_MAX_FILL_BAR_COUNT);
+
     UILayout_LoadNewLayoutFromFile(layout, filename);
 }
 
@@ -35,6 +37,7 @@ void UILayout_LoadNewLayoutFromFile(ui_layout_t* layout, const char* filename) {
     }
 
     UILayout_LoadButtonsFromFile(layout, json);
+    UILayout_LoadFillBarsFromFile(layout, json);
 
     cJSON_Delete(json);
     free(buffer);
@@ -84,5 +87,49 @@ void UILayout_LoadButtonsFromFile(ui_layout_t* layout, cJSON* json) {
 }
 
 void UILayout_LoadFillBarsFromFile(ui_layout_t* layout, cJSON* json) {
+    cJSON* fill_bars = cJSON_GetObjectItem(json, "Fillbars");
+    cJSON* fill_bar;
 
+    cJSON_ArrayForEach(fill_bar, fill_bars) {
+        // Get index
+        cJSON* index_object = cJSON_GetObjectItem(fill_bar, "Index");
+        u32 index = index_object->valueint;
+
+        // Get & Set Position
+        cJSON* pos = cJSON_GetObjectItem(fill_bar, "Pos");
+        cJSON* x = cJSON_GetArrayItem(pos, 0);
+        cJSON* y = cJSON_GetArrayItem(pos, 1);
+        layout->fill_bar_datas[index].pos = (vec2_t){x->valueint, y->valueint};
+
+        // Get & Set Size
+        cJSON* size = cJSON_GetObjectItem(fill_bar, "Size");
+        x = cJSON_GetArrayItem(size, 0);
+        y = cJSON_GetArrayItem(size, 1);
+        layout->fill_bar_datas[index].size = (vec2_t){x->valueint, y->valueint};
+
+        // Get & Set Color
+        cJSON* color = cJSON_GetObjectItem(fill_bar, "Background Color");
+        cJSON* r = cJSON_GetArrayItem(color, 0);
+        cJSON* g = cJSON_GetArrayItem(color, 1);
+        cJSON* b = cJSON_GetArrayItem(color, 2);
+        cJSON* a = cJSON_GetArrayItem(color, 3);
+        layout->fill_bar_datas[index].bg_color =
+            C2D_Color32f(r->valuedouble, g->valuedouble, b->valuedouble, a->valuedouble);
+
+        // Get & Set Color
+        color = cJSON_GetObjectItem(fill_bar, "Fill Color");
+        r = cJSON_GetArrayItem(color, 0);
+        g = cJSON_GetArrayItem(color, 1);
+        b = cJSON_GetArrayItem(color, 2);
+        a = cJSON_GetArrayItem(color, 3);
+        layout->fill_bar_datas[index].fill_color =
+            C2D_Color32f(r->valuedouble, g->valuedouble, b->valuedouble, a->valuedouble);
+
+        // Get & Set Value Max
+        cJSON* max_value = cJSON_GetObjectItem(fill_bar, "Max Value");
+        layout->fill_bar_datas[index].max_value = max_value->valuedouble;
+
+        // Mark Fill Bar Data as initialized
+        layout->fill_bar_datas[index].initialized = true;
+    }
 }

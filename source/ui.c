@@ -6,9 +6,9 @@
 #include "uisprites.h"
 #include "game.h"
 
-void UI_Init(ui_t* ui, game_t* game, ui_layout_t* button_layout) {
+void UI_Init(ui_t* ui, game_t* game, ui_layout_t* layout) {
     ui->sheet = C2D_SpriteSheetLoad("romfs:/gfx/uisprites.t3x");
-    UI_CreateFromLayout(ui, button_layout);
+    UI_CreateFromLayout(ui, layout);
     UIScripts_SetGame(game);
 }
 
@@ -19,6 +19,10 @@ void UI_Update(ui_t* ui) {
         if (ui->buttons[i].initialized == false) break;
         Button_Update(&ui->buttons[i]);
     }
+    for (u32 i = 0; i < UILAYOUT_MAX_FILL_BAR_COUNT; i++) {
+        if (ui->fill_bars[i].data.max_value == 0.f) break;
+        FillBar_Update(&ui->fill_bars[i], 0.75f);
+    }
 }
 
 void UI_Draw(ui_t* ui) {
@@ -26,14 +30,24 @@ void UI_Draw(ui_t* ui) {
         if (ui->buttons[i].initialized == false) break;
         Button_Draw(&ui->buttons[i]);
     }
+    for (u32 i = 0; i < UILAYOUT_MAX_FILL_BAR_COUNT; i++) {
+        if (ui->fill_bars[i].data.max_value == 0.f) break;
+        FillBar_Draw(&ui->fill_bars[i]);
+    }
 }
 
-void UI_CreateFromLayout(ui_t* ui,  ui_layout_t* button_layout) {
+void UI_CreateFromLayout(ui_t* ui,  ui_layout_t* layout) {
     memset(ui->buttons, 0, sizeof(button_t) * UILAYOUT_MAX_BUTTON_COUNT);
+    memset(ui->fill_bars, 0, sizeof(fill_bar_t) * UILAYOUT_MAX_FILL_BAR_COUNT);
 
     for (u32 i = 0; i < UILAYOUT_MAX_BUTTON_COUNT; i++) {
-        if (button_layout->button_datas[i].initialized) {
-            Button_Init(&ui->buttons[i], button_layout->button_datas[i], ui->sheet);
+        if (layout->button_datas[i].initialized) {
+            Button_Init(&ui->buttons[i], layout->button_datas[i], ui->sheet);
+        }
+    }
+    for (u32 i = 0; i < UILAYOUT_MAX_FILL_BAR_COUNT; i++) {
+        if (layout->fill_bar_datas[i].initialized) {
+            FillBar_Init(&ui->fill_bars[i], layout->fill_bar_datas[i]);
         }
     }
 }

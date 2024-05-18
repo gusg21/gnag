@@ -4,6 +4,8 @@
 #include "vec2.h"
 
 typedef struct {
+    bool initialized;
+
     vec2_t pos;
     vec2_t size;
     u32 fill_color;
