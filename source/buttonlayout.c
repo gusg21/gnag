@@ -6,17 +6,19 @@
 #include "_defs.h"
 #include "debugconsole.h"
 #include "uisprites.h"
+#include "panic.h"
 
-void ButtonLayout_InitFromFile(button_layout_t* button_layout, char filename[]) {
+void ButtonLayout_InitFromFile(button_layout_t* button_layout, const char* filename) {
     memset(button_layout->datas, 0, sizeof(button_data_t) * 32);
     ButtonLayout_LoadNewLayoutFromFile(button_layout, filename);
 }
 
-void ButtonLayout_LoadNewLayoutFromFile(button_layout_t* button_layout, char filename[])
+void ButtonLayout_LoadNewLayoutFromFile(button_layout_t* button_layout, const char* filename)
 {
     FILE* fptr = fopen(filename, "r");
     if (fptr == NULL) { 
-        DebugConsole_Print("Unable to open file", 20); 
+        Panic_Panic();
+        printf("Unable to open file %s", filename); 
     } 
 
     char buffer[4096];
@@ -26,7 +28,8 @@ void ButtonLayout_LoadNewLayoutFromFile(button_layout_t* button_layout, char fil
     cJSON* json = cJSON_Parse(buffer);
     if (json == NULL)
     {
-        DebugConsole_Print("Error loading JSON", 19);
+        Panic_Panic();
+        printf("Error load JSON from %s", filename); 
     }
   
     cJSON* buttons = cJSON_GetObjectItem(json, "Buttons");
