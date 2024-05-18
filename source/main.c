@@ -51,8 +51,10 @@ int main() {
     DebugConsole_Print("game initialized", 17);
     
 	// Create and Init Bottom Screen UI
+    button_layout_t button_layout;
 	ui_t bottom_ui;
-	UI_Init(&bottom_ui);
+    ButtonLayout_Init(&button_layout);
+	UI_Init(&bottom_ui, &button_layout);
 
 	DebugConsole_Print("ui initialized", 15);
 

@@ -20,6 +20,8 @@ bool Input_IsButtonReleased(u32 button_mask) {
 
 bool Input_IsTouchScreenPressed() { return Input_IsButtonPressed(KEY_TOUCH); }
 
+bool Input_IsTouchScreenReleased() { return Input_IsButtonReleased(KEY_TOUCH); }
+
 vec2_t Input_GetTouchPosition() {
     touchPosition touch_pos;
     hidTouchRead(&touch_pos);

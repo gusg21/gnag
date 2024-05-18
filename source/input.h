@@ -9,6 +9,7 @@ bool Input_IsButtonDown(u32 button_mask);
 bool Input_IsButtonPressed(u32 button_mask);
 bool Input_IsButtonReleased(u32 button_mask);
 bool Input_IsTouchScreenPressed();
+bool Input_IsTouchScreenReleased();
 vec2_t Input_GetTouchPosition();
 
 #endif // INPUT_H
