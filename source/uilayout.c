@@ -4,7 +4,6 @@
 #include "stdlib.h"
 
 #include "_defs.h"
-#include "cJSON.h"
 #include "debugconsole.h"
 #include "panic.h"
 #include "uisprites.h"
@@ -35,6 +34,13 @@ void UILayout_LoadNewLayoutFromFile(ui_layout_t* layout, const char* filename) {
         printf("%d bytes in", (size_t)cJSON_GetErrorPtr() - (size_t)buffer);
     }
 
+    UILayout_LoadButtonsFromFile(layout, json);
+
+    cJSON_Delete(json);
+    free(buffer);
+}
+
+void UILayout_LoadButtonsFromFile(ui_layout_t* layout, cJSON* json) {
     cJSON* buttons = cJSON_GetObjectItem(json, "Buttons");
     cJSON* button;
 
@@ -75,7 +81,8 @@ void UILayout_LoadNewLayoutFromFile(ui_layout_t* layout, const char* filename) {
         // Mark Button Data as initialized
         layout->button_datas[index].initialized = true;
     }
+}
 
-    cJSON_Delete(json);
-    free(buffer);
+void UILayout_LoadFillBarsFromFile(ui_layout_t* layout, cJSON* json) {
+
 }

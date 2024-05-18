@@ -4,7 +4,6 @@
 #include <citro2d.h>
 
 #include "buttondata.h"
-#include "vec2.h"
 
 #define BUTTON_INACTIVE_COLOR C2D_Color32f(0.2f, 0.2f, 0.2f, 1.f)
 

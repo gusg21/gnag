@@ -5,12 +5,14 @@
 
 #include "uilayout.h"
 #include "button.h"
+#include "fillbar.h"
 
 typedef struct game_s game_t;
 
 typedef struct {
     C2D_SpriteSheet sheet;
     button_t buttons[UILAYOUT_MAX_BUTTON_COUNT];
+    fill_bar_t fill_bars[UILAYOUT_MAX_FILL_BAR_COUNT];
 
 } ui_t;
 
