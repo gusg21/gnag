@@ -29,7 +29,7 @@ typedef struct {
 
     character_action_t action_queue[BOARD_MAX_CHARACTER_ACTION_QUEUE_LENGTH];
     u32 action_write_index, action_read_index;
-    float action_execution_time;
+    float action_execution_secs;
     bool action_queue_executing;
 } board_t;
 
@@ -42,5 +42,6 @@ void Board_ClearQueue(board_t* board);
 float Board_GetNormalizedActionTime(board_t* board);
 character_action_t* Board_GetCurrentAction(board_t* board);
 character_t* Board_NewCharacter(board_t* board);
+character_t* Board_GetCharacterByType(board_t* board, character_type_e type);
 
 #endif // BOARD_H

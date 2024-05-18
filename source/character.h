@@ -4,6 +4,8 @@
 #include <3ds.h>
 #include <citro2d.h>
 
+#include "vec2.h"
+
 typedef enum {
     CHAR_NONE,
     CHAR_GOOD,
@@ -13,11 +15,11 @@ typedef enum {
 } character_type_e;
 
 typedef struct {
-    bool valid;
+    bool initialized;
 
     character_type_e type;
 
-    u32 pos_x, pos_y;
+    vec2_t pos;
 
     C2D_Sprite sprite;
 } character_t;

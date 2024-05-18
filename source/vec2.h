@@ -12,6 +12,7 @@ typedef struct {
     s32 x, y;
 } vec2i_t;
 
+vec2_t Vec2_Add(vec2_t a, vec2_t b);
 vec2_t Vec2_Lerp(vec2_t a, vec2_t b, float t);
 
 #endif  // VEC2_H

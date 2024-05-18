@@ -15,9 +15,10 @@ static u32 S_GetSpriteIndexForCharacterType(character_type_e type) {
 }
 
 void Character_Init(character_t* character, C2D_SpriteSheet sheet, character_type_e type, u32 start_x, u32 start_y) {
-    character->valid = true;
-    character->pos_x = start_x;
-    character->pos_y = start_y;
+    character->initialized = true;
+    character->pos.x = start_x;
+    character->pos.y = start_y;
+    character->type = type;
 
     C2D_SpriteFromSheet(&character->sprite, sheet, S_GetSpriteIndexForCharacterType(type));
     C2D_SpriteSetCenter(&character->sprite, 0.5f, 1.0f);  // Bottom center
@@ -25,6 +26,6 @@ void Character_Init(character_t* character, C2D_SpriteSheet sheet, character_typ
 }
 
 void Character_Draw(character_t* character) {
-    C2D_SpriteSetPos(&character->sprite, character->pos_x, character->pos_y);
+    C2D_SpriteSetPos(&character->sprite, character->pos.x, character->pos.y);
     C2D_DrawSprite(&character->sprite);
 }
