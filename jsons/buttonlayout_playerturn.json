@@ -1,34 +1,84 @@
 {
-    "Button Count": "4",
-    
     "Buttons": [
         {
-            "Pos": ["0.0", "230.0"],
-            "Size": ["10.0", "10.0"],
-            "Sprite Index": "1",
-            "Color": ["0.1", "0.1", "0.1", "1.0"],
-            "Callback": "1"
+            "Name": "Move",
+            "Pos": [5, 40],
+            "Size": [150, 35],
+            "Sprite Index": 1,
+            "Color": [1.0, 0.2, 0.2, 1.0],
+            "Callback": 3
         },
         {
-            "Pos": ["160.0", "20.0"],
-            "Size": ["96.0", "32.0"],
-            "Sprite Index": "1",
-            "Color": ["1.0", "0.0", "0.0", "1.0"],
-            "Callback": "2"
+            "Name": "Action 1",
+            "Pos": [5, 80],
+            "Size": [110, 35],
+            "Sprite Index": 1,
+            "Color": [0.1, 1.0, 0.4, 1.0],
+            "Callback": 2
         },
         {
-            "Pos": ["160.0", "60.0"],
-            "Size": ["96.0", "32.0"],
-            "Sprite Index": "1",
-            "Color": ["0.0", "1.0", "0.0", "1.0"],
-            "Callback": "3"
+            "Name": "Action 2",
+            "Pos": [5, 120],
+            "Size": [110, 35],
+            "Sprite Index": 1,
+            "Color": [0.1, 1.0, 0.4, 1.0],
+            "Callback": 2
         },
         {
-            "Pos": ["160.0", "100.0"],
-            "Size": ["96.0", "32.0"],
-            "Sprite Index": "1",
-            "Color": ["0.0", "0.0", "1.0", "1.0"],
-            "Callback": "4"
+            "Name": "Action 3",
+            "Pos": [5, 160],
+            "Size": [110, 35],
+            "Sprite Index": 1,
+            "Color": [0.1, 1.0, 0.4, 1.0],
+            "Callback": 2
+        },
+        {
+            "Name": "Action 1 Special",
+            "Pos": [120, 80],
+            "Size": [35, 35],
+            "Sprite Index": 1,
+            "Color": [0.1, 1.0, 0.4, 1.0],
+            "Callback": 0
+        },
+        {
+            "Name": "Action 2 Special",
+            "Pos": [120, 120],
+            "Size": [35, 35],
+            "Sprite Index": 1,
+            "Color": [0.1, 1.0, 0.4, 1.0],
+            "Callback": 0
+        },
+        {
+            "Name": "Action 3 Special",
+            "Pos": [120, 160],
+            "Size": [35, 35],
+            "Sprite Index": 1,
+            "Color": [0.1, 1.0, 0.4, 1.0],
+            "Callback": 0
+        },
+        {
+            "Name": "Character Panel",
+            "Pos": [5, 200],
+            "Size": [150, 35],
+            "Sprite Index": 0,
+            "Color": [0.2, 0.2, 0.2, 1.0],
+            "Callback": 0
+        },
+        {
+            "Name": "Info Panel",
+            "Pos": [165, 40],
+            "Size": [150, 155],
+            "Sprite Index": 0,
+            "Color": [0.2, 0.2, 0.2, 1.0],
+            "Callback": 0
+        },
+        {
+            "Name": "Confirm",
+            "Pos": [165, 200],
+            "Size": [150, 35],
+            "Sprite Index": 1,
+            "Color": [0.0, 1.0, 0.0, 1.0],
+            "Callback": 4
         }
     ]
 }
