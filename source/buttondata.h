@@ -1,6 +1,7 @@
 #ifndef BUTTONDATA_H
 #define BUTTONDATA_H
 
+#include <3ds.h>
 #include <citro2d.h>
 
 #include "vec2.h"
@@ -14,6 +15,8 @@ typedef enum {
 } button_callback_type_e;
 
 typedef struct {
+    bool initialized;
+
     vec2_t pos;
     vec2_t size;
     u32 sprite_idx;

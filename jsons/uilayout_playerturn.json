@@ -1,6 +1,7 @@
 {
     "Buttons": [
         {
+            "Index": 0,
             "Name": "Move",
             "Pos": [5, 40],
             "Size": [150, 35],
@@ -9,6 +10,7 @@
             "Callback": 3
         },
         {
+            "Index": 1,
             "Name": "Action 1",
             "Pos": [5, 80],
             "Size": [110, 35],
@@ -17,6 +19,7 @@
             "Callback": 2
         },
         {
+            "Index": 2,
             "Name": "Action 2",
             "Pos": [5, 120],
             "Size": [110, 35],
@@ -25,6 +28,7 @@
             "Callback": 2
         },
         {
+            "Index": 3,
             "Name": "Action 3",
             "Pos": [5, 160],
             "Size": [110, 35],
@@ -33,6 +37,7 @@
             "Callback": 2
         },
         {
+            "Index": 4,
             "Name": "Action 1 Special",
             "Pos": [120, 80],
             "Size": [35, 35],
@@ -41,6 +46,7 @@
             "Callback": 0
         },
         {
+            "Index": 5,
             "Name": "Action 2 Special",
             "Pos": [120, 120],
             "Size": [35, 35],
@@ -49,6 +55,7 @@
             "Callback": 0
         },
         {
+            "Index": 6,
             "Name": "Action 3 Special",
             "Pos": [120, 160],
             "Size": [35, 35],
@@ -57,6 +64,7 @@
             "Callback": 0
         },
         {
+            "Index": 7,
             "Name": "Character Panel",
             "Pos": [5, 200],
             "Size": [150, 35],
@@ -65,6 +73,7 @@
             "Callback": 0
         },
         {
+            "Index": 8,
             "Name": "Info Panel",
             "Pos": [165, 40],
             "Size": [150, 155],
@@ -73,6 +82,7 @@
             "Callback": 0
         },
         {
+            "Index": 9,
             "Name": "Confirm",
             "Pos": [165, 200],
             "Size": [150, 35],
