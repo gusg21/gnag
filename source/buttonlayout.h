@@ -7,6 +7,7 @@
 
 typedef struct {
     button_data_t datas[BUTTONLAYOUT_MAX_BUTTON_COUNT];
+    u32 data_count;
 
 } button_layout_t;
 

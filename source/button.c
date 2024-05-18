@@ -2,18 +2,14 @@
 
 #include "debugconsole.h"
 #include "input.h"
+#include "uiscripts.h"
 
-void Button_InitSimple(button_t* button, button_data_t data) {
-    button->data = data;
-    button->data.color = C2D_Color32f(.1f, .1f, .1f, 1.f);
-    button->pressable = true;
-    button->initialized = true;
-}
-
-void Button_InitVec2(button_t* button, button_data_t data, C2D_SpriteSheet sheet) {
+void Button_Init(button_t* button, button_data_t data, C2D_SpriteSheet sheet) {
     button->data = data;
     button->pressable = true;
     button->initialized = true;
+
+    button->on_pressed = UIScripts_GetFunctionByCallbackType(data.callback);
 
     C2D_SpriteFromSheet(&button->sprite, sheet, button->data.sprite_idx);
     C2D_SpriteSetCenter(&button->sprite, 0.5f, 0.5f);
@@ -25,7 +21,8 @@ void Button_Update(button_t* button) {
         vec2_t touch_pos = Input_GetTouchPosition();
 
         if (touch_pos.x > button->data.pos.x && touch_pos.x < button->data.pos.x + button->data.size.x &&
-            touch_pos.y > button->data.pos.y && touch_pos.y < button->data.pos.y + button->data.size.y) {
+            touch_pos.y > button->data.pos.y && touch_pos.y < button->data.pos.y + button->data.size.y &&
+            button->on_pressed != NULL) {
             button->on_pressed(button);
         }
     }

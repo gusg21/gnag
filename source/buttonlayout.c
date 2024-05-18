@@ -6,8 +6,19 @@
 #include "uisprites.h"
 
 void ButtonLayout_Init(button_layout_t* button_layout) {
-    button_layout->datas[0] = (button_data_t){(vec2_t){0.f, BOTTOM_SCREEN_HEIGHT - 10}, (vec2_t){10, 10}};
-    button_layout->datas[1] = (button_data_t){(vec2_t){BOTTOM_SCREEN_WIDTH / 2, 20}, (vec2_t){96, 32}, uisprites_star_idx, C2D_Color32f(1.f, 0.f, 0.f, 1.f)};
-    button_layout->datas[2] = (button_data_t){(vec2_t){BOTTOM_SCREEN_WIDTH / 2, 60}, (vec2_t){96, 32}, uisprites_star_idx, C2D_Color32f(0.f, 1.f, 0.f, 1.f)};
-    button_layout->datas[3] = (button_data_t){(vec2_t){BOTTOM_SCREEN_WIDTH / 2, 100}, (vec2_t){96, 32}, uisprites_star_idx, C2D_Color32f(0.f, 0.f, 1.f, 1.f)};
+    button_layout->datas[0] = (button_data_t){(vec2_t){0, BOTTOM_SCREEN_HEIGHT - 10}, (vec2_t){10, 10},
+    uisprites_star_idx, C2D_Color32f(.1f, .1f, .1f, 1.f), UI_ACTION_DEBUG_CONSOLE_TOGGLE};
+    button_layout->datas[1] = (button_data_t){(vec2_t){BOTTOM_SCREEN_WIDTH / 2, 20}, (vec2_t){96, 32},
+    uisprites_star_idx, C2D_Color32f(1.f, 0.f, 0.f, 1.f), UI_ACTION_TEST};
+    button_layout->datas[2] = (button_data_t){(vec2_t){BOTTOM_SCREEN_WIDTH / 2, 60}, (vec2_t){96, 32},
+    uisprites_star_idx, C2D_Color32f(0.f, 1.f, 0.f, 1.f), UI_ACTION_TEST};
+    button_layout->datas[3] = (button_data_t){(vec2_t){BOTTOM_SCREEN_WIDTH / 2, 100}, (vec2_t){96, 32},
+    uisprites_star_idx, C2D_Color32f(0.f, 0.f, 1.f, 1.f), UI_ACTION_TEST};
+
+    button_layout->data_count = 4;
+}
+
+void ButtonLayout_LoadFromFile()
+{
+
 }

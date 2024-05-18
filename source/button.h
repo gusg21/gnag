@@ -20,8 +20,7 @@ typedef struct button {
 
 } button_t;
 
-void Button_InitSimple(button_t* button, button_data_t data);
-void Button_InitVec2(button_t* button, button_data_t data, C2D_SpriteSheet sheet);
+void Button_Init(button_t* button, button_data_t data, C2D_SpriteSheet sheet);
 void Button_Update(button_t* button);
 void Button_Draw(button_t* button);
 

@@ -27,6 +27,8 @@
         "reent.h": "c",
         "stddef.h": "c",
         "button.h": "c",
-        "uisprites.h": "c"
+        "uisprites.h": "c",
+        "input.h": "c",
+        "buttonlayout.h": "c"
     }
 }
