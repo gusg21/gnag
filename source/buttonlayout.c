@@ -15,6 +15,7 @@ void ButtonLayout_Init(button_layout_t* button_layout, C2D_SpriteSheet sheet) {
     // Test buttons
     Button_InitVec2(&button_layout->buttons[1], (vec2_t){BOTTOM_SCREEN_WIDTH - 148, 20}, (vec2_t){96, 32},
     sheet, uisprites_star_idx, C2D_Color32f(1.f, 0.5f, 0.5f, 1.f));
+    button_layout->buttons[1].pressable = false;
     Button_InitVec2(&button_layout->buttons[2], (vec2_t){BOTTOM_SCREEN_WIDTH - 148, 60}, (vec2_t){96, 32},
     sheet, uisprites_star_idx, C2D_Color32f(0.5f, 1.f, 0.5f, 1.f));
     Button_InitVec2(&button_layout->buttons[3], (vec2_t){BOTTOM_SCREEN_WIDTH - 148, 100}, (vec2_t){96, 32},

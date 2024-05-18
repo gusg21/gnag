@@ -21,6 +21,17 @@ void Button_InitVec2(button_t* button, vec2_t pos, vec2_t size, C2D_SpriteSheet 
     C2D_SpriteFromSheet(&button->sprite, sheet, sprite_idx);
     C2D_SpriteSetCenter(&button->sprite, 0.5f, 0.5f);
     C2D_SpriteSetPos(&button->sprite, button->pos.x + (button->size.x / 2), button->pos.y + (button->size.y / 2));
+
+    /* Still working on scale
+    if ((u16)button->size.x > button->sprite.image.tex->width)
+    {
+        C2D_SpriteSetScale(&button->sprite, button->size.x / button->sprite.image.tex->width, 1.f);
+    }
+    if ((u16)button->size.y > button->sprite.image.tex->height)
+    {
+        C2D_SpriteSetScale(&button->sprite, 1.f, button->sprite.image.tex->height / button->size.y);
+    }
+    */
 }
 
 void Button_InitFloat(button_t* button, float pos_x, float pos_y, float size_x, float size_y, C2D_SpriteSheet sheet, u32 sprite_idx, u32 color) {
@@ -35,6 +46,17 @@ void Button_InitFloat(button_t* button, float pos_x, float pos_y, float size_x, 
     C2D_SpriteFromSheet(&button->sprite, sheet, sprite_idx);
     C2D_SpriteSetCenter(&button->sprite, 0.5f, 0.5f);
     C2D_SpriteSetPos(&button->sprite, button->pos.x + (button->size.x / 2), button->pos.y + (button->size.y / 2));
+    
+    /* Still working on scale
+    if ((u16)button->size.x > button->sprite.image.tex->width)
+    {
+        C2D_SpriteSetScale(&button->sprite, button->size.x / button->sprite.image.tex->width, 1.f);
+    }
+    if ((u16)button->size.y > button->sprite.image.tex->height)
+    {
+        C2D_SpriteSetScale(&button->sprite, 1.f, button->sprite.image.tex->height / button->size.y);
+    }
+    */
 }
 
 void Button_Update(button_t* button) {
@@ -54,9 +76,10 @@ void Button_Draw(button_t* button) {
         C2D_DrawSprite(&button->sprite);
     } else {
         C2D_DrawRectSolid(button->pos.x, button->pos.y, 0, button->size.x, button->size.y, BUTTON_INACTIVE_COLOR);
-        button->sprite.image.tex->dim = 0.5f;
-        C2D_DrawSprite(&button->sprite);
-        button->sprite.image.tex->dim = 0.f;
+        C2D_ImageTint inactive;
+        C2D_SetTintMode(C2D_TintLuma);
+        C2D_PlainImageTint(&inactive, C2D_Color32f(.8f, .8f, .8f, 1.f), 1.f);
+        C2D_DrawSpriteTinted(&button->sprite, &inactive);
     }
 }
 
