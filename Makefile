@@ -90,7 +90,7 @@ PICAFILES	:=	$(foreach dir,$(SOURCES),$(notdir $(wildcard $(dir)/*.v.pica)))
 SHLISTFILES	:=	$(foreach dir,$(SOURCES),$(notdir $(wildcard $(dir)/*.shlist)))
 GFXFILES	:=	$(foreach dir,$(GRAPHICS),$(notdir $(wildcard $(dir)/*.t3s)))
 BINFILES	:=	$(foreach dir,$(DATA),$(notdir $(wildcard $(dir)/*.*)))
-JSONFILES	:=  $(foreach dir,$(JSONS),$(notdir $(wildcard $(dir)/*.*)))
+JSONFILES	:=  $(foreach dir,$(JSONS),$(notdir $(wildcard $(dir)/*.json*)))
 
 $(info CFILES is $(CFILES))
 $(info CPPFILES is $(CPPFILES))

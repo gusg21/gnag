@@ -11,8 +11,7 @@ typedef struct {
 
 } button_layout_t;
 
-void ButtonLayout_Init(button_layout_t* button_layout);
-
-void ButtonLayout_LoadFromFile(button_layout_t* button_layout, char filename[]);
+void ButtonLayout_InitFromFile(button_layout_t* button_layout, char filename[]);
+void ButtonLayout_LoadNewLayoutFromFile(button_layout_t* button_layout, char filename[]);
 
 #endif

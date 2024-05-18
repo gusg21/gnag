@@ -1,26 +1,59 @@
 #include "buttonlayout.h"
 
+#include <stdio.h>
 #include <citro2d.h>
 
+#include "cJSON.h"
 #include "_defs.h"
 #include "debugconsole.h"
 #include "uisprites.h"
 
-void ButtonLayout_Init(button_layout_t* button_layout) {
-    ButtonLayout_LoadFromFile(button_layout, "buttonlayout_playerturn.json");
-
-    button_layout->datas[1] = (button_data_t){(vec2_t){BOTTOM_SCREEN_WIDTH / 2, 20}, (vec2_t){96, 32},
-    uisprites_star_idx, C2D_Color32f(1.f, 0.f, 0.f, 1.f), BUTTON_CALLBACK_TEST};
-    button_layout->datas[2] = (button_data_t){(vec2_t){BOTTOM_SCREEN_WIDTH / 2, 60}, (vec2_t){96, 32},
-    uisprites_star_idx, C2D_Color32f(0.f, 1.f, 0.f, 1.f), BUTTON_CALLBACK_MOVE};
-    button_layout->datas[3] = (button_data_t){(vec2_t){BOTTOM_SCREEN_WIDTH / 2, 100}, (vec2_t){96, 32},
-    uisprites_star_idx, C2D_Color32f(0.f, 0.f, 1.f, 1.f), BUTTON_CALLBACK_CONFIRM};
+void ButtonLayout_InitFromFile(button_layout_t* button_layout, char filename[]) {
+    ButtonLayout_LoadNewLayoutFromFile(button_layout, filename);
 }
 
-void ButtonLayout_LoadFromFile(button_layout_t* button_layout, char filename[])
+void ButtonLayout_LoadNewLayoutFromFile(button_layout_t* button_layout, char filename[])
 {
-    // parse section, replace 4 with value
-    button_layout->data_count = 4;
+    FILE* fptr = fopen(filename, "r");
+    if (fptr == NULL) { 
+        DebugConsole_Print("Unable to open file", 20); 
+    } 
 
-    // foreach section, parse then assign to next buttondata
+    char buffer[2048]; 
+    fread(&buffer, sizeof(char), sizeof(buffer), fptr); 
+    fclose(fptr);
+  
+    cJSON* json = cJSON_ParseWithLength(buffer, sizeof(buffer));
+    if (json == NULL)
+    {
+        DebugConsole_Print("Error loading JSON", 19);
+    }
+  
+    // access the JSON data 
+    cJSON* count = cJSON_GetObjectItem(json, "Button Count");
+    button_layout->data_count = count->valueint;
+
+    cJSON* buttons = cJSON_GetObjectItem(json, "Buttons");
+    cJSON* button;
+    u32 i = 0;
+
+    cJSON_ArrayForEach(button, buttons)
+    {
+        cJSON* pos = cJSON_GetObjectItem(buttons, "Pos");
+        cJSON* size = cJSON_GetObjectItem(buttons, "Size");
+        cJSON* sprite_idx = cJSON_GetObjectItem(buttons, "Sprite Index");
+        cJSON* color = cJSON_GetObjectItem(buttons, "Color");
+        cJSON* callback = cJSON_GetObjectItem(buttons, "Callback");
+
+        button_layout->datas[i].pos = (vec2_t){pos[0].valuedouble, pos[1].valuedouble};
+        button_layout->datas[i].size = (vec2_t){size[0].valuedouble, size[1].valuedouble};
+        button_layout->datas[i].sprite_idx = sprite_idx->valueint;
+        button_layout->datas[i].color = C2D_Color32f(color[0].valuedouble, 
+        color[1].valuedouble, color[2].valuedouble, color[3].valuedouble);
+        button_layout->datas[i].callback = (button_callback_type_e)callback->valueint;
+
+        i++;
+    }
+
+    cJSON_Delete(json);
 }

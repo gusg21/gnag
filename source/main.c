@@ -53,7 +53,7 @@ int main() {
 	// Create and Init Bottom Screen UI
     button_layout_t button_layout;
 	ui_t bottom_ui;
-    ButtonLayout_Init(&button_layout);
+    ButtonLayout_InitFromFile(&button_layout, "../buttonlayout_playerturn.json");
 	UI_Init(&bottom_ui, game, &button_layout);
 
 	DebugConsole_Print("ui initialized", 15);
