@@ -65,11 +65,11 @@
         },
         {
             "Index": 7,
-            "Name": "Character Panel",
+            "Name": "Debug Console Toggle",
             "Pos": [5, 200],
             "Size": [150, 35],
             "Sprite Index": 0,
-            "Color": [0.2, 0.2, 0.2, 1.0],
+            "Color": [1.0, 1.0, 0.2, 1.0],
             "Callback": 1
         },
         {
