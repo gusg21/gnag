@@ -1,10 +1,7 @@
 {
-    // Number of buttons to load
     "Button Count": "4",
     
-    // List of buttons and their data
     "Buttons": [
-        // Toggle Debug Console
         {
             "Pos": ["0.0", "230.0"],
             "Size": ["10.0", "10.0"],
@@ -12,7 +9,6 @@
             "Color": ["0.1", "0.1", "0.1", "1.0"],
             "Callback": "1"
         },
-        // Test
         {
             "Pos": ["160.0", "20.0"],
             "Size": ["96.0", "32.0"],
@@ -20,7 +16,6 @@
             "Color": ["1.0", "0.0", "0.0", "1.0"],
             "Callback": "2"
         },
-        // Move
         {
             "Pos": ["160.0", "60.0"],
             "Size": ["96.0", "32.0"],
@@ -28,7 +23,6 @@
             "Color": ["0.0", "1.0", "0.0", "1.0"],
             "Callback": "3"
         },
-        // Confirm
         {
             "Pos": ["160.0", "100.0"],
             "Size": ["96.0", "32.0"],

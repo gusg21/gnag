@@ -1,6 +1,5 @@
 #include "buttonlayout.h"
 
-#include <stdio.h>
 #include <citro2d.h>
 
 #include "cJSON.h"
@@ -20,10 +19,10 @@ void ButtonLayout_LoadNewLayoutFromFile(button_layout_t* button_layout, char fil
     } 
 
     char buffer[2048]; 
-    fread(&buffer, sizeof(char), sizeof(buffer), fptr); 
+    fread(buffer, sizeof(char), sizeof(buffer), fptr); 
     fclose(fptr);
   
-    cJSON* json = cJSON_ParseWithLength(buffer, sizeof(buffer));
+    cJSON* json = cJSON_Parse(buffer);
     if (json == NULL)
     {
         DebugConsole_Print("Error loading JSON", 19);
@@ -39,11 +38,11 @@ void ButtonLayout_LoadNewLayoutFromFile(button_layout_t* button_layout, char fil
 
     cJSON_ArrayForEach(button, buttons)
     {
-        cJSON* pos = cJSON_GetObjectItem(buttons, "Pos");
-        cJSON* size = cJSON_GetObjectItem(buttons, "Size");
-        cJSON* sprite_idx = cJSON_GetObjectItem(buttons, "Sprite Index");
-        cJSON* color = cJSON_GetObjectItem(buttons, "Color");
-        cJSON* callback = cJSON_GetObjectItem(buttons, "Callback");
+        cJSON* pos = cJSON_GetObjectItem(button, "Pos");
+        cJSON* size = cJSON_GetObjectItem(button, "Size");
+        cJSON* sprite_idx = cJSON_GetObjectItem(button, "Sprite Index");
+        cJSON* color = cJSON_GetObjectItem(button, "Color");
+        cJSON* callback = cJSON_GetObjectItem(button, "Callback");
 
         button_layout->datas[i].pos = (vec2_t){pos[0].valuedouble, pos[1].valuedouble};
         button_layout->datas[i].size = (vec2_t){size[0].valuedouble, size[1].valuedouble};
