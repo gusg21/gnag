@@ -13,4 +13,6 @@ typedef struct {
 
 void ButtonLayout_Init(button_layout_t* button_layout);
 
+void ButtonLayout_LoadFromFile(button_layout_t* button_layout);
+
 #endif

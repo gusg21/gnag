@@ -3,6 +3,7 @@
 #include <citro2d.h>
 
 #include "_defs.h"
+#include "ini.h"
 #include "uisprites.h"
 
 void ButtonLayout_Init(button_layout_t* button_layout) {
@@ -18,7 +19,7 @@ void ButtonLayout_Init(button_layout_t* button_layout) {
     button_layout->data_count = 4;
 }
 
-void ButtonLayout_LoadFromFile()
+void ButtonLayout_LoadFromFile(button_layout_t* button_layout, char* filename[])
 {
-
+    if (ini_parse(filename)
 }
