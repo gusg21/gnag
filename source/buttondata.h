@@ -14,6 +14,10 @@ typedef enum {
     BUTTON_CALLBACK_CONFIRM
 } button_callback_type_e;
 
+typedef enum {
+    BUTTON_UPDATER_NONE,
+} button_updater_type_e;
+
 typedef struct {
     bool initialized;
 
@@ -22,7 +26,9 @@ typedef struct {
     u32 sprite_idx;
     u32 color;
     u32 pressed_color;
-    button_callback_type_e callback;
+
+    button_callback_type_e callback_type;
+    button_updater_type_e updater_type;
 
 } button_data_t;
 

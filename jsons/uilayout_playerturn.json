@@ -7,7 +7,8 @@
             "Size": [150, 35],
             "Sprite Index": 2,
             "Color": [0.7, 0.2, 0.3, 1.0],
-            "Callback": 3
+            "Callback": 3,
+            "Updater": 0
         },
         {
             "Index": 1,
@@ -16,7 +17,8 @@
             "Size": [110, 35],
             "Sprite Index": 1,
             "Color": [0.1, 1.0, 0.4, 1.0],
-            "Callback": 2
+            "Callback": 2,
+            "Updater": 0
         },
         {
             "Index": 2,
@@ -25,7 +27,9 @@
             "Size": [110, 35],
             "Sprite Index": 1,
             "Color": [0.1, 1.0, 0.4, 1.0],
-            "Callback": 2
+            "Callback": 2,
+            "Updater": 0
+
         },
         {
             "Index": 3,
@@ -34,7 +38,9 @@
             "Size": [110, 35],
             "Sprite Index": 1,
             "Color": [0.1, 1.0, 0.4, 1.0],
-            "Callback": 2
+            "Callback": 2,
+            "Updater": 0
+
         },
         {
             "Index": 4,
@@ -43,7 +49,9 @@
             "Size": [35, 35],
             "Sprite Index": 1,
             "Color": [0.1, 1.0, 0.4, 1.0],
-            "Callback": 0
+            "Callback": 0,
+            "Updater": 0
+
         },
         {
             "Index": 5,
@@ -52,7 +60,9 @@
             "Size": [35, 35],
             "Sprite Index": 1,
             "Color": [0.1, 1.0, 0.4, 1.0],
-            "Callback": 0
+            "Callback": 0,
+            "Updater": 0
+
         },
         {
             "Index": 6,
@@ -61,7 +71,9 @@
             "Size": [35, 35],
             "Sprite Index": 1,
             "Color": [0.1, 1.0, 0.4, 1.0],
-            "Callback": 0
+            "Callback": 0,
+            "Updater": 0
+
         },
         {
             "Index": 7,
@@ -70,7 +82,9 @@
             "Size": [150, 35],
             "Sprite Index": 0,
             "Color": [1.0, 1.0, 0.2, 1.0],
-            "Callback": 1
+            "Callback": 1,
+            "Updater": 0
+
         },
         {
             "Index": 8,
@@ -79,7 +93,9 @@
             "Size": [150, 155],
             "Sprite Index": 0,
             "Color": [0.2, 0.2, 0.2, 1.0],
-            "Callback": 0
+            "Callback": 0,
+            "Updater": 0
+
         },
         {
             "Index": 9,
@@ -88,7 +104,9 @@
             "Size": [150, 35],
             "Sprite Index": 1,
             "Color": [0.0, 1.0, 0.0, 1.0],
-            "Callback": 4
+            "Callback": 4,
+            "Updater": 0
+
         }
     ],
 
@@ -100,7 +118,8 @@
             "Size": [310, 10],
             "Background Color": [0.2, 0.2, 0.2, 1.0],
             "Fill Color": [0.2, 0.2, 1.0, 1.0],
-            "Max Value": 1.0
+            "Max Value": 100.0,
+            "Updater": 1
         }
     ]
 }

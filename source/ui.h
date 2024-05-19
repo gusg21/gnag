@@ -14,8 +14,6 @@ typedef struct {
     button_t buttons[UILAYOUT_MAX_BUTTON_COUNT];
     fill_bar_t fill_bars[UILAYOUT_MAX_FILL_BAR_COUNT];
 
-    void (*ui_updater)();
-
 } ui_t;
 
 void UI_Init(ui_t* ui, game_t* game, ui_layout_t* ui_layout);

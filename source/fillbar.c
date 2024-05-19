@@ -2,16 +2,24 @@
 
 #include <citro2d.h>
 
+#include "_defs.h"
+#include "uiscripts.h"
+
 void FillBar_Init(fill_bar_t* bar, fill_bar_data_t data) {
     bar->data = data;
     bar->fill_value = data.max_value;
-    bar->is_updating = true;
+    bar->updater = UIScripts_GetFillBarUpdaterByType(data.updater_type);
 }
 
-void FillBar_Update(fill_bar_t* bar, float value) {
-    if (bar->is_updating) {
-        bar->fill_value = value;
+void FillBar_Update(fill_bar_t* bar) {
+    // Call the updater
+    if (bar->updater != NULL) {
+        bar->updater(bar);
     }
+}
+
+void FillBar_SetValue(fill_bar_t* bar, float value) {
+    bar->fill_value = value;
 }
 
 void FillBar_Draw(fill_bar_t* bar) {

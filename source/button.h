@@ -16,8 +16,8 @@ typedef struct button_s {
     bool held;
     bool initialized;
 
-    void (*on_pressed)(struct button_s* button_pressed);
-    void (*on_released)(struct button_s* button_released);
+    void (*on_released)(struct button_s* button);
+    void (*updater)(struct button_s* button);
 
 } button_t;
 

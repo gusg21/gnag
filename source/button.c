@@ -7,7 +7,7 @@
 void Button_Init(button_t* button, button_data_t data, C2D_SpriteSheet sheet) {
     button->data = data;
 
-    if (data.callback != 0)
+    if (data.callback_type != 0)
     {
         button->pressable = true;
     }
@@ -15,9 +15,8 @@ void Button_Init(button_t* button, button_data_t data, C2D_SpriteSheet sheet) {
     button->held = false;
     button->initialized = true;
 
-    // onpressed
-    // onheld?
-    button->on_released = UIScripts_GetFunctionByCallbackType(data.callback);
+    button->on_released = UIScripts_GetButtonCallbackByType(data.callback_type);
+    button->updater = UIScripts_GetButtonUpdaterByType(data.updater_type);
 
     C2D_SpriteFromSheet(&button->sprite, sheet, button->data.sprite_idx);
     C2D_SpriteSetCenter(&button->sprite, 0.5f, 0.5f);
@@ -25,13 +24,14 @@ void Button_Init(button_t* button, button_data_t data, C2D_SpriteSheet sheet) {
 }
 
 void Button_Update(button_t* button) {
+    // Call the updater
+    if (button->updater != NULL) {
+        button->updater(button);
+    }
+
     if (Button_IsPressed(button)) {
         // Player pressed button this frame
         button->held = true;
-        if (button->on_pressed != NULL)
-        {
-            button->on_pressed(button);
-        }
     }
     else if (button->pressable && Input_IsTouchScreenDown() && !Button_IsDown(button)) {
         // Player slid stylus off of button

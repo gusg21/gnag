@@ -30,9 +30,12 @@ void UILayout_LoadNewLayoutFromFile(ui_layout_t* layout, const char* filename) {
     cJSON* json = cJSON_Parse(buffer);
     if (json == NULL) {
         Panic_Panic();
+        size_t error_byte_offset = (size_t)cJSON_GetErrorPtr() - (size_t)buffer;
+        char* begin = &buffer[MAX(error_byte_offset - 50, 0)];
+        size_t length = 50;
         CTR_PRINTF("Error loading JSON from %s\n", filename);
-        CTR_PRINTF("%*.*s\n", 100, 100, buffer);
-        CTR_PRINTF("%d bytes in\n", (size_t)cJSON_GetErrorPtr() - (size_t)buffer);
+        CTR_PRINTF("%*.*s\n", length, length, begin);
+        CTR_PRINTF("%d bytes from start of file\n", error_byte_offset);
     }
 
     UILayout_LoadButtonsFromFile(layout, json);
@@ -82,8 +85,20 @@ void UILayout_LoadButtonsFromFile(ui_layout_t* layout, cJSON* json) {
                          a->valuedouble);
 
         // Get & Set Callback
-        cJSON* callback = cJSON_GetObjectItem(button, "Callback");
-        layout->button_datas[index].callback = callback->valueint;
+        cJSON* callback_type = cJSON_GetObjectItem(button, "Callback");
+        if (callback_type != NULL) { // Having a callback is optional
+            layout->button_datas[index].callback_type = callback_type->valueint;
+        } else {
+            layout->button_datas[index].callback_type = BUTTON_CALLBACK_NONE;
+        }
+
+        // Get & Set Updater
+        cJSON* updater_type = cJSON_GetObjectItem(button, "Updater");
+        if (updater_type != NULL) { // optional
+            layout->button_datas[index].updater_type = updater_type->valueint;
+        } else {
+            layout->button_datas[index].updater_type = BUTTON_CALLBACK_NONE;
+        }
 
         // Mark Button Data as initialized
         layout->button_datas[index].initialized = true;
@@ -132,6 +147,14 @@ void UILayout_LoadFillBarsFromFile(ui_layout_t* layout, cJSON* json) {
         // Get & Set Value Max
         cJSON* max_value = cJSON_GetObjectItem(fill_bar, "Max Value");
         layout->fill_bar_datas[index].max_value = max_value->valuedouble;
+
+        // Get & Set Updater
+        cJSON* updater_type = cJSON_GetObjectItem(fill_bar, "Updater");
+        if (updater_type != NULL) { // optional
+            layout->fill_bar_datas[index].updater_type = updater_type->valueint;
+        } else {
+            layout->fill_bar_datas[index].updater_type = BUTTON_CALLBACK_NONE;
+        }
 
         // Mark Fill Bar Data as initialized
         layout->fill_bar_datas[index].initialized = true;

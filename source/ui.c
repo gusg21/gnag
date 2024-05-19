@@ -15,19 +15,16 @@ void UI_Init(ui_t* ui, game_t* game, ui_layout_t* layout) {
 void UI_Destroy(ui_t* ui) { C2D_SpriteSheetFree(ui->sheet); }
 
 void UI_Update(ui_t* ui) {
-    ui->ui_updater = UIScripts_UpdateButton;
     for (u32 i = 0; i < UILAYOUT_MAX_BUTTON_COUNT; i++) {
         button_t* button = &ui->buttons[i];
         if (button->initialized == false) break;
-        ui->ui_updater(button);
         Button_Update(button);
+        
     }
-    ui->ui_updater = UIScripts_UpdateFillBar;
     for (u32 i = 0; i < UILAYOUT_MAX_FILL_BAR_COUNT; i++) {
         fill_bar_t* fill_bar = &ui->fill_bars[i];
         if (fill_bar->data.max_value == 0.f) break;
-        ui->ui_updater(fill_bar);
-        FillBar_Update(fill_bar, 0.45f);
+        FillBar_Update(fill_bar);
     }
 }
 

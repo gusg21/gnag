@@ -2,7 +2,7 @@
 
 #include "_defs.h"
 #include "panic.h"
-#include "actionscripts.h"
+#include "characteraction.h"
 
 void Board_Init(board_t* board) {
     memset(board->characters, 0, sizeof(character_t) * BOARD_MAX_CHARACTER_COUNT);
@@ -37,7 +37,7 @@ void Board_Update(board_t* board, float delta_secs) {
             }
         }
 
-        ActionScripts_Run(Board_GetCurrentAction(board), board);
+        CharacterAction_Run(Board_GetCurrentAction(board), board);
     }
 }
 

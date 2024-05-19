@@ -5,6 +5,9 @@
 
 #define CTR_PRINTF(fmt, ...) fprintf(stderr, "[GNAG-INFO] " fmt __VA_OPT__(,) __VA_ARGS__)
 
+#define MIN(x,y) (x < y) ? x : y
+#define MAX(x,y) (x > y) ? x : y
+
 #define TOP_SCREEN_WIDTH  400
 #define TOP_SCREEN_HEIGHT 240
 #define BOTTOM_SCREEN_WIDTH  320

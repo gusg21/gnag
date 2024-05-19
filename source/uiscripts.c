@@ -7,7 +7,7 @@ static game_t* UIScripts_S_Game = NULL;
 
 void UIScripts_SetGame(game_t* game) { UIScripts_S_Game = game; }
 
-void (*UIScripts_GetFunctionByCallbackType(button_callback_type_e type))(button_t*) {
+void (*UIScripts_GetButtonCallbackByType(button_callback_type_e type))(button_t*) {
     switch (type) {
         case BUTTON_CALLBACK_NONE:
             return NULL;
@@ -25,55 +25,25 @@ void (*UIScripts_GetFunctionByCallbackType(button_callback_type_e type))(button_
     }
 }
 
-void UIScripts_UpdateButton(button_t* button) {
-    switch (UIScripts_S_Game->state)
-    {
-        case GAME_STATE_PAUSED:
-            button->pressable = false;
-            return;
-        case GAME_STATE_PLAYER_TURN:
-            button->pressable = true;
-            return;
-        case GAME_STATE_PLAYER_ACTING:
-            button->pressable = false;
-            return;
-        case GAME_STATE_OPPONENT_TURN:
-            button->pressable = false;
-            return;
-        case GAME_STATE_OPPONENT_ACTING:
-            button->pressable = false;
-            return;
-        case GAME_STATE_SELECTING_TILE:
-            button->pressable = false;
-            return;
+void (*UIScripts_GetButtonUpdaterByType(button_updater_type_e type))(button_t*) {
+    switch (type) {
+        case BUTTON_UPDATER_NONE:
+            return NULL;
+
         default:
-            return; //do nothing
+            return NULL;
     }
 }
 
-void UIScripts_UpdateFillBar(fill_bar_t* fill_bar) {
-    switch (UIScripts_S_Game->state)
-    {
-        case GAME_STATE_PAUSED:
-            fill_bar->is_updating = false;
-            return;
-        case GAME_STATE_PLAYER_TURN:
-            fill_bar->is_updating = true;
-            return;
-        case GAME_STATE_PLAYER_ACTING:
-            fill_bar->is_updating = true;
-            return;
-        case GAME_STATE_OPPONENT_TURN:
-            fill_bar->is_updating = false;
-            return;
-        case GAME_STATE_OPPONENT_ACTING:
-            fill_bar->is_updating = true;
-            return;
-        case GAME_STATE_SELECTING_TILE:
-            fill_bar->is_updating = true;
-            return;
+void (*UIScripts_GetFillBarUpdaterByType(fill_bar_updater_type_e type))(fill_bar_t*) {
+    switch (type) {
+        case FILL_BAR_UPDATER_NONE:
+            return NULL;
+        case FILL_BAR_UPDATER_HEALTH:
+            return UIScripts_FillBarHealthUpdater;
+
         default:
-            return; //do nothing
+            return NULL;
     }
 }
 
@@ -103,4 +73,10 @@ void UIScripts_Confirm(button_t* button) {
         CTR_PRINTF("selecting next char\n");
         Board_SelectNotYetActedCharacter(&UIScripts_S_Game->board);
     }
+}
+
+void UIScripts_FillBarHealthUpdater(fill_bar_t* fill_bar) {
+    // Update no matter the state :)
+    CTR_PRINTF("Fill bar update\n");
+    FillBar_SetValue(fill_bar, Board_GetCurrentActingCharacter(&UIScripts_S_Game->board)->health);
 }
