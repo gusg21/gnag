@@ -1,6 +1,6 @@
 #include "button.h"
 
-#include "debugconsole.h"
+#include "_defs.h"
 #include "input.h"
 #include "uiscripts.h"
 
@@ -97,5 +97,5 @@ bool Button_IsReleased(button_t* button) {
 }
 
 void Button_TestButton(button_t* button) {
-    DebugConsole_Print("works", 6);
+    CTR_PRINTF("works\n");
 }

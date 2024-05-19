@@ -9,7 +9,7 @@ void Game_Init(game_t* game) {
     game->sheet = C2D_SpriteSheetLoad("romfs:/gfx/sprites.t3x");
     if (game->sheet == NULL) {
         Panic_Panic();
-        printf("Failed to load sprite sheet from fs");
+        CTR_PRINTF("Failed to load sprite sheet from fs\n");
     }
 
     Board_Init(&game->board);

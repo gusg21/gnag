@@ -1,7 +1,6 @@
 #include "ui.h"
 
 #include "_defs.h"
-#include "debugconsole.h"
 #include "uiscripts.h"
 #include "uisprites.h"
 #include "game.h"

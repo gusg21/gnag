@@ -1,8 +1,8 @@
 #include "board.h"
 
+#include "_defs.h"
 #include "panic.h"
 #include "actionscripts.h"
-#include "debugconsole.h"
 
 void Board_Init(board_t* board) {
     memset(board->characters, 0, sizeof(character_t) * BOARD_MAX_CHARACTER_COUNT);
@@ -34,9 +34,6 @@ void Board_Update(board_t* board, float delta_secs) {
             if (!Board_GetCurrentAction(board)->initialized) {
                 board->action_queue_executing = false;
                 Board_ClearQueue(board);
-                DebugConsole_Print("end acting", 11);
-            } else {
-                DebugConsole_Print("next action", 12);
             }
         }
 
@@ -65,10 +62,10 @@ void Board_BuildPlayerControlledCharacterIndex(board_t* board) {
 void Board_EnqueueAction(board_t* board, character_action_t action) {
     if (board->action_queue_executing) {
         Panic_Panic();
-        printf("Tried to enqueue action while executing");
+        CTR_PRINTF("Tried to enqueue action while executing\n");
     }
 
-    DebugConsole_Print("action enqueued", 16);
+    CTR_PRINTF("action enqueued\n");
 
     board->action_queue[board->action_write_index] = action;
     board->action_queue[board->action_write_index].initialized = true;
@@ -83,7 +80,7 @@ void Board_EnqueuePlayerControlledCharacterAction(board_t* board, character_acti
         .order = board->next_player_controlled_action_top_order
     };
 
-    DebugConsole_PrintInt(board->next_player_controlled_action_top_order);
+    CTR_PRINTF("order %ld\n", board->next_player_controlled_action_top_order);
 
     // Mark this character as having acted
     board->player_controlled_characters_acted_flags[board->current_player_controlled_character_index] = true;
@@ -93,9 +90,10 @@ void Board_EnqueuePlayerControlledCharacterAction(board_t* board, character_acti
     board->next_player_controlled_action_top_order++;
 }
 
-void Board_EnqueueAllPlayerControlledCharacterActionsToMainActionQueue(board_t* board) {
+u32 Board_EnqueueAllPlayerControlledCharacterActionsToMainActionQueue(board_t* board) {
     ordered_character_action_t* lowest;
     u32 lowest_order;
+    u32 actions_queued = 0;
 
     while (true) {
         lowest = NULL;
@@ -113,6 +111,8 @@ void Board_EnqueueAllPlayerControlledCharacterActionsToMainActionQueue(board_t* 
         }
 
         if (lowest != NULL) {
+            actions_queued++;
+
             // Remove it from the queue
             lowest->initialized = false;
 
@@ -129,6 +129,8 @@ void Board_EnqueueAllPlayerControlledCharacterActionsToMainActionQueue(board_t* 
 
     board->next_player_controlled_action_index = 0;
     board->next_player_controlled_action_top_order = 0;
+
+    return actions_queued;
 }
 
 void Board_ExecuteQueue(board_t* board) {
@@ -140,8 +142,14 @@ void Board_ExecuteQueue(board_t* board) {
 void Board_ClearQueue(board_t* board) {
     board->action_read_index = 0;
     board->action_write_index = 0;
+    board->action_execution_secs = 0.f;
+    board->action_queue_executing = false;
 
     memset(board->action_queue, 0, sizeof(character_action_t) * BOARD_MAX_CHARACTER_ACTION_QUEUE_LENGTH);
+    memset(board->player_controlled_characters_acted_flags, 0, sizeof(bool) * BOARD_MAX_PLAYER_CONTROLLED_CHARACTER_COUNT);
+    memset(board->player_controlled_action_queue, 0, sizeof(ordered_character_action_t) * BOARD_MAX_PLAYER_CONTROLLED_CHARACTER_ACTION_QUEUE_LENGTH);
+
+    board->current_player_controlled_character_index = 0;
 }
 
 float Board_GetNormalizedActionTime(board_t* board) {
@@ -160,7 +168,7 @@ void Board_SelectNotYetActedCharacter(board_t* board) {
     for (u32 index = 0; index < BOARD_MAX_PLAYER_CONTROLLED_CHARACTER_COUNT; index++) {
         // if exists a PCC that's actually real (non-NULL) and also has not acted, select it
         if (board->player_controlled_characters[index] != NULL && !board->player_controlled_characters_acted_flags[index] == true) {
-            DebugConsole_Print("Selecting new character", 24);
+            CTR_PRINTF("Selecting new character %ld\n", index);
             board->current_player_controlled_character_index = index;
             break;
         }
@@ -193,12 +201,12 @@ character_t* Board_GetCharacterByType(board_t* board, character_type_e type) {
     
     // Freak out!
     Panic_Panic();
-    printf("no character with requested type %d.\n", type);
-    printf("found types: ");
+    CTR_PRINTF("no character with requested type %d.\n", type);
+    CTR_PRINTF("found types: ");
     for (u32 character_index = 0; character_index < BOARD_MAX_CHARACTER_COUNT; character_index++) {
         character_t* character = &board->characters[character_index];
         if (character->initialized) {
-            printf("%d ", character->type);
+            CTR_PRINTF("%d ", character->type);
         }
     }
     return NULL;

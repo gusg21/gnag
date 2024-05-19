@@ -1,6 +1,6 @@
 #include "uiscripts.h"
 
-#include "debugconsole.h"
+#include "_defs.h"
 #include "game.h"
 
 static game_t* UIScripts_S_Game = NULL;
@@ -14,7 +14,7 @@ void (*UIScripts_GetFunctionByCallbackType(button_callback_type_e type))(button_
         case BUTTON_CALLBACK_TEST:
             return Button_TestButton;
         case BUTTON_CALLBACK_DEBUG_CONSOLE_TOGGLE:
-            return DebugConsole_ToggleEnabled;
+            return NULL;
         case BUTTON_CALLBACK_MOVE:
             return UIScripts_Move;
         case BUTTON_CALLBACK_CONFIRM:
@@ -38,12 +38,12 @@ void UIScripts_Move(button_t* button) {
 
 void UIScripts_Confirm(button_t* button) {
     if (Board_HaveAllPlayerControlledCharactersActed(&UIScripts_S_Game->board)) {
-        DebugConsole_Print("all chars acted", 16);
-        Board_EnqueueAllPlayerControlledCharacterActionsToMainActionQueue(&UIScripts_S_Game->board);
+        u32 actions_queued = Board_EnqueueAllPlayerControlledCharacterActionsToMainActionQueue(&UIScripts_S_Game->board);
         // todo)) @gusg21 DO AI
         Board_ExecuteQueue(&UIScripts_S_Game->board);
+        CTR_PRINTF("%ld actions queued\n", actions_queued);
     } else {
-        DebugConsole_Print("selecting next char", 20);
+        CTR_PRINTF("selecting next char\n");
         Board_SelectNotYetActedCharacter(&UIScripts_S_Game->board);
     }
 }

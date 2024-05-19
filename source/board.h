@@ -59,7 +59,7 @@ void Board_Draw(board_t* board, grid_t* grid);
 void Board_BuildPlayerControlledCharacterIndex(board_t* board);
 void Board_EnqueueAction(board_t* board, character_action_t action);
 void Board_EnqueuePlayerControlledCharacterAction(board_t* board, character_action_t action);
-void Board_EnqueueAllPlayerControlledCharacterActionsToMainActionQueue(board_t* board);
+u32 Board_EnqueueAllPlayerControlledCharacterActionsToMainActionQueue(board_t* board);
 void Board_ExecuteQueue(board_t* board);
 void Board_ClearQueue(board_t* board);
 float Board_GetNormalizedActionTime(board_t* board);

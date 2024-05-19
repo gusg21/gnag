@@ -13,7 +13,6 @@
 
 #include "_defs.h"
 #include "button.h"
-#include "debugconsole.h"
 #include "game.h"
 #include "input.h"
 #include "panic.h"
@@ -29,13 +28,12 @@ int main() {
     C2D_Init(C2D_DEFAULT_MAX_OBJECTS);
     C2D_Prepare();
 
+    // Pipe printf to SVC call
+    consoleDebugInit(debugDevice_SVC);
+
     // Create screens
     C3D_RenderTarget* top_screen = C2D_CreateScreenTarget(GFX_TOP, GFX_LEFT);
     C3D_RenderTarget* bottom_screen = C2D_CreateScreenTarget(GFX_BOTTOM, GFX_LEFT);
-
-    // Create debug console
-    DebugConsole_Init();
-    DebugConsole_Print("DEBUG CONSOLE", 14);
 
     // Allocate game data
     game_t* game = malloc(sizeof(game_t));
@@ -50,16 +48,12 @@ int main() {
     Board_BuildPlayerControlledCharacterIndex(&game->board);
     Grid_GetTileAt(&game->grid, 0, 0)->is_spikes = true;
 	Grid_Build(&game->grid);
-
-    DebugConsole_Print("game initialized", 17);
     
 	// Create and Init Bottom Screen UI
     ui_layout_t button_layout;
 	ui_t bottom_ui;
     UILayout_InitFromFile(&button_layout, "romfs:/jsons/uilayout_playerturn.json");
 	UI_Init(&bottom_ui, game, &button_layout);
-
-	DebugConsole_Print("ui initialized", 15);
 
 	// Panic_Panic();
 	// printf("Test panic");
@@ -74,7 +68,6 @@ int main() {
 
         Game_Update(game, delta_secs);  // Fixed timestep for now
         UI_Update(&bottom_ui);
-        DebugConsole_Update(delta_secs);
 
         // Render the scene
         C3D_FrameBegin(C3D_FRAME_SYNCDRAW);
@@ -87,7 +80,6 @@ int main() {
         {
             // Bottom screen drawing
             UI_Draw(&bottom_ui);
-            DebugConsole_Draw();
         }
         C3D_FrameEnd(0);
 

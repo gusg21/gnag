@@ -1,6 +1,6 @@
 #include "grid.h"
 
-#include "debugconsole.h"
+#include "_defs.h"
 #include "panic.h"
 #include "sprites.h"
 
@@ -89,7 +89,7 @@ float Grid_GetIsoDepthForTilePos(grid_t* grid, u32 tile_x, u32 tile_y) {
 
     if (depth > 1.f || depth < -1.f) {
         Panic_Panic();
-        printf("Tile depth OOB: %.2f %ld %ld", depth, tile_x, tile_y);
+        CTR_PRINTF("Tile depth OOB: %.2f %ld %ld\n", depth, tile_x, tile_y);
     }
 
     return depth;

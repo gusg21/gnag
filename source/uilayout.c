@@ -4,7 +4,6 @@
 #include "stdlib.h"
 
 #include "_defs.h"
-#include "debugconsole.h"
 #include "panic.h"
 #include "uisprites.h"
 
@@ -21,7 +20,7 @@ void UILayout_LoadNewLayoutFromFile(ui_layout_t* layout, const char* filename) {
     FILE* fptr = fopen(filename, "r");
     if (fptr == NULL) {
         Panic_Panic();
-        printf("Unable to open file %s", filename);
+        CTR_PRINTF("Unable to open file %s\n", filename);
     }
 
     char* buffer = malloc(sizeof(char) * UILAYOUT_MAX_FILE_SIZE);
@@ -31,9 +30,9 @@ void UILayout_LoadNewLayoutFromFile(ui_layout_t* layout, const char* filename) {
     cJSON* json = cJSON_Parse(buffer);
     if (json == NULL) {
         Panic_Panic();
-        printf("Error loading JSON from %s\n", filename);
-        printf("%*.*s\n", 100, 100, buffer);
-        printf("%d bytes in", (size_t)cJSON_GetErrorPtr() - (size_t)buffer);
+        CTR_PRINTF("Error loading JSON from %s\n", filename);
+        CTR_PRINTF("%*.*s\n", 100, 100, buffer);
+        CTR_PRINTF("%d bytes in\n", (size_t)cJSON_GetErrorPtr() - (size_t)buffer);
     }
 
     UILayout_LoadButtonsFromFile(layout, json);
