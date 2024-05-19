@@ -95,15 +95,22 @@ u32 Board_EnqueueAllPlayerControlledCharacterActionsToMainActionQueue(board_t* b
     u32 lowest_order;
     u32 actions_queued = 0;
 
+    for (u32 action_index = 0; action_index < BOARD_MAX_PLAYER_CONTROLLED_CHARACTER_ACTION_QUEUE_LENGTH; action_index++) {
+        ordered_character_action_t* action = &board->player_controlled_action_queue[action_index];
+        if (action->initialized) {
+            CTR_PRINTF("player action type %d order %ld\n", action->action.type, action->order);
+        }
+    }
+
     while (true) {
         lowest = NULL;
-        lowest_order = -10000; // We're realists here
+        lowest_order = 0;
 
         // Find the lowest ordered action
         for (u32 action_index = 0; action_index < BOARD_MAX_PLAYER_CONTROLLED_CHARACTER_ACTION_QUEUE_LENGTH; action_index++) {
             ordered_character_action_t* action = &board->player_controlled_action_queue[action_index];
             if (action->initialized) {
-                if (action->order > lowest_order) {
+                if (action->order >= lowest_order) {
                     lowest_order = action->order;
                     lowest = action;
                 }

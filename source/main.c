@@ -19,7 +19,16 @@
 #include "ui.h"
 #include "sprites.h"
 
+// Handle gnag_debug_handle;
+
 int main() {
+    // Debug Setup
+    // svcDebugActiveProcess(&gnag_debug_handle, CUR_PROCESS_HANDLE);
+    // svcBreakDebugProcess(gnag_debug_handle);
+
+    // Pipe printf to SVC call
+    consoleDebugInit(debugDevice_SVC);
+
     // Init libs
     romfsInit();
     cfguInit();
@@ -28,8 +37,7 @@ int main() {
     C2D_Init(C2D_DEFAULT_MAX_OBJECTS);
     C2D_Prepare();
 
-    // Pipe printf to SVC call
-    consoleDebugInit(debugDevice_SVC);
+    
 
     // Create screens
     C3D_RenderTarget* top_screen = C2D_CreateScreenTarget(GFX_TOP, GFX_LEFT);
