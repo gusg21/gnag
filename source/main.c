@@ -43,8 +43,11 @@ int main() {
 
     // Init the game
     Game_Init(game);
-    Game_CreateCharacterAt(game, CHAR_GOOD, 5, 5);
-    Game_CreateCharacterAt(game, CHAR_BAD, 2, 3);
+
+	// Put in testing characters; will eventually be loaded from a scenario struct
+    Game_CreateCharacterAt(game, CHAR_GOOD, true, 5, 5);
+    Game_CreateCharacterAt(game, CHAR_BAD, true, 2, 3);
+    Board_BuildPlayerControlledCharacterIndex(&game->board);
     Grid_GetTileAt(&game->grid, 0, 0)->is_spikes = true;
 	Grid_Build(&game->grid);
 
@@ -67,8 +70,11 @@ int main() {
     while (aptMainLoop() && !Panic_IsPanicked()) {
         hidScanInput();
 
-        Game_Update(game, 1.f / 60.f);  // Fixed timestep for now
+        float delta_secs = 1.f / 60.f;
+
+        Game_Update(game, delta_secs);  // Fixed timestep for now
         UI_Update(&bottom_ui);
+        DebugConsole_Update(delta_secs);
 
         // Render the scene
         C3D_FrameBegin(C3D_FRAME_SYNCDRAW);

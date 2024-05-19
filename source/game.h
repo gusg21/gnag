@@ -19,6 +19,6 @@ void Game_Init(game_t* game);
 void Game_Destroy(game_t* game);
 void Game_Update(game_t* game, float delta_secs);
 void Game_Draw(game_t* game);
-character_t* Game_CreateCharacterAt(game_t* game, character_type_e type, u32 tile_x, u32 tile_y);
+character_t* Game_CreateCharacterAt(game_t* game, character_type_e type, bool is_player_controlled, u32 tile_x, u32 tile_y);
 
 #endif // GAME_H

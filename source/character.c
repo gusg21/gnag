@@ -14,11 +14,12 @@ static u32 S_GetSpriteIndexForCharacterType(character_type_e type) {
     }
 }
 
-void Character_Init(character_t* character, C2D_SpriteSheet sheet, character_type_e type, u32 start_x, u32 start_y) {
+void Character_Init(character_t* character, C2D_SpriteSheet sheet, character_type_e type, bool is_player_controlled, u32 start_x, u32 start_y) {
     character->initialized = true;
     character->pos.x = start_x;
     character->pos.y = start_y;
     character->type = type;
+    character->is_player_controlled = is_player_controlled;
 
     C2D_SpriteFromSheet(&character->sprite, sheet, S_GetSpriteIndexForCharacterType(type));
     C2D_SpriteSetCenter(&character->sprite, 0.5f, 1.0f);  // Bottom center

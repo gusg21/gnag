@@ -26,16 +26,24 @@ void (*UIScripts_GetFunctionByCallbackType(button_callback_type_e type))(button_
 }
 
 void UIScripts_Move(button_t* button) {
-    character_t* good = Board_GetCharacterByType(&UIScripts_S_Game->board, CHAR_GOOD);
-    Board_EnqueueAction(&UIScripts_S_Game->board,
-                        (character_action_t){.character = good,
+    character_t* current = Board_GetCurrentActingCharacter(&UIScripts_S_Game->board);
+    Board_EnqueuePlayerControlledCharacterAction(&UIScripts_S_Game->board,
+                        (character_action_t){.character = current,
                                              .duration = 1.f,
                                              .initialized = true,
                                              .type = ACTION_MOVE,
-                                             .move_source = good->pos,
-                                             .move_destination = Vec2_Add(good->pos, (vec2_t){50.f, 0.f})});
+                                             .move_source = current->pos,
+                                             .move_destination = Vec2_Add(current->pos, (vec2_t){50.f, 0.f})});
 }
 
 void UIScripts_Confirm(button_t* button) {
-    Board_ExecuteQueue(&UIScripts_S_Game->board);
+    if (Board_HaveAllPlayerControlledCharactersActed(&UIScripts_S_Game->board)) {
+        DebugConsole_Print("all chars acted", 16);
+        Board_EnqueueAllPlayerControlledCharacterActionsToMainActionQueue(&UIScripts_S_Game->board);
+        // todo)) @gusg21 DO AI
+        Board_ExecuteQueue(&UIScripts_S_Game->board);
+    } else {
+        DebugConsole_Print("selecting next char", 20);
+        Board_SelectNotYetActedCharacter(&UIScripts_S_Game->board);
+    }
 }

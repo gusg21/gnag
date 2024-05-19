@@ -29,7 +29,8 @@
         "button.h": "c",
         "uisprites.h": "c",
         "input.h": "c",
-        "buttonlayout.h": "c",
         "buttondata.h": "c"
+        "buttonlayout.h": "c",
     }
+    "C_Cpp.default.compilerPath": "C:\\devkitPro\\devkitARM\\bin\\arm-none-eabi-gcc"
 }

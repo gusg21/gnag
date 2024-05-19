@@ -38,13 +38,6 @@ void Game_Update(game_t* game, float delta_secs) {
     if (Input_IsButtonDown(KEY_CPAD_DOWN)) {
         game->view_y += delta_secs * cam_speed;
     }
-
-    if (Input_IsButtonPressed(KEY_R)) {
-        
-    }
-
-    if (Input_IsButtonPressed(KEY_A)) {
-    }
 }
 
 void Game_Draw(game_t* game) {
@@ -57,12 +50,12 @@ void Game_Draw(game_t* game) {
     C2D_ViewReset();
 }
 
-character_t* Game_CreateCharacterAt(game_t* game, character_type_e type, u32 tile_x, u32 tile_y) {
+character_t* Game_CreateCharacterAt(game_t* game, character_type_e type, bool is_player_controlled, u32 tile_x, u32 tile_y) {
     vec2_t world_pos = Grid_GridPosToWorldPos(&game->grid, (vec2i_t){.x = tile_x, .y = tile_y});
     world_pos.y += 10;  // centers the sprites better
 
     character_t* character = Board_NewCharacter(&game->board);
-    Character_Init(character, game->sheet, type, world_pos.x, world_pos.y);
+    Character_Init(character, game->sheet, type, is_player_controlled, world_pos.x, world_pos.y);
 
     return character;
 }

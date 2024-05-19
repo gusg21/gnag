@@ -7,3 +7,7 @@ float Mathf_Clamp(float x, float min, float max) {
     if (x > max) return max;
     return x;
 }
+
+float Mathf_Min(float a, float b) { return (a < b) ? a : b; }
+
+float Mathf_Max(float a, float b) { return (a > b) ? a : b; }
