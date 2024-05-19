@@ -11,10 +11,6 @@ void (*UIScripts_GetButtonCallbackByType(button_callback_type_e type))(button_t*
     switch (type) {
         case BUTTON_CALLBACK_NONE:
             return NULL;
-        case BUTTON_CALLBACK_TEST:
-            return UIScripts_TestButton;
-        case BUTTON_CALLBACK_DEBUG_CONSOLE_TOGGLE:
-            return NULL;
         case BUTTON_CALLBACK_MOVE:
             return UIScripts_Move;
         case BUTTON_CALLBACK_CONFIRM:
@@ -29,6 +25,10 @@ void (*UIScripts_GetButtonUpdaterByType(button_updater_type_e type))(button_t*) 
     switch (type) {
         case BUTTON_UPDATER_NONE:
             return NULL;
+        case BUTTON_UPDATER_MOVE:
+            return UIScripts_ButtonMoveUpdater;
+        case BUTTON_UPDATER_CONFIRM:
+            return UIScripts_ButtonConfirmUpdater;
 
         default:
             return NULL;
@@ -47,10 +47,6 @@ void (*UIScripts_GetFillBarUpdaterByType(fill_bar_updater_type_e type))(fill_bar
     }
 }
 
-void UIScripts_TestButton(button_t* button) {
-    CTR_PRINTF("works\n");
-}
-
 void UIScripts_Move(button_t* button) {
     character_t* current = Board_GetCurrentActingCharacter(&UIScripts_S_Game->board);
     Board_EnqueuePlayerControlledCharacterAction(&UIScripts_S_Game->board,
@@ -60,6 +56,7 @@ void UIScripts_Move(button_t* button) {
                                              .type = ACTION_MOVE,
                                              .move_source = current->pos,
                                              .move_destination = Vec2_Add(current->pos, (vec2_t){50.f, 0.f})});
+    Game_UpdateGameState(UIScripts_S_Game, GAME_STATE_SELECTING_TILE);
 }
 
 void UIScripts_Confirm(button_t* button) {
@@ -75,8 +72,29 @@ void UIScripts_Confirm(button_t* button) {
     }
 }
 
+void UIScripts_ButtonMoveUpdater(button_t* button) {
+    if (UIScripts_S_Game->state == GAME_STATE_PLAYER_TURN)
+    {
+        button->pressable = true;
+    }
+    else
+    {
+        button->pressable = false;
+    }
+}
+
+void UIScripts_ButtonConfirmUpdater(button_t* button) {
+    if (UIScripts_S_Game->state == GAME_STATE_PLAYER_TURN)
+    {
+        button->pressable = true;
+    }
+    else
+    {
+        button->pressable = false;
+    }
+}
+
 void UIScripts_FillBarHealthUpdater(fill_bar_t* fill_bar) {
     // Update no matter the state :)
-    CTR_PRINTF("Fill bar update\n");
     FillBar_SetValue(fill_bar, Board_GetCurrentActingCharacter(&UIScripts_S_Game->board)->health);
 }

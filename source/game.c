@@ -26,26 +26,38 @@ void Game_Destroy(game_t* game) { C2D_SpriteSheetFree(game->sheet); }
 void Game_Update(game_t* game, float delta_secs) {
     Board_Update(&game->board, delta_secs);
 
-    // If all player characters have acted, set next game state
-    if (game->state == GAME_STATE_PLAYER_ACTING && !game->board.action_queue_executing)
-    {
-        Game_UpdateGameState(game, GAME_STATE_PLAYER_TURN);
-    }
-
     float cam_speed = 100.f;
 
-    if (Input_IsButtonDown(KEY_CPAD_RIGHT)) {
-        game->view.x += delta_secs * cam_speed;
+    if (game->state == GAME_STATE_PLAYER_TURN) {
+        // Do joystick camera panning
+        if (Input_IsButtonDown(KEY_CPAD_RIGHT))
+            game->view.x += delta_secs * cam_speed;
+        if (Input_IsButtonDown(KEY_CPAD_LEFT))
+            game->view.x -= delta_secs * cam_speed;
+        if (Input_IsButtonDown(KEY_CPAD_UP))
+            game->view.y -= delta_secs * cam_speed;
+        if (Input_IsButtonDown(KEY_CPAD_DOWN))
+            game->view.y += delta_secs * cam_speed;
+        
+    } else if (game->state == GAME_STATE_PLAYER_ACTING) {
+        // All player characters have executed queued actions
+        if (!game->board.action_queue_executing) {
+            Game_UpdateGameState(game, GAME_STATE_PLAYER_TURN);
+        }
+
+    } else if (game->state == GAME_STATE_SELECTING_TILE) {
+        // Return selection on A
+        if (Input_IsButtonPressed(KEY_A)) {
+            CTR_PRINTF("tile selected\n");
+            Game_UpdateGameState(game, GAME_STATE_PLAYER_TURN);
+        }
+        // Return without selecting on B
+        else if (Input_IsButtonPressed(KEY_B)) {
+            CTR_PRINTF("selection cancelled\n");
+            Game_UpdateGameState(game, GAME_STATE_PLAYER_TURN);
+        }
     }
-    if (Input_IsButtonDown(KEY_CPAD_LEFT)) {
-        game->view.x -= delta_secs * cam_speed;
-    }
-    if (Input_IsButtonDown(KEY_CPAD_UP)) {
-        game->view.y -= delta_secs * cam_speed;
-    }
-    if (Input_IsButtonDown(KEY_CPAD_DOWN)) {
-        game->view.y += delta_secs * cam_speed;
-    }
+
 }
 
 void Game_Draw(game_t* game) {
@@ -68,6 +80,11 @@ character_t* Game_CreateCharacterAt(game_t* game, character_type_e type, bool is
     return character;
 }
 
+void Game_ViewFocusTarget(game_t* game, vec2_t target) {
+    game->view.x = target.x;
+    game->view.y = target.y;
+}
+
 void Game_UpdateGameState(game_t* game, game_state_e state) {
     if (state == GAME_STATE_NONE) return;
     
@@ -76,17 +93,23 @@ void Game_UpdateGameState(game_t* game, game_state_e state) {
     switch (state)
     {
         case GAME_STATE_PAUSED:
-            // Do nothing
+            CTR_PRINTF("STATE paused\n");
+            return;
         case GAME_STATE_PLAYER_TURN:
-            CTR_PRINTF("player turn");
+            CTR_PRINTF("STATE player turn\n");
+            return;
         case GAME_STATE_PLAYER_ACTING:
-            CTR_PRINTF("player acting");
+            CTR_PRINTF("STATE player acting\n");
+            return;
         case GAME_STATE_OPPONENT_TURN:
-            // Center camera on active player
+            CTR_PRINTF("STATE opponent turn\n");
+            return;
         case GAME_STATE_OPPONENT_ACTING:
-            // Center camera on active player
+            CTR_PRINTF("STATE opponent acting\n");
+            return;
         case GAME_STATE_SELECTING_TILE:
-            // Center camera on active player
+            CTR_PRINTF("STATE player selecting tile\n");
+            return;
 
         default:
         //do nothing

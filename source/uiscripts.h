@@ -17,6 +17,8 @@ void UIScripts_Move(button_t* button);
 void UIScripts_Confirm(button_t* button);
 
 // Updaters
+void UIScripts_ButtonMoveUpdater(button_t* button);
+void UIScripts_ButtonConfirmUpdater(button_t* button);
 void UIScripts_FillBarHealthUpdater(fill_bar_t* fill_bar);
 
 #endif // UI_SCRIPTS_H

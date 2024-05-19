@@ -35,6 +35,7 @@ void Game_Draw(game_t* game);
 
 character_t* Game_CreateCharacterAt(game_t* game, character_type_e type, bool is_player_controlled, u32 tile_x, u32 tile_y);
 
+void Game_ViewFocusTarget(game_t* game, vec2_t target);
 void Game_UpdateGameState(game_t* game, game_state_e state);
 
 #endif // GAME_H

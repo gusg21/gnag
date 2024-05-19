@@ -8,14 +8,14 @@
 
 typedef enum {
     BUTTON_CALLBACK_NONE,
-    BUTTON_CALLBACK_DEBUG_CONSOLE_TOGGLE,
-    BUTTON_CALLBACK_TEST,
     BUTTON_CALLBACK_MOVE,
     BUTTON_CALLBACK_CONFIRM
 } button_callback_type_e;
 
 typedef enum {
     BUTTON_UPDATER_NONE,
+    BUTTON_UPDATER_MOVE,
+    BUTTON_UPDATER_CONFIRM,
 } button_updater_type_e;
 
 typedef struct {

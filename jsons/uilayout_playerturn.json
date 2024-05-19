@@ -7,7 +7,7 @@
             "Size": [24, 24],
             "Sprite Index": 1,
             "Color": [0.7, 0.7, 0.7, 1.0],
-            "Callback": 2,
+            "Callback": 0,
             "Updater": 0
         },
         {
@@ -17,7 +17,7 @@
             "Size": [24, 24],
             "Sprite Index": 1,
             "Color": [0.7, 0.7, 0.7, 1.0],
-            "Callback": 2,
+            "Callback": 0,
             "Updater": 0
         },
         {
@@ -27,8 +27,8 @@
             "Size": [152, 32],
             "Sprite Index": 2,
             "Color": [0.7, 0.2, 0.3, 1.0],
-            "Callback": 3,
-            "Updater": 0
+            "Callback": 1,
+            "Updater": 1
         },
         {
             "Index": 3,
@@ -37,7 +37,7 @@
             "Size": [120, 32],
             "Sprite Index": 1,
             "Color": [0.1, 1.0, 0.4, 1.0],
-            "Callback": 2,
+            "Callback": 0,
             "Updater": 0
         },
         {
@@ -47,7 +47,7 @@
             "Size": [120, 32],
             "Sprite Index": 1,
             "Color": [0.1, 1.0, 0.4, 1.0],
-            "Callback": 2,
+            "Callback": 0,
             "Updater": 0
 
         },
@@ -58,7 +58,7 @@
             "Size": [120, 32],
             "Sprite Index": 1,
             "Color": [0.1, 1.0, 0.4, 1.0],
-            "Callback": 2,
+            "Callback": 0,
             "Updater": 0
 
         },
@@ -124,8 +124,8 @@
             "Size": [150, 32],
             "Sprite Index": 1,
             "Color": [0.0, 1.0, 0.0, 1.0],
-            "Callback": 4,
-            "Updater": 0
+            "Callback": 2,
+            "Updater": 2
 
         }
     ],
