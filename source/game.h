@@ -13,7 +13,7 @@ typedef enum {
 	GAME_STATE_PAUSED, // Ingame pause or 3DS on homescreen
 	GAME_STATE_PLAYER_TURN, // Input allowed between enemy moves end and player moves complete
 	GAME_STATE_PLAYER_ACTING, // Player characters completing queued actions and environment updating
-	GAME_STATE_OPPONENT_TURN, // Waiting for enemy moves to complete
+	GAME_STATE_OPPONENT_TURN, // Waiting for enemy moves to complete (SHOULD BE QUICK, AI & ANIMATION)
 	GAME_STATE_OPPONENT_ACTING, // Enemy characters completing actions and environment updating
 	GAME_STATE_SELECTING_TILE, // Selecting tile to target on top screen
 
