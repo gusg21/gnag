@@ -21,6 +21,7 @@ typedef struct {
     vec2_t size;
     u32 sprite_idx;
     u32 color;
+    u32 pressed_color;
     button_callback_type_e callback;
 
 } button_data_t;

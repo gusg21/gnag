@@ -5,8 +5,8 @@
             "Name": "Move",
             "Pos": [5, 40],
             "Size": [150, 35],
-            "Sprite Index": 1,
-            "Color": [1.0, 0.2, 0.2, 1.0],
+            "Sprite Index": 2,
+            "Color": [0.7, 0.2, 0.3, 1.0],
             "Callback": 3
         },
         {

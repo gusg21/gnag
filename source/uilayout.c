@@ -76,6 +76,11 @@ void UILayout_LoadButtonsFromFile(ui_layout_t* layout, cJSON* json) {
         cJSON* a = cJSON_GetArrayItem(color, 3);
         layout->button_datas[index].color =
             C2D_Color32f(r->valuedouble, g->valuedouble, b->valuedouble, a->valuedouble);
+        layout->button_datas[index].pressed_color =
+            C2D_Color32f(Mathf_Lerp(r->valuedouble, .5f, .5f),
+                         Mathf_Lerp(g->valuedouble, .5f, .5f), 
+                         Mathf_Lerp(b->valuedouble, .5f, .5f), 
+                         a->valuedouble);
 
         // Get & Set Callback
         cJSON* callback = cJSON_GetObjectItem(button, "Callback");

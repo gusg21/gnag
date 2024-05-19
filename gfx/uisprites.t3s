@@ -1,3 +1,4 @@
 --atlas -f rgba8888 -z auto
 good.png
 star.png
+ui_movebutton.png
