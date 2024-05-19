@@ -48,6 +48,14 @@ void Game_Update(game_t* game, float delta_secs) {
     } else if (game->state == GAME_STATE_SELECTING_TILE) {
         // Return selection on A
         if (Input_IsButtonPressed(KEY_A)) {
+            character_t* current = Board_GetCurrentActingCharacter(&game->board);
+            Board_EnqueuePlayerControlledCharacterAction(&game->board,
+                        (character_action_t){.character = current,
+                                             .duration = 1.f,
+                                             .initialized = true,
+                                             .type = ACTION_MOVE,
+                                             .move_source = current->pos,
+                                             .move_destination = Vec2_Add(current->pos, (vec2_t){50.f, 0.f})});
             CTR_PRINTF("tile selected\n");
             Game_UpdateGameState(game, GAME_STATE_PLAYER_TURN);
         }

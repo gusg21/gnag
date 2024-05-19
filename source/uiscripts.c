@@ -48,14 +48,6 @@ void (*UIScripts_GetFillBarUpdaterByType(fill_bar_updater_type_e type))(fill_bar
 }
 
 void UIScripts_Move(button_t* button) {
-    character_t* current = Board_GetCurrentActingCharacter(&UIScripts_S_Game->board);
-    Board_EnqueuePlayerControlledCharacterAction(&UIScripts_S_Game->board,
-                        (character_action_t){.character = current,
-                                             .duration = 1.f,
-                                             .initialized = true,
-                                             .type = ACTION_MOVE,
-                                             .move_source = current->pos,
-                                             .move_destination = Vec2_Add(current->pos, (vec2_t){50.f, 0.f})});
     Game_UpdateGameState(UIScripts_S_Game, GAME_STATE_SELECTING_TILE);
 }
 
