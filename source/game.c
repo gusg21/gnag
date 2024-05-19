@@ -53,7 +53,7 @@ void Game_Update(game_t* game, float delta_secs) {
                         (character_action_t){.character = current,
                                              .duration = 0.5f,
                                              .initialized = true,
-                                             .type = ACTION_MOVE,
+                                             .type = ACTION_MOVEMULTI,
                                              .move_source = current->pos,
                                              .move_destination = Vec2_Add(current->pos, (vec2_t){32.f, -16.f})});
             CTR_PRINTF("tile selected\n");

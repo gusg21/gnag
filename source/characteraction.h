@@ -9,7 +9,8 @@ struct board_s;
 
 typedef enum {
     ACTION_NONE, // Nothing
-    ACTION_MOVE // Move the character to a position
+    ACTION_MOVE, // Move the character to a position
+    ACTION_MOVEMULTI // Move the character through an array of positions
 } character_action_type_e;
 
 typedef struct {
