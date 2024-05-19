@@ -3,9 +3,12 @@
 
 #include "fillbardata.h"
 
-typedef struct {
+struct fill_bar;
+
+typedef struct fill_bar_s {
     fill_bar_data_t data;
     float fill_value;
+    bool is_updating;
 
 } fill_bar_t;
 

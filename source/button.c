@@ -95,7 +95,3 @@ bool Button_IsReleased(button_t* button) {
     return (button->pressable && !Input_IsTouchScreenDown() &&
            !Button_IsDown(button) && button->held == true);
 }
-
-void Button_TestButton(button_t* button) {
-    CTR_PRINTF("works\n");
-}

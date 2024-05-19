@@ -9,15 +9,15 @@
 
 struct button;
 
-typedef struct button {
+typedef struct button_s {
     button_data_t data;
     C2D_Sprite sprite;
     bool pressable;
     bool held;
     bool initialized;
 
-    void (*on_pressed)(struct button* button_pressed);
-    void (*on_released)(struct button* button_released);
+    void (*on_pressed)(struct button_s* button_pressed);
+    void (*on_released)(struct button_s* button_released);
 
 } button_t;
 
@@ -28,7 +28,5 @@ void Button_Draw(button_t* button);
 bool Button_IsPressed(button_t* button);
 bool Button_IsDown(button_t* button);
 bool Button_IsReleased(button_t* button);
-
-void Button_TestButton(button_t* button);
 
 #endif
