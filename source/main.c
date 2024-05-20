@@ -22,12 +22,15 @@
 // Handle gnag_debug_handle;
 
 int main() {
+
     // Debug Setup
     // svcDebugActiveProcess(&gnag_debug_handle, CUR_PROCESS_HANDLE);
     // svcBreakDebugProcess(gnag_debug_handle);
 
     // Pipe printf to SVC call
     consoleDebugInit(debugDevice_SVC);
+
+    CTR_PRINTF("gnag main()\n");
 
     // Init libs
     romfsInit();

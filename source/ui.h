@@ -6,14 +6,16 @@
 #include "uilayout.h"
 #include "button.h"
 #include "fillbar.h"
+#include "text.h"
 
 typedef struct game_s game_t;
 
 typedef struct {
     C2D_SpriteSheet sheet;
+    
     button_t buttons[UILAYOUT_MAX_BUTTON_COUNT];
     fill_bar_t fill_bars[UILAYOUT_MAX_FILL_BAR_COUNT];
-
+    text_t texts[UILAYOUT_MAX_TEXT_COUNT];
 } ui_t;
 
 void UI_Init(ui_t* ui, game_t* game, ui_layout_t* ui_layout);

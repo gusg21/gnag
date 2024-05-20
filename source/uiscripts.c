@@ -47,13 +47,30 @@ void (*UIScripts_GetFillBarUpdaterByType(fill_bar_updater_type_e type))(fill_bar
     }
 }
 
+
+
+void (*UIScripts_GetTextUpdaterByType(text_updater_type_e type))(text_t*) {
+    switch (type) {
+        case TEXT_UPDATER_NONE:
+            return NULL;
+        case TEXT_UPDATER_SELECTED_CHARACTER_NAME:
+            return UIScripts_TextSelectedCharacterNameUpdater;
+
+        default:
+            return NULL;
+    }
+}
+
+void UIScripts_TestButton(button_t* button) { CTR_PRINTF("works\n"); }
+
 void UIScripts_Move(button_t* button) {
     Game_UpdateGameState(UIScripts_S_Game, GAME_STATE_SELECTING_TILE);
 }
 
 void UIScripts_Confirm(button_t* button) {
     if (Board_HaveAllPlayerControlledCharactersActed(&UIScripts_S_Game->board)) {
-        u32 actions_queued = Board_EnqueueAllPlayerControlledCharacterActionsToMainActionQueue(&UIScripts_S_Game->board);
+        u32 actions_queued =
+            Board_EnqueueAllPlayerControlledCharacterActionsToMainActionQueue(&UIScripts_S_Game->board);
         // todo)) @gusg21 DO AI
         Board_ExecuteQueue(&UIScripts_S_Game->board);
         Game_UpdateGameState(UIScripts_S_Game, GAME_STATE_PLAYER_ACTING);
@@ -88,5 +105,10 @@ void UIScripts_ButtonConfirmUpdater(button_t* button) {
 
 void UIScripts_FillBarHealthUpdater(fill_bar_t* fill_bar) {
     // Update no matter the state :)
-    FillBar_SetValue(fill_bar, Board_GetCurrentActingCharacter(&UIScripts_S_Game->board)->health);
+    FillBar_SetValue(fill_bar, Board_GetCurrentSelectedPlayerControlledCharacter(&UIScripts_S_Game->board)->health);
+}
+
+void UIScripts_TextSelectedCharacterNameUpdater(text_t* text) {
+    // todo)) @gusg21 this is expensive to do every frame
+    Text_SetText(text, Character_GetName(Board_GetCurrentSelectedPlayerControlledCharacter(&UIScripts_S_Game->board)));
 }

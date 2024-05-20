@@ -151,5 +151,14 @@
             "Max Value": 100.0,
             "Updater": 1
         }
+    ],
+
+    "Texts": [
+        {
+            "Index": 0,
+            "Initial Text": "Howdy!",
+            "Pos": [10, 10],
+            "Updater": 1
+        }
     ]
 }

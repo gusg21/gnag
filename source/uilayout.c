@@ -12,6 +12,7 @@
 void UILayout_InitFromFile(ui_layout_t* layout, const char* filename) {
     memset(layout->button_datas, 0, sizeof(button_data_t) * UILAYOUT_MAX_BUTTON_COUNT);
     memset(layout->fill_bar_datas, 0, sizeof(fill_bar_data_t) * UILAYOUT_MAX_FILL_BAR_COUNT);
+    memset(layout->text_datas, 0, sizeof(text_data_t) * UILAYOUT_MAX_TEXT_COUNT);
 
     UILayout_LoadNewLayoutFromFile(layout, filename);
 }
@@ -38,14 +39,15 @@ void UILayout_LoadNewLayoutFromFile(ui_layout_t* layout, const char* filename) {
         CTR_PRINTF("%d bytes from start of file\n", error_byte_offset);
     }
 
-    UILayout_LoadButtonsFromFile(layout, json);
-    UILayout_LoadFillBarsFromFile(layout, json);
+    UILayout_LoadButtonsFromJSON(layout, json);
+    UILayout_LoadFillBarsFromJSON(layout, json);
+    UILayout_LoadTextsFromJSON(layout, json);
 
     cJSON_Delete(json);
     free(buffer);
 }
 
-void UILayout_LoadButtonsFromFile(ui_layout_t* layout, cJSON* json) {
+void UILayout_LoadButtonsFromJSON(ui_layout_t* layout, cJSON* json) {
     cJSON* buttons = cJSON_GetObjectItem(json, "Buttons");
     cJSON* button;
 
@@ -105,7 +107,7 @@ void UILayout_LoadButtonsFromFile(ui_layout_t* layout, cJSON* json) {
     }
 }
 
-void UILayout_LoadFillBarsFromFile(ui_layout_t* layout, cJSON* json) {
+void UILayout_LoadFillBarsFromJSON(ui_layout_t* layout, cJSON* json) {
     cJSON* fill_bars = cJSON_GetObjectItem(json, "Fillbars");
     cJSON* fill_bar;
 
@@ -118,13 +120,13 @@ void UILayout_LoadFillBarsFromFile(ui_layout_t* layout, cJSON* json) {
         cJSON* pos = cJSON_GetObjectItem(fill_bar, "Pos");
         cJSON* x = cJSON_GetArrayItem(pos, 0);
         cJSON* y = cJSON_GetArrayItem(pos, 1);
-        layout->fill_bar_datas[index].pos = (vec2_t){x->valueint, y->valueint};
+        layout->fill_bar_datas[index].pos = (vec2_t){x->valuedouble, y->valuedouble};
 
         // Get & Set Size
         cJSON* size = cJSON_GetObjectItem(fill_bar, "Size");
         x = cJSON_GetArrayItem(size, 0);
         y = cJSON_GetArrayItem(size, 1);
-        layout->fill_bar_datas[index].size = (vec2_t){x->valueint, y->valueint};
+        layout->fill_bar_datas[index].size = (vec2_t){x->valuedouble, y->valuedouble};
 
         // Get & Set Color
         cJSON* color = cJSON_GetObjectItem(fill_bar, "Background Color");
@@ -153,10 +155,45 @@ void UILayout_LoadFillBarsFromFile(ui_layout_t* layout, cJSON* json) {
         if (updater_type != NULL) { // optional
             layout->fill_bar_datas[index].updater_type = updater_type->valueint;
         } else {
-            layout->fill_bar_datas[index].updater_type = BUTTON_CALLBACK_NONE;
+            layout->fill_bar_datas[index].updater_type = FILL_BAR_UPDATER_NONE;
         }
 
         // Mark Fill Bar Data as initialized
         layout->fill_bar_datas[index].initialized = true;
+    }
+}
+
+void UILayout_LoadTextsFromJSON(ui_layout_t* layout, cJSON* json) {
+    cJSON* texts = cJSON_GetObjectItem(json, "Texts");
+    cJSON* text;
+
+    cJSON_ArrayForEach(text, texts) {
+        // Get index
+        cJSON* index_object = cJSON_GetObjectItem(text, "Index");
+        u32 index = index_object->valueint;
+
+        // Get initial text
+        cJSON* initial_text_object = cJSON_GetObjectItem(text, "Initial Text");
+        size_t initial_text_length = strlen(initial_text_object->valuestring);
+        memcpy(layout->text_datas[index].initial_text, initial_text_object->valuestring, initial_text_length);
+
+        // Get & Set Position
+        cJSON* pos = cJSON_GetObjectItem(text, "Pos");
+        cJSON* x = cJSON_GetArrayItem(pos, 0);
+        cJSON* y = cJSON_GetArrayItem(pos, 1);
+        layout->text_datas[index].pos = (vec2_t){x->valuedouble, y->valuedouble};
+
+        // Get Updater type
+        cJSON* updater_type = cJSON_GetObjectItem(text, "Updater");
+        if (updater_type != NULL) { // optional
+            layout->text_datas[index].updater_type = updater_type->valueint;
+            CTR_PRINTF("Text updater type# %d\n", updater_type->valueint);
+        } else {
+            layout->text_datas[index].updater_type = TEXT_UPDATER_NONE;
+            CTR_PRINTF("No updater field for text, loading 0\n");
+        }
+
+        // Mark Fill Bar Data as initialized
+        layout->text_datas[index].initialized = true;
     }
 }

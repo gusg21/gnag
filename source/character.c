@@ -28,6 +28,11 @@ void Character_Init(character_t* character, C2D_SpriteSheet sheet, character_typ
     C2D_SpriteSetDepth(&character->sprite, 1.f);
 }
 
+void Character_Draw(character_t* character) {
+    C2D_SpriteSetPos(&character->sprite, character->pos.x, character->pos.y);
+    C2D_DrawSprite(&character->sprite);
+}
+
 const char* Character_GetName(character_t* character) {
     switch (character->type) {
         case CHAR_BAD:
@@ -46,7 +51,8 @@ const char* Character_GetName(character_t* character) {
     }
 }
 
-void Character_Draw(character_t* character) {
-    C2D_SpriteSetPos(&character->sprite, character->pos.x, character->pos.y);
-    C2D_DrawSprite(&character->sprite);
+vec2_t Character_GetCenterPosition(character_t* character) {
+    // This function might vary based on type for different sized character sprites. for now this should work; change if
+    // needed ;)
+    return (vec2_t){.x = character->pos.x, .y = character->pos.y - 48};
 }

@@ -25,7 +25,8 @@ typedef struct game_s {
 	C2D_SpriteSheet sheet;
 	grid_t grid;
 	board_t board;
-	vec2_t view;
+	vec2_t view_pos;
+	character_t* focused_character;
 } game_t;
 
 void Game_Init(game_t* game);

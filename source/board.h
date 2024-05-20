@@ -44,6 +44,7 @@ void Board_ClearQueue(board_t* board);
 float Board_GetNormalizedActionTime(board_t* board);
 character_action_t* Board_GetCurrentAction(board_t* board);
 character_t* Board_GetCurrentActingCharacter(board_t* board);
+character_t* Board_GetCurrentSelectedPlayerControlledCharacter(board_t* board);
 void Board_SelectNotYetActedCharacter(board_t* board);
 bool Board_HaveAllPlayerControlledCharactersActed(board_t* board);
 character_t* Board_NewCharacter(board_t* board);

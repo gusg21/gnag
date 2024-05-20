@@ -9,6 +9,7 @@ void FillBar_Init(fill_bar_t* bar, fill_bar_data_t data) {
     bar->data = data;
     bar->fill_value = data.max_value;
     bar->updater = UIScripts_GetFillBarUpdaterByType(data.updater_type);
+    bar->initialized = true;
 }
 
 void FillBar_Update(fill_bar_t* bar) {

@@ -6,6 +6,8 @@
 struct fill_bar;
 
 typedef struct fill_bar_s {
+    bool initialized;
+    
     fill_bar_data_t data;
     float fill_value;
 
