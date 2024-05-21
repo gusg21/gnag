@@ -39,7 +39,7 @@ void Game_Update(game_t* game, float delta_secs) {
     } else if (game->state == GAME_STATE_SELECTING_TILE) {
         // Return selection on A
         if (Input_IsButtonPressed(KEY_A)) {
-            character_t* current = Board_GetCurrentActingCharacter(&game->board);
+            character_t* current = Board_GetCurrentSelectedPlayerControlledCharacter(&game->board);
             Board_EnqueuePlayerControlledCharacterAction(&game->board,
                         (character_action_t){.character = current,
                                              .duration = 0.5f,
