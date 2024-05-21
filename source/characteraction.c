@@ -6,7 +6,7 @@
 
 void CharacterAction_Run(character_action_t* action, board_t* board) {
     switch (action->type) {
-        case ACTION_MOVE: {
+        case CHARACTER_ACTION_MOVE: {
             // CTR_PRINTF("Move single character @ %p\n", action->character);
             character_t* target = action->character;
             float t = Board_GetNormalizedActionTime(board);
@@ -23,7 +23,7 @@ void CharacterAction_Run(character_action_t* action, board_t* board) {
             
             break;
         }
-        case ACTION_NONE: {
+        case CHARACTER_ACTION_NONE: {
             break;
         }
         default:

@@ -30,8 +30,7 @@ void Game_Update(game_t* game, float delta_secs) {
         // All player characters have executed queued actions
         if (!game->board.action_queue_executing) {
             Game_UpdateGameState(game, GAME_STATE_OPPONENT_TURN);
-        }
-        else {
+        } else {
             game->focused_character = Board_GetCurrentActingCharacter(&game->board);
         }
     } else if (game->state == GAME_STATE_PLAYER_TURN) {
@@ -41,14 +40,14 @@ void Game_Update(game_t* game, float delta_secs) {
         // Return selection on A
         if (Input_IsButtonPressed(KEY_A)) {
             character_t* current = Board_GetCurrentSelectedPlayerControlledCharacter(&game->board);
-            character_action_t action = (character_action_t){.character = current,
-                                                             .duration = 0.8f,
+            character_action_t action = (character_action_t){.type = CHARACTER_ACTION_MOVE,
+                                                             .character = current,
+                                                             .duration = 1.0f,
                                                              .initialized = true,
-                                                             .type = ACTION_MOVE,
                                                              .move_source = current->tile_pos,
                                                              .move_destination_count = 2};
-            action.move_destinations[0] = (vec2_t){ current->tile_pos.x + 1, current->tile_pos.y };
-            action.move_destinations[1] = (vec2_t){ current->tile_pos.x, current->tile_pos.y + 1};
+            action.move_destinations[0] = (vec2_t){current->tile_pos.x + 1, current->tile_pos.y};
+            action.move_destinations[1] = (vec2_t){current->tile_pos.x, current->tile_pos.y + 1};
             Board_EnqueuePlayerControlledCharacterAction(&game->board, action);
             CTR_PRINTF("tile selected\n");
             Game_UpdateGameState(game, GAME_STATE_PLAYER_TURN);
@@ -60,12 +59,28 @@ void Game_Update(game_t* game, float delta_secs) {
         }
     } else if (game->state == GAME_STATE_OPPONENT_TURN) {
         // Do the opponent AI
-        // ...
+        for (u32 character_index = 0; character_index < BOARD_MAX_CHARACTER_COUNT; character_index++) {
+            character_t* character = &game->board.characters[character_index];
+            if (character->initialized && !character->is_player_controlled) {
+                character_action_t action = (character_action_t){.type = CHARACTER_ACTION_MOVE,
+                                                                 .character = character,
+                                                                 .duration = 1.0f,
+                                                                 .initialized = true,
+                                                                 .move_source = character->tile_pos,
+                                                                 .move_destination_count = 2};
+                action.move_destinations[0] = (vec2_t){character->tile_pos.x - 1, character->tile_pos.y};
+                action.move_destinations[1] = (vec2_t){character->tile_pos.x, character->tile_pos.y - 1};
+                Board_EnqueueAction(&game->board, action);
+            }
+        }
+        Board_ExecuteQueue(&game->board);
 
         // Immediately change to acting state
         Game_UpdateGameState(game, GAME_STATE_OPPONENT_ACTING);
     } else if (game->state == GAME_STATE_OPPONENT_ACTING) {
         // Wait until all actions complete
+        game->focused_character = Board_GetCurrentActingCharacter(&game->board);
+
         if (!game->board.action_queue_executing) {
             // Return to player turn
             Game_UpdateGameState(game, GAME_STATE_PLAYER_TURN);
