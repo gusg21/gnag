@@ -29,7 +29,7 @@ void Game_Update(game_t* game, float delta_secs) {
     if (game->state == GAME_STATE_PLAYER_ACTING) {
         // All player characters have executed queued actions
         if (!game->board.action_queue_executing) {
-            Game_UpdateGameState(game, GAME_STATE_PLAYER_TURN);
+            Game_UpdateGameState(game, GAME_STATE_OPPONENT_TURN);
         }
         else {
             game->focused_character = Board_GetCurrentActingCharacter(&game->board);
@@ -56,6 +56,18 @@ void Game_Update(game_t* game, float delta_secs) {
         // Return without selecting on B
         else if (Input_IsButtonPressed(KEY_B)) {
             CTR_PRINTF("selection cancelled\n");
+            Game_UpdateGameState(game, GAME_STATE_PLAYER_TURN);
+        }
+    } else if (game->state == GAME_STATE_OPPONENT_TURN) {
+        // Do the opponent AI
+        // ...
+
+        // Immediately change to acting state
+        Game_UpdateGameState(game, GAME_STATE_OPPONENT_ACTING);
+    } else if (game->state == GAME_STATE_OPPONENT_ACTING) {
+        // Wait until all actions complete
+        if (!game->board.action_queue_executing) {
+            // Return to player turn
             Game_UpdateGameState(game, GAME_STATE_PLAYER_TURN);
         }
     }
