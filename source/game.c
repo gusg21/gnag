@@ -27,7 +27,7 @@ void Game_Update(game_t* game, float delta_secs) {
     Board_Update(&game->board, delta_secs);
 
     if (game->state == GAME_STATE_PLAYER_ACTING) {
-        // game->focused_character = Board_GetCurrentActingCharacter(&game->board);
+        game->focused_character = Board_GetCurrentActingCharacter(&game->board);
 
         // All player characters have executed queued actions
         if (!game->board.action_queue_executing) {
@@ -41,7 +41,7 @@ void Game_Update(game_t* game, float delta_secs) {
         if (Input_IsButtonPressed(KEY_A)) {
             character_t* current = Board_GetCurrentSelectedPlayerControlledCharacter(&game->board);
             character_action_t action = (character_action_t){.character = current,
-                                                             .duration = 0.5f,
+                                                             .duration = 0.8f,
                                                              .initialized = true,
                                                              .type = ACTION_MOVE,
                                                              .move_source = current->tile_pos,
