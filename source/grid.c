@@ -82,6 +82,12 @@ vec2_t Grid_GridPosToWorldPos(grid_t* grid, vec2i_t grid_pos) {
                     .y = grid->center_y + grid_pos.y * grid->tile_h / 2 - grid_pos.x * grid->tile_h / 2};
 }
 
+vec2_t Grid_GridFloatPosToWorldPos(grid_t* grid, vec2_t grid_pos) {
+    return (vec2_t){.x = grid->center_x - (grid->grid_w * grid->tile_w) / 2 + grid->tile_w / 2 +
+                         grid_pos.x * grid->tile_w / 2 + grid_pos.y * grid->tile_w / 2,
+                    .y = grid->center_y + grid_pos.y * grid->tile_h / 2 - grid_pos.x * grid->tile_h / 2};
+}
+
 float Grid_GetIsoDepthForTilePos(grid_t* grid, u32 tile_x, u32 tile_y) {
     // return ((((tile_y - tile_x) / ((float)(grid->tile_w) * 50.f))) * -1.f + 0.1f);
 

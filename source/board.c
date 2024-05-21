@@ -46,7 +46,7 @@ void Board_Update(board_t* board, float delta_secs) {
 void Board_Draw(board_t* board, grid_t* grid) {
     for (u32 characterIndex = 0; characterIndex < BOARD_MAX_CHARACTER_COUNT; characterIndex++) {
         character_t* character = &board->characters[characterIndex];
-        if (character->initialized) Character_Draw(character);
+        if (character->initialized) Character_Draw(character, grid);
     }
 }
 

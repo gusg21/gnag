@@ -5,12 +5,13 @@
 
 #include "character.h"
 
+#define CHARACTER_ACTION_MAX_MOVE_DESTINATIONS 16
+
 struct board_s;
 
 typedef enum {
     ACTION_NONE, // Nothing
-    ACTION_MOVE, // Move the character to a position
-    ACTION_MOVEMULTI // Move the character through an array of positions
+    ACTION_MOVE, // Move the character to multiple position
 } character_action_type_e;
 
 typedef struct {
@@ -21,7 +22,8 @@ typedef struct {
     float duration;
 
     vec2_t move_source;
-    vec2_t move_destination;
+    vec2_t move_destinations[CHARACTER_ACTION_MAX_MOVE_DESTINATIONS];
+    u32 move_destination_count; // No .initialized for vec2_t
 } character_action_t;
 
 typedef struct {

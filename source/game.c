@@ -25,9 +25,9 @@ void Game_Destroy(game_t* game) { C2D_SpriteSheetFree(game->sheet); }
 
 void Game_Update(game_t* game, float delta_secs) {
     Board_Update(&game->board, delta_secs);
-    
+
     if (game->state == GAME_STATE_PLAYER_ACTING) {
-        //game->focused_character = Board_GetCurrentActingCharacter(&game->board);
+        // game->focused_character = Board_GetCurrentActingCharacter(&game->board);
 
         // All player characters have executed queued actions
         if (!game->board.action_queue_executing) {
@@ -40,13 +40,15 @@ void Game_Update(game_t* game, float delta_secs) {
         // Return selection on A
         if (Input_IsButtonPressed(KEY_A)) {
             character_t* current = Board_GetCurrentSelectedPlayerControlledCharacter(&game->board);
-            Board_EnqueuePlayerControlledCharacterAction(&game->board,
-                        (character_action_t){.character = current,
-                                             .duration = 0.5f,
-                                             .initialized = true,
-                                             .type = ACTION_MOVE,
-                                             .move_source = current->pos,
-                                             .move_destination = Vec2_Add(current->pos, (vec2_t){32.f, -16.f})});
+            character_action_t action = (character_action_t){.character = current,
+                                                             .duration = 0.5f,
+                                                             .initialized = true,
+                                                             .type = ACTION_MOVE,
+                                                             .move_source = current->tile_pos,
+                                                             .move_destination_count = 2};
+            action.move_destinations[0] = (vec2_t){ current->tile_pos.x + 1, current->tile_pos.y };
+            action.move_destinations[1] = (vec2_t){ current->tile_pos.x, current->tile_pos.y + 1};
+            Board_EnqueuePlayerControlledCharacterAction(&game->board, action);
             CTR_PRINTF("tile selected\n");
             Game_UpdateGameState(game, GAME_STATE_PLAYER_TURN);
         }
@@ -57,7 +59,7 @@ void Game_Update(game_t* game, float delta_secs) {
         }
     }
 
-    vec2_t character_pos = Character_GetCenterPosition(game->focused_character);
+    vec2_t character_pos = Character_GetCenterPosition(game->focused_character, &game->grid);
     game->view_pos = Vec2_Lerp(game->view_pos, character_pos, 0.1f);
 }
 
@@ -71,23 +73,20 @@ void Game_Draw(game_t* game) {
     C2D_ViewReset();
 }
 
-character_t* Game_CreateCharacterAt(game_t* game, character_type_e type, bool is_player_controlled, u32 tile_x, u32 tile_y) {
-    vec2_t world_pos = Grid_GridPosToWorldPos(&game->grid, (vec2i_t){.x = tile_x, .y = tile_y});
-    world_pos.y += 10;  // centers the sprites better
-
+character_t* Game_CreateCharacterAt(game_t* game, character_type_e type, bool is_player_controlled, float tile_x,
+                                    float tile_y) {
     character_t* character = Board_NewCharacter(&game->board);
-    Character_Init(character, game->sheet, type, is_player_controlled, world_pos.x, world_pos.y);
+    Character_Init(character, game->sheet, type, is_player_controlled, tile_x, tile_y);
 
     return character;
 }
 
 void Game_UpdateGameState(game_t* game, game_state_e state) {
     if (state == GAME_STATE_NONE) return;
-    
+
     game->state = state;
 
-    switch (state)
-    {
+    switch (state) {
         case GAME_STATE_PAUSED:
             CTR_PRINTF("STATE paused\n");
             return;
@@ -97,7 +96,8 @@ void Game_UpdateGameState(game_t* game, game_state_e state) {
         case GAME_STATE_PLAYER_ACTING:
             CTR_PRINTF("STATE player acting\n");
             return;
-        case GAME_STATE_OPPONENT_TURN: // todo)) actually needed? enemies would most likely act instantly with no "thinking"
+        case GAME_STATE_OPPONENT_TURN:  // todo)) actually needed? enemies would most likely act instantly with no
+                                        // "thinking"
             CTR_PRINTF("STATE opponent turn\n");
             return;
         case GAME_STATE_OPPONENT_ACTING:
@@ -108,6 +108,6 @@ void Game_UpdateGameState(game_t* game, game_state_e state) {
             return;
 
         default:
-        //do nothing
+            // do nothing
     }
 }

@@ -1,6 +1,7 @@
 #include "character.h"
 
 #include "sprites.h"
+#include "board.h"
 
 static u32 S_GetSpriteIndexForCharacterType(character_type_e type) {
     switch (type) {
@@ -17,8 +18,8 @@ static u32 S_GetSpriteIndexForCharacterType(character_type_e type) {
 void Character_Init(character_t* character, C2D_SpriteSheet sheet, character_type_e type, bool is_player_controlled,
                     u32 start_x, u32 start_y) {
     character->initialized = true;
-    character->pos.x = start_x;
-    character->pos.y = start_y;
+    character->tile_pos.x = start_x;
+    character->tile_pos.y = start_y;
     character->type = type;
     character->is_player_controlled = is_player_controlled;
     character->health = CHARACTER_MAX_HEALTH;
@@ -28,8 +29,10 @@ void Character_Init(character_t* character, C2D_SpriteSheet sheet, character_typ
     C2D_SpriteSetDepth(&character->sprite, 1.f);
 }
 
-void Character_Draw(character_t* character) {
-    C2D_SpriteSetPos(&character->sprite, character->pos.x, character->pos.y);
+void Character_Draw(character_t* character, grid_t* grid) {
+    vec2_t world_pos = Grid_GridFloatPosToWorldPos(grid, character->tile_pos);
+    world_pos.y += 10.f;
+    C2D_SpriteSetPos(&character->sprite, world_pos.x, world_pos.y);
     C2D_DrawSprite(&character->sprite);
 }
 
@@ -51,8 +54,9 @@ const char* Character_GetName(character_t* character) {
     }
 }
 
-vec2_t Character_GetCenterPosition(character_t* character) {
+vec2_t Character_GetCenterPosition(character_t* character, grid_t* grid) {
     // This function might vary based on type for different sized character sprites. for now this should work; change if
     // needed ;)
-    return (vec2_t){.x = character->pos.x, .y = character->pos.y - 48};
+    vec2_t world_pos = Grid_GridFloatPosToWorldPos(grid, character->tile_pos);
+    return (vec2_t){.x = world_pos.x, .y = world_pos.y - 48.f};
 }

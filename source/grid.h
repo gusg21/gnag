@@ -30,6 +30,7 @@ size_t Grid_GetSpriteIndexForTile(grid_t* grid, grid_tile_t* tile);
 grid_tile_t* Grid_GetTileAt(grid_t* grid, u32 tile_x, u32 tile_y);
 C2D_Sprite* Grid_GetSpriteAt(grid_t* grid, u32 tile_x, u32 tile_y);
 vec2_t Grid_GridPosToWorldPos(grid_t* grid, vec2i_t grid_pos);
+vec2_t Grid_GridFloatPosToWorldPos(grid_t* grid, vec2_t grid_pos);
 float Grid_GetIsoDepthForTilePos(grid_t* grid, u32 tile_x, u32 tile_y);
 
 #endif // GRID_H
