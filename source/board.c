@@ -180,13 +180,13 @@ character_t* Board_GetCurrentSelectedPlayerControlledCharacter(board_t* board) {
 s32 Board_GetPlayerControlledCharacterCount(board_t* board) {
     for (u32 index = 0; index < BOARD_MAX_PLAYER_CONTROLLED_CHARACTER_COUNT; index++)
     {
-        if (!board->player_controlled_characters[index]->initialized)
+        if (board->player_controlled_characters[index] == NULL || 
+            !board->player_controlled_characters[index]->initialized)
         {
             return index;
         }
     }
-    CTR_PRINTF("No player controlled characters");
-    return 0; 
+    return 0;
 }
 
 void Board_SelectNotYetActedCharacter(board_t* board) {
@@ -202,17 +202,17 @@ void Board_SelectNotYetActedCharacter(board_t* board) {
 }
 
 void Board_SelectPreviousPlayerControlledCharacter(board_t* board) {
-    CTR_PRINTF("Swapping to previous character");
-    if (board->current_player_controlled_character_index == 0) {
+    board->current_player_controlled_character_index--;
+    if (board->current_player_controlled_character_index < 0) {
         board->current_player_controlled_character_index = Board_GetPlayerControlledCharacterCount(board) - 1;
-    } else board->current_player_controlled_character_index--;
+    }
 }
 
 void Board_SelectNextPlayerControlledCharacter(board_t* board) {
-    CTR_PRINTF("Swapping to next character");
-    if (board->current_player_controlled_character_index == Board_GetPlayerControlledCharacterCount(board) - 1) {
+    board->current_player_controlled_character_index++;
+    if (board->current_player_controlled_character_index > Board_GetPlayerControlledCharacterCount(board) - 1) {
         board->current_player_controlled_character_index = 0;
-    } else board->current_player_controlled_character_index++;
+    }
 }
 
 bool Board_HaveAllPlayerControlledCharactersActed(board_t* board) {

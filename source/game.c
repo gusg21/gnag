@@ -27,11 +27,12 @@ void Game_Update(game_t* game, float delta_secs) {
     Board_Update(&game->board, delta_secs);
 
     if (game->state == GAME_STATE_PLAYER_ACTING) {
-        game->focused_character = Board_GetCurrentActingCharacter(&game->board);
-
         // All player characters have executed queued actions
         if (!game->board.action_queue_executing) {
             Game_UpdateGameState(game, GAME_STATE_PLAYER_TURN);
+        }
+        else {
+            game->focused_character = Board_GetCurrentActingCharacter(&game->board);
         }
     } else if (game->state == GAME_STATE_PLAYER_TURN) {
         game->focused_character = Board_GetCurrentSelectedPlayerControlledCharacter(&game->board);
