@@ -14,6 +14,7 @@ typedef struct text_s {
 
     void (*updater)(struct text_s* text);
     vec2_t pos;
+    bool centered;
 } text_t;
 
 void Text_Init(text_t* text, text_data_t data);

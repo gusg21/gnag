@@ -15,6 +15,10 @@ void (*UIScripts_GetButtonCallbackByType(button_callback_type_e type))(button_t*
             return UIScripts_Move;
         case BUTTON_CALLBACK_CONFIRM:
             return UIScripts_Confirm;
+        case BUTTON_CALLBACK_PREV_CHARACTER:
+            return UIScripts_PrevPlayerCharacter;
+        case BUTTON_CALLBACK_NEXT_CHARACTER:
+            return UIScripts_NextPlayerCharacter;
 
         default:
             return NULL;
@@ -25,6 +29,8 @@ void (*UIScripts_GetButtonUpdaterByType(button_updater_type_e type))(button_t*) 
     switch (type) {
         case BUTTON_UPDATER_NONE:
             return NULL;
+        case BUTTON_UPDATER_PLAYER_TURN:
+            return UIScripts_ButtonPlayerTurnUpdater;
         case BUTTON_UPDATER_MOVE:
             return UIScripts_ButtonMoveUpdater;
         case BUTTON_UPDATER_CONFIRM:
@@ -78,6 +84,25 @@ void UIScripts_Confirm(button_t* button) {
     } else {
         CTR_PRINTF("selecting next char\n");
         Board_SelectNotYetActedCharacter(&UIScripts_S_Game->board);
+    }
+}
+
+void UIScripts_NextPlayerCharacter(button_t* button) {
+    Board_SelectNextPlayerControlledCharacter(&UIScripts_S_Game->board);
+}
+
+void UIScripts_PrevPlayerCharacter(button_t* button) {
+    Board_SelectPreviousPlayerControlledCharacter(&UIScripts_S_Game->board);
+}
+
+void UIScripts_ButtonPlayerTurnUpdater(button_t* button) {
+    if (UIScripts_S_Game->state == GAME_STATE_PLAYER_TURN)
+    {
+        button->pressable = true;
+    }
+    else
+    {
+        button->pressable = false;
     }
 }
 

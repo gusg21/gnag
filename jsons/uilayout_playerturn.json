@@ -5,37 +5,37 @@
             "Name": "Character Select Left",
             "Pos": [4, 4],
             "Size": [24, 24],
-            "Sprite Index": 1,
+            "Sprite Index": -1,
             "Color": [0.7, 0.7, 0.7, 1.0],
-            "Callback": 0,
-            "Updater": 0
+            "Callback": 3,
+            "Updater": 1
         },
         {
             "Index": 1,
             "Name": "Character Select Right",
             "Pos": [292, 4],
             "Size": [24, 24],
-            "Sprite Index": 1,
+            "Sprite Index": -1,
             "Color": [0.7, 0.7, 0.7, 1.0],
-            "Callback": 0,
-            "Updater": 0
+            "Callback": 4,
+            "Updater": 1
         },
         {
             "Index": 2,
             "Name": "Move",
             "Pos": [4, 44],
             "Size": [152, 32],
-            "Sprite Index": 2,
+            "Sprite Index": -1,
             "Color": [0.7, 0.2, 0.3, 1.0],
             "Callback": 1,
-            "Updater": 1
+            "Updater": 2
         },
         {
             "Index": 3,
             "Name": "Action 1",
             "Pos": [4, 80],
-            "Size": [120, 32],
-            "Sprite Index": 1,
+            "Size": [116, 32],
+            "Sprite Index": -1,
             "Color": [0.1, 1.0, 0.4, 1.0],
             "Callback": 0,
             "Updater": 0
@@ -44,8 +44,8 @@
             "Index": 4,
             "Name": "Action 2",
             "Pos": [4, 116],
-            "Size": [120, 32],
-            "Sprite Index": 1,
+            "Size": [116, 32],
+            "Sprite Index": -1,
             "Color": [0.1, 1.0, 0.4, 1.0],
             "Callback": 0,
             "Updater": 0
@@ -55,8 +55,8 @@
             "Index": 5,
             "Name": "Action 3",
             "Pos": [4, 152],
-            "Size": [120, 32],
-            "Sprite Index": 1,
+            "Size": [116, 32],
+            "Sprite Index": -1,
             "Color": [0.1, 1.0, 0.4, 1.0],
             "Callback": 0,
             "Updater": 0
@@ -100,7 +100,7 @@
             "Name": "Player Panel",
             "Pos": [4, 188],
             "Size": [152, 48],
-            "Sprite Index": 0,
+            "Sprite Index": -1,
             "Color": [1.0, 1.0, 0.2, 1.0],
             "Callback": 0,
             "Updater": 0
@@ -111,7 +111,7 @@
             "Name": "Info Panel",
             "Pos": [164, 44],
             "Size": [152, 156],
-            "Sprite Index": 0,
+            "Sprite Index": -1,
             "Color": [0.2, 0.2, 0.2, 1.0],
             "Callback": 0,
             "Updater": 0
@@ -122,10 +122,10 @@
             "Name": "Confirm",
             "Pos": [164, 204],
             "Size": [150, 32],
-            "Sprite Index": 1,
+            "Sprite Index": -1,
             "Color": [0.0, 1.0, 0.0, 1.0],
             "Callback": 2,
-            "Updater": 2
+            "Updater": 3
 
         }
     ],
@@ -157,7 +157,8 @@
         {
             "Index": 0,
             "Initial Text": "Howdy!",
-            "Pos": [10, 10],
+            "Pos": [160, 4],
+            "Centered": true,
             "Updater": 1
         }
     ]

@@ -81,14 +81,12 @@ void UILayout_LoadButtonsFromJSON(ui_layout_t* layout, cJSON* json) {
         layout->button_datas[index].color =
             C2D_Color32f(r->valuedouble, g->valuedouble, b->valuedouble, a->valuedouble);
         layout->button_datas[index].pressed_color =
-            C2D_Color32f(Mathf_Lerp(r->valuedouble, .5f, .5f),
-                         Mathf_Lerp(g->valuedouble, .5f, .5f), 
-                         Mathf_Lerp(b->valuedouble, .5f, .5f), 
-                         a->valuedouble);
+            C2D_Color32f(Mathf_Lerp(r->valuedouble, .5f, .5f), Mathf_Lerp(g->valuedouble, .5f, .5f),
+                         Mathf_Lerp(b->valuedouble, .5f, .5f), a->valuedouble);
 
         // Get & Set Callback
         cJSON* callback_type = cJSON_GetObjectItem(button, "Callback");
-        if (callback_type != NULL) { // Having a callback is optional
+        if (callback_type != NULL) {  // Having a callback is optional
             layout->button_datas[index].callback_type = callback_type->valueint;
         } else {
             layout->button_datas[index].callback_type = BUTTON_CALLBACK_NONE;
@@ -96,7 +94,7 @@ void UILayout_LoadButtonsFromJSON(ui_layout_t* layout, cJSON* json) {
 
         // Get & Set Updater
         cJSON* updater_type = cJSON_GetObjectItem(button, "Updater");
-        if (updater_type != NULL) { // optional
+        if (updater_type != NULL) {  // optional
             layout->button_datas[index].updater_type = updater_type->valueint;
         } else {
             layout->button_datas[index].updater_type = BUTTON_CALLBACK_NONE;
@@ -152,7 +150,7 @@ void UILayout_LoadFillBarsFromJSON(ui_layout_t* layout, cJSON* json) {
 
         // Get & Set Updater
         cJSON* updater_type = cJSON_GetObjectItem(fill_bar, "Updater");
-        if (updater_type != NULL) { // optional
+        if (updater_type != NULL) {  // optional
             layout->fill_bar_datas[index].updater_type = updater_type->valueint;
         } else {
             layout->fill_bar_datas[index].updater_type = FILL_BAR_UPDATER_NONE;
@@ -183,9 +181,18 @@ void UILayout_LoadTextsFromJSON(ui_layout_t* layout, cJSON* json) {
         cJSON* y = cJSON_GetArrayItem(pos, 1);
         layout->text_datas[index].pos = (vec2_t){x->valuedouble, y->valuedouble};
 
+        // Get & Set Alignment
+        cJSON* centered = cJSON_GetObjectItem(text, "Centered");
+        if (cJSON_IsBool(centered)) {
+            if (cJSON_IsTrue(centered))
+                layout->text_datas[index].centered = true;
+            else
+                layout->text_datas[index].centered = false;
+        }
+
         // Get Updater type
         cJSON* updater_type = cJSON_GetObjectItem(text, "Updater");
-        if (updater_type != NULL) { // optional
+        if (updater_type != NULL) {  // optional
             layout->text_datas[index].updater_type = updater_type->valueint;
             CTR_PRINTF("Text updater type# %d\n", updater_type->valueint);
         } else {

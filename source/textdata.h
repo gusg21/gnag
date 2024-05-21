@@ -14,6 +14,7 @@ typedef struct text_data_s {
     bool initialized;
     char initial_text[TEXT_DATA_MAX_TEXT_LENGTH];
     vec2_t pos;
+    bool centered;
     text_updater_type_e updater_type;
 } text_data_t;
 

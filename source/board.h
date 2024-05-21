@@ -23,7 +23,7 @@ typedef struct board_s {
 
     // PCCs
     character_t* player_controlled_characters[BOARD_MAX_PLAYER_CONTROLLED_CHARACTER_COUNT];
-    u32 current_player_controlled_character_index;
+    s32 current_player_controlled_character_index;
     bool player_controlled_characters_acted_flags[BOARD_MAX_PLAYER_CONTROLLED_CHARACTER_COUNT];
 
     // Action queue w/ depth for PCCs
@@ -45,7 +45,10 @@ float Board_GetNormalizedActionTime(board_t* board);
 character_action_t* Board_GetCurrentAction(board_t* board);
 character_t* Board_GetCurrentActingCharacter(board_t* board);
 character_t* Board_GetCurrentSelectedPlayerControlledCharacter(board_t* board);
+s32 Board_GetPlayerControlledCharacterCount(board_t* board);
 void Board_SelectNotYetActedCharacter(board_t* board);
+void Board_SelectNextPlayerControlledCharacter(board_t* board);
+void Board_SelectPreviousPlayerControlledCharacter(board_t* board);
 bool Board_HaveAllPlayerControlledCharactersActed(board_t* board);
 character_t* Board_NewCharacter(board_t* board);
 character_t* Board_GetCharacterByType(board_t* board, character_type_e type);

@@ -5,6 +5,7 @@
 void Text_Init(text_t* text, text_data_t data) {
     text->buffer = C2D_TextBufNew(TEXT_DATA_MAX_TEXT_LENGTH);
     text->pos = data.pos;
+    text->centered = data.centered;
     text->updater = UIScripts_GetTextUpdaterByType(data.updater_type);
     text->initialized = true;
 
@@ -22,7 +23,10 @@ void Text_Update(text_t* text) {
 }
 
 void Text_Draw(text_t* text) {
-    C2D_DrawText(&text->text, C2D_AlignLeft, text->pos.x, text->pos.y, 0.f, 1.0f, 1.0f);
+    if (text->centered)
+        C2D_DrawText(&text->text, C2D_AlignCenter, text->pos.x, text->pos.y, 0.f, 1.0f, 1.0f);
+    else
+        C2D_DrawText(&text->text, C2D_AlignLeft, text->pos.x, text->pos.y, 0.f, 1.0f, 1.0f);
 }
 
 void Text_SetText(text_t* text, const char* characters) {

@@ -17,8 +17,11 @@ void (*UIScripts_GetTextUpdaterByType(text_updater_type_e type))(text_t*);
 void UIScripts_TestButton(button_t* button);
 void UIScripts_Move(button_t* button);
 void UIScripts_Confirm(button_t* button);
+void UIScripts_NextPlayerCharacter(button_t* button);
+void UIScripts_PrevPlayerCharacter(button_t* button);
 
 // Updaters
+void UIScripts_ButtonPlayerTurnUpdater(button_t* button);
 void UIScripts_ButtonMoveUpdater(button_t* button);
 void UIScripts_ButtonConfirmUpdater(button_t* button);
 void UIScripts_FillBarHealthUpdater(fill_bar_t* fill_bar);
