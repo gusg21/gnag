@@ -5,6 +5,7 @@
 
 #include "board.h"
 #include "grid.h"
+#include "ai.h"
 
 #define GAME_MAX_ACTORS 1024
 
@@ -25,6 +26,7 @@ typedef struct game_s {
 	C2D_SpriteSheet sheet;
 	grid_t grid;
 	board_t board;
+	ai_t ai;
 	vec2_t view_pos;
 	character_t* focused_character;
 } game_t;

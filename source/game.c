@@ -1,6 +1,7 @@
 #include "game.h"
 
 #include "_defs.h"
+#include "ai.h"
 #include "input.h"
 #include "panic.h"
 #include "sprites.h"
@@ -59,20 +60,7 @@ void Game_Update(game_t* game, float delta_secs) {
         }
     } else if (game->state == GAME_STATE_OPPONENT_TURN) {
         // Do the opponent AI
-        for (u32 character_index = 0; character_index < BOARD_MAX_CHARACTER_COUNT; character_index++) {
-            character_t* character = &game->board.characters[character_index];
-            if (character->initialized && !character->is_player_controlled) {
-                character_action_t action = (character_action_t){.type = CHARACTER_ACTION_MOVE,
-                                                                 .character = character,
-                                                                 .duration = 1.0f,
-                                                                 .initialized = true,
-                                                                 .move_source = character->tile_pos,
-                                                                 .move_destination_count = 2};
-                action.move_destinations[0] = (vec2_t){character->tile_pos.x - 1, character->tile_pos.y};
-                action.move_destinations[1] = (vec2_t){character->tile_pos.x, character->tile_pos.y - 1};
-                Board_EnqueueAction(&game->board, action);
-            }
-        }
+        AI_EnqueueAIActions(&game->ai, &game->board);
         Board_ExecuteQueue(&game->board);
 
         // Immediately change to acting state
