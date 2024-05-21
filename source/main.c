@@ -54,6 +54,7 @@ int main() {
 	// Put in testing characters; will eventually be loaded from a scenario struct
     Game_CreateCharacterAt(game, CHAR_GOOD, true, 5, 5);
     Game_CreateCharacterAt(game, CHAR_BAD, true, 2, 3);
+    Game_CreateCharacterAt(game, CHAR_UGLY, true, 7, 8);
     Board_BuildPlayerControlledCharacterIndex(&game->board);
     Grid_GetTileAt(&game->grid, 0, 0)->is_spikes = true;
 	Grid_Build(&game->grid);

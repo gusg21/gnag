@@ -9,6 +9,8 @@ static u32 S_GetSpriteIndexForCharacterType(character_type_e type) {
             return sprites_good_idx;
         case CHAR_BAD:
             return sprites_bad_idx;
+        case CHAR_UGLY:
+            return sprites_ugly_idx;
 
         default:
             return sprites_point_idx;
