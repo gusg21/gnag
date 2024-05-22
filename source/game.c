@@ -35,15 +35,16 @@ void Game_Update(game_t* game, float delta_secs) {
         } else {
             game->focus_pos = Character_GetCenterPosition(Board_GetCurrentActingCharacter(&game->board), &game->grid);
         }
-    
-    // PLAYERS TURN
+
+        // PLAYERS TURN
     } else if (game->state == GAME_STATE_PLAYER_TURN) {
         if (Input_IsButtonPressed(KEY_B)) {
             Board_UndoLastPlayerControlledCharacterAction(&game->board);
         }
-        game->focus_pos = Character_GetCenterPosition(Board_GetCurrentSelectedPlayerControlledCharacter(&game->board), &game->grid);
+        game->focus_pos =
+            Character_GetCenterPosition(Board_GetCurrentSelectedPlayerControlledCharacter(&game->board), &game->grid);
 
-    // PLAYER SELECTING TILE
+        // PLAYER SELECTING TILE
     } else if (game->state == GAME_STATE_SELECTING_TILE) {
         // Return selection on A
         if (Input_IsButtonPressed(KEY_A)) {
@@ -56,6 +57,7 @@ void Game_Update(game_t* game, float delta_secs) {
                                                              .move_destination_count = 1};
             action.move_destinations[0] = game->selected_tile_pos;
             Board_EnqueuePlayerControlledCharacterAction(&game->board, action);
+            current->moves_left = 0;
             CTR_PRINTF("tile selected\n");
             Game_UpdateGameState(game, GAME_STATE_PLAYER_TURN);
         }
@@ -63,30 +65,26 @@ void Game_Update(game_t* game, float delta_secs) {
         else if (Input_IsButtonPressed(KEY_B)) {
             CTR_PRINTF("selection cancelled\n");
             Game_UpdateGameState(game, GAME_STATE_PLAYER_TURN);
-        }
-        else {
+        } else {
             // 4 input directions to select tile
             if (Input_IsButtonPressed(KEY_DUP)) {
-                game->selected_tile_pos = (vec2_t){game->selected_tile_pos.x + 1, game->selected_tile_pos.y};
-                CTR_PRINTF("up right\n");
-            }
-            else if (Input_IsButtonPressed(KEY_DLEFT)) {
-                game->selected_tile_pos = (vec2_t){game->selected_tile_pos.x, game->selected_tile_pos.y - 1};
-                CTR_PRINTF("up left\n");
-            }
-            else if (Input_IsButtonPressed(KEY_DRIGHT)) {
-                game->selected_tile_pos = (vec2_t){game->selected_tile_pos.x, game->selected_tile_pos.y + 1};
-                CTR_PRINTF("down right\n");
-            }
-            else if (Input_IsButtonPressed(KEY_DDOWN)) {
-                game->selected_tile_pos = (vec2_t){game->selected_tile_pos.x - 1, game->selected_tile_pos.y};
-                CTR_PRINTF("down left\n");
+                if (!(game->selected_tile_pos.y <= 0))
+                    game->selected_tile_pos = (vec2_t){game->selected_tile_pos.x, game->selected_tile_pos.y - 1};
+            } else if (Input_IsButtonPressed(KEY_DDOWN)) {
+                if (!(game->selected_tile_pos.y >= game->grid.grid_h - 1))
+                    game->selected_tile_pos = (vec2_t){game->selected_tile_pos.x, game->selected_tile_pos.y + 1};
+            }  else if (Input_IsButtonPressed(KEY_DLEFT)) {
+                if (!(game->selected_tile_pos.x <= 0))
+                    game->selected_tile_pos = (vec2_t){game->selected_tile_pos.x - 1, game->selected_tile_pos.y};
+            } else if (Input_IsButtonPressed(KEY_DRIGHT)) {
+                if (!(game->selected_tile_pos.x >= game->grid.grid_w - 1))
+                    game->selected_tile_pos = (vec2_t){game->selected_tile_pos.x + 1, game->selected_tile_pos.y};
             }
             // Focus is selected tile
             game->focus_pos = Grid_GridFloatPosToWorldPos(&game->grid, game->selected_tile_pos);
         }
 
-    // OPPONENTS TURN
+        // OPPONENTS TURN
     } else if (game->state == GAME_STATE_OPPONENT_TURN) {
         // Do the opponent AI
         AI_EnqueueAIActions(&game->ai, &game->board);
@@ -95,7 +93,7 @@ void Game_Update(game_t* game, float delta_secs) {
         // Immediately change to acting state
         Game_UpdateGameState(game, GAME_STATE_OPPONENT_ACTING);
 
-    // OPPONENTS ACTING
+        // OPPONENTS ACTING
     } else if (game->state == GAME_STATE_OPPONENT_ACTING) {
         // Wait until all actions complete
         if (!game->board.action_queue_executing) {
@@ -126,7 +124,6 @@ void Game_Draw(game_t* game) {
         C2D_SpriteSetDepth(&tile_selected_sprite, 0.5f);
         C2D_DrawSprite(&tile_selected_sprite);
     }
-
 
     C2D_ViewReset();
 }

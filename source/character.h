@@ -8,6 +8,7 @@
 #include "grid.h"
 
 #define CHARACTER_MAX_HEALTH 100.f
+#define CHARACTER_MOVE_SPEED 5
 
 typedef enum {
     CHAR_NONE,
@@ -25,6 +26,9 @@ typedef struct {
     C2D_Sprite sprite;
     bool is_player_controlled;
     float health;
+    u32 move_speed;
+    u32 moves_left;
+
 } character_t;
 
 void Character_Init(character_t* character, C2D_SpriteSheet sheet, character_type_e type, bool is_player_controlled, u32 start_x, u32 start_y);

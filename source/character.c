@@ -27,6 +27,8 @@ void Character_Init(character_t* character, C2D_SpriteSheet sheet, character_typ
     character->type = type;
     character->is_player_controlled = is_player_controlled;
     character->health = CHARACTER_MAX_HEALTH;
+    character->move_speed = CHARACTER_MOVE_SPEED;
+    character->moves_left = character->move_speed;
 
     C2D_SpriteFromSheet(&character->sprite, sheet, S_GetSpriteIndexForCharacterType(type));
     C2D_SpriteSetCenter(&character->sprite, 0.5f, 1.0f);  // Bottom center

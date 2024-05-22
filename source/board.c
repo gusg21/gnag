@@ -40,6 +40,7 @@ void Board_Update(board_t* board, float delta_secs) {
         }
 
         CharacterAction_Run(Board_GetCurrentAction(board), board);
+        Board_GetCurrentAction(board)->character->moves_left = Board_GetCurrentAction(board)->character->move_speed;
     }
 }
 
@@ -91,25 +92,32 @@ void Board_EnqueuePlayerControlledCharacterAction(board_t* board, character_acti
 
 void Board_UndoLastPlayerControlledCharacterAction(board_t* board) {
     // Add this to the PCC queue
-    if (board->next_player_controlled_action_index > 0)
-    {
+    if (board->next_player_controlled_action_index > 0) {
         board->next_player_controlled_action_index--;
         board->next_player_controlled_action_top_order--;
 
-        character_t* current_char = board->player_controlled_action_queue[board->next_player_controlled_action_index].action.character;
+        character_t* current_char =
+            board->player_controlled_action_queue[board->next_player_controlled_action_index].action.character;
 
         board->current_player_controlled_character_index = Board_GetIndexByCharacter(board, current_char);
 
-        board->player_controlled_action_queue[board->next_player_controlled_action_index] = (ordered_character_action_t){};
+        board->player_controlled_action_queue[board->next_player_controlled_action_index] =
+            (ordered_character_action_t){};
 
         CTR_PRINTF("action order %ld removed\n", board->next_player_controlled_action_top_order);
 
-        // Check if character has now not acted
+        // Check if character has now not acted and reset move speed
         board->player_controlled_characters_acted_flags[board->current_player_controlled_character_index] = false;
+        current_char->moves_left = current_char->move_speed;
         for (u32 index = 0; index < BOARD_MAX_PLAYER_CONTROLLED_CHARACTER_ACTION_QUEUE_LENGTH; index++) {
-            if (board->player_controlled_action_queue[index].initialized &&
-            board->player_controlled_action_queue[index].action.character == current_char) {
-                board->player_controlled_characters_acted_flags[board->current_player_controlled_character_index] = true;
+            ordered_character_action_t* action = &board->player_controlled_action_queue[index];
+            if (action->action.initialized) {
+                if (action->action.character == current_char) {
+                    board->player_controlled_characters_acted_flags[board->current_player_controlled_character_index] =
+                        true;
+                } else if (action->action.type == CHARACTER_ACTION_MOVE) {
+                    current_char->moves_left -= action->action.move_destination_count;
+                }
             }
         }
     }
@@ -174,11 +182,9 @@ character_t* Board_GetCurrentSelectedPlayerControlledCharacter(board_t* board) {
 }
 
 s32 Board_GetPlayerControlledCharacterCount(board_t* board) {
-    for (u32 index = 0; index < BOARD_MAX_PLAYER_CONTROLLED_CHARACTER_COUNT; index++)
-    {
-        if (board->player_controlled_characters[index] == NULL || 
-            !board->player_controlled_characters[index]->initialized)
-        {
+    for (u32 index = 0; index < BOARD_MAX_PLAYER_CONTROLLED_CHARACTER_COUNT; index++) {
+        if (board->player_controlled_characters[index] == NULL ||
+            !board->player_controlled_characters[index]->initialized) {
             return index;
         }
     }
@@ -249,10 +255,9 @@ character_t* Board_GetCharacterByType(board_t* board, character_type_e type) {
     return NULL;
 }
 
-u32 Board_GetIndexByCharacter(board_t* board, character_t* character) { 
+u32 Board_GetIndexByCharacter(board_t* board, character_t* character) {
     for (u32 pcc_index = 0; pcc_index < BOARD_MAX_PLAYER_CONTROLLED_CHARACTER_COUNT; pcc_index++) {
-        if (&board->characters[pcc_index] == character)
-        {
+        if (&board->characters[pcc_index] == character) {
             return pcc_index;
         }
     }

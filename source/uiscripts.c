@@ -107,7 +107,8 @@ void UIScripts_ButtonPlayerTurnUpdater(button_t* button) {
 }
 
 void UIScripts_ButtonMoveUpdater(button_t* button) {
-    if (UIScripts_S_Game->state == GAME_STATE_PLAYER_TURN)
+    if (UIScripts_S_Game->state == GAME_STATE_PLAYER_TURN &&
+        Board_GetCurrentSelectedPlayerControlledCharacter(&UIScripts_S_Game->board)->moves_left > 0)
     {
         button->pressable = true;
     }
