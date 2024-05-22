@@ -27,16 +27,20 @@ void Game_Destroy(game_t* game) { C2D_SpriteSheetFree(game->sheet); }
 void Game_Update(game_t* game, float delta_secs) {
     Board_Update(&game->board, delta_secs);
 
+    // PLAYERS ACTING
     if (game->state == GAME_STATE_PLAYER_ACTING) {
         // All player characters have executed queued actions
         if (!game->board.action_queue_executing) {
             Game_UpdateGameState(game, GAME_STATE_OPPONENT_TURN);
         } else {
-            game->focused_character = Board_GetCurrentActingCharacter(&game->board);
+            game->focus_pos = Character_GetCenterPosition(Board_GetCurrentActingCharacter(&game->board), &game->grid);
         }
+    
+    // PLAYERS TURN
     } else if (game->state == GAME_STATE_PLAYER_TURN) {
-        game->focused_character = Board_GetCurrentSelectedPlayerControlledCharacter(&game->board);
+        game->focus_pos = Character_GetCenterPosition(Board_GetCurrentSelectedPlayerControlledCharacter(&game->board), &game->grid);
 
+    // PLAYER SELECTING TILE
     } else if (game->state == GAME_STATE_SELECTING_TILE) {
         // Return selection on A
         if (Input_IsButtonPressed(KEY_A)) {
@@ -58,6 +62,11 @@ void Game_Update(game_t* game, float delta_secs) {
             CTR_PRINTF("selection cancelled\n");
             Game_UpdateGameState(game, GAME_STATE_PLAYER_TURN);
         }
+        else {
+
+        }
+
+    // OPPONENTS TURN
     } else if (game->state == GAME_STATE_OPPONENT_TURN) {
         // Do the opponent AI
         AI_EnqueueAIActions(&game->ai, &game->board);
@@ -65,18 +74,20 @@ void Game_Update(game_t* game, float delta_secs) {
 
         // Immediately change to acting state
         Game_UpdateGameState(game, GAME_STATE_OPPONENT_ACTING);
+
+    // OPPONENTS ACTING
     } else if (game->state == GAME_STATE_OPPONENT_ACTING) {
         // Wait until all actions complete
-        game->focused_character = Board_GetCurrentActingCharacter(&game->board);
-
         if (!game->board.action_queue_executing) {
             // Return to player turn
             Game_UpdateGameState(game, GAME_STATE_PLAYER_TURN);
+        } else {
+            game->focus_pos = Character_GetCenterPosition(Board_GetCurrentActingCharacter(&game->board), &game->grid);
         }
     }
 
-    vec2_t character_pos = Character_GetCenterPosition(game->focused_character, &game->grid);
-    game->view_pos = Vec2_Lerp(game->view_pos, character_pos, 0.1f);
+    // Move camera to focused target
+    game->view_pos = Vec2_Lerp(game->view_pos, game->focus_pos, 0.1f);
 }
 
 void Game_Draw(game_t* game) {

@@ -28,7 +28,7 @@ typedef struct game_s {
 	board_t board;
 	ai_t ai;
 	vec2_t view_pos;
-	character_t* focused_character;
+	vec2_t focus_pos;
 } game_t;
 
 void Game_Init(game_t* game);
@@ -38,7 +38,6 @@ void Game_Draw(game_t* game);
 
 character_t* Game_CreateCharacterAt(game_t* game, character_type_e type, bool is_player_controlled, float tile_x, float tile_y);
 
-void Game_ViewFocusTarget(game_t* game, vec2_t target);
 void Game_UpdateGameState(game_t* game, game_state_e state);
 
 #endif // GAME_H
