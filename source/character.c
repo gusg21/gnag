@@ -30,7 +30,7 @@ void Character_Init(character_t* character, C2D_SpriteSheet sheet, character_typ
 
     C2D_SpriteFromSheet(&character->sprite, sheet, S_GetSpriteIndexForCharacterType(type));
     C2D_SpriteSetCenter(&character->sprite, 0.5f, 1.0f);  // Bottom center
-    C2D_SpriteSetDepth(&character->sprite, 1.f);
+    C2D_SpriteSetDepth(&character->sprite, 0.f);
 }
 
 void Character_Draw(character_t* character, grid_t* grid) {

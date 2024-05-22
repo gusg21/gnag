@@ -29,6 +29,8 @@ typedef struct game_s {
 	ai_t ai;
 	vec2_t view_pos;
 	vec2_t focus_pos;
+	vec2_t selected_tile_pos;
+
 } game_t;
 
 void Game_Init(game_t* game);
