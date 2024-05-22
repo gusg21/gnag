@@ -89,6 +89,32 @@ void Board_EnqueuePlayerControlledCharacterAction(board_t* board, character_acti
     board->next_player_controlled_action_top_order++;
 }
 
+void Board_UndoLastPlayerControlledCharacterAction(board_t* board) {
+    // Add this to the PCC queue
+    if (board->next_player_controlled_action_index > 0)
+    {
+        board->next_player_controlled_action_index--;
+        board->next_player_controlled_action_top_order--;
+
+        character_t* current_char = board->player_controlled_action_queue[board->next_player_controlled_action_index].action.character;
+
+        board->current_player_controlled_character_index = Board_GetIndexByCharacter(board, current_char);
+
+        board->player_controlled_action_queue[board->next_player_controlled_action_index] = (ordered_character_action_t){};
+
+        CTR_PRINTF("action order %ld removed\n", board->next_player_controlled_action_top_order);
+
+        // Check if character has now not acted
+        board->player_controlled_characters_acted_flags[board->current_player_controlled_character_index] = false;
+        for (u32 index = 0; index < BOARD_MAX_PLAYER_CONTROLLED_CHARACTER_ACTION_QUEUE_LENGTH; index++) {
+            if (board->player_controlled_action_queue[index].initialized &&
+            board->player_controlled_action_queue[index].action.character == current_char) {
+                board->player_controlled_characters_acted_flags[board->current_player_controlled_character_index] = true;
+            }
+        }
+    }
+}
+
 u32 Board_EnqueueAllPlayerControlledCharacterActionsToMainActionQueue(board_t* board) {
     u32 actions_queued = 0;
 
@@ -221,4 +247,15 @@ character_t* Board_GetCharacterByType(board_t* board, character_type_e type) {
         }
     }
     return NULL;
+}
+
+u32 Board_GetIndexByCharacter(board_t* board, character_t* character) { 
+    for (u32 pcc_index = 0; pcc_index < BOARD_MAX_PLAYER_CONTROLLED_CHARACTER_COUNT; pcc_index++) {
+        if (&board->characters[pcc_index] == character)
+        {
+            return pcc_index;
+        }
+    }
+    CTR_PRINTF("PCC not found");
+    return BOARD_MAX_PLAYER_CONTROLLED_CHARACTER_COUNT;
 }

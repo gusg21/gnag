@@ -38,6 +38,7 @@ void Board_Draw(board_t* board, grid_t* grid);
 void Board_BuildPlayerControlledCharacterIndex(board_t* board);
 void Board_EnqueueAction(board_t* board, character_action_t action);
 void Board_EnqueuePlayerControlledCharacterAction(board_t* board, character_action_t action);
+void Board_UndoLastPlayerControlledCharacterAction(board_t* board);
 u32 Board_EnqueueAllPlayerControlledCharacterActionsToMainActionQueue(board_t* board);
 void Board_ExecuteQueue(board_t* board);
 void Board_ClearQueue(board_t* board);
@@ -52,5 +53,6 @@ void Board_SelectPreviousPlayerControlledCharacter(board_t* board);
 bool Board_HaveAllPlayerControlledCharactersActed(board_t* board);
 character_t* Board_NewCharacter(board_t* board);
 character_t* Board_GetCharacterByType(board_t* board, character_type_e type);
+u32 Board_GetIndexByCharacter(board_t* board, character_t* character);
 
 #endif // BOARD_H

@@ -38,6 +38,9 @@ void Game_Update(game_t* game, float delta_secs) {
     
     // PLAYERS TURN
     } else if (game->state == GAME_STATE_PLAYER_TURN) {
+        if (Input_IsButtonPressed(KEY_B)) {
+            Board_UndoLastPlayerControlledCharacterAction(&game->board);
+        }
         game->focus_pos = Character_GetCenterPosition(Board_GetCurrentSelectedPlayerControlledCharacter(&game->board), &game->grid);
 
     // PLAYER SELECTING TILE
