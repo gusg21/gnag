@@ -78,8 +78,8 @@ void UIScripts_Confirm(button_t* button) {
         u32 actions_queued =
             Board_EnqueueAllPlayerControlledCharacterActionsToMainActionQueue(&UIScripts_S_Game->board);
         // todo)) @gusg21 DO AI
-        Board_ExecuteQueue(&UIScripts_S_Game->board);
         Game_UpdateGameState(UIScripts_S_Game, GAME_STATE_PLAYER_ACTING);
+        Board_ExecuteQueue(&UIScripts_S_Game->board);
         CTR_PRINTF("%ld actions queued\n", actions_queued);
     } else {
         CTR_PRINTF("selecting next char\n");

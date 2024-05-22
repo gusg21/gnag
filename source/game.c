@@ -63,7 +63,7 @@ void Game_Update(game_t* game, float delta_secs) {
             Game_UpdateGameState(game, GAME_STATE_PLAYER_TURN);
         }
         else {
-
+            
         }
 
     // OPPONENTS TURN
