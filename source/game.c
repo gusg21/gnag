@@ -27,83 +27,17 @@ void Game_Destroy(game_t* game) { C2D_SpriteSheetFree(game->sheet); }
 void Game_Update(game_t* game, float delta_secs) {
     Board_Update(&game->board, delta_secs);
 
-    // PLAYERS ACTING
-    if (game->state == GAME_STATE_PLAYER_ACTING) {
-        // All player characters have executed queued actions
-        if (!game->board.action_queue_executing) {
-            Game_UpdateGameState(game, GAME_STATE_OPPONENT_TURN);
-        } else {
-            game->focus_pos = Character_GetCenterPosition(Board_GetCurrentActingCharacter(&game->board), &game->grid);
-        }
-
-        // PLAYERS TURN
-    } else if (game->state == GAME_STATE_PLAYER_TURN) {
-        if (Input_IsButtonPressed(KEY_B)) {
-            Board_UndoLastPlayerControlledCharacterAction(&game->board);
-        }
-        game->focus_pos =
-            Character_GetCenterPosition(Board_GetCurrentSelectedPlayerControlledCharacter(&game->board), &game->grid);
-
-        // PLAYER SELECTING TILE
-    } else if (game->state == GAME_STATE_SELECTING_TILE) {
-        // Return selection on A
-        if (Input_IsButtonPressed(KEY_A)) {
-            character_t* current = Board_GetCurrentSelectedPlayerControlledCharacter(&game->board);
-            character_action_t action = (character_action_t){.type = CHARACTER_ACTION_MOVE,
-                                                             .character = current,
-                                                             .duration = 1.0f,
-                                                             .initialized = true,
-                                                             .move_source = current->tile_pos,
-                                                             .move_destination_count = 1};
-            action.move_destinations[0] = game->selected_tile_pos;
-            Board_EnqueuePlayerControlledCharacterAction(&game->board, action);
-            current->moved = true;
-            CTR_PRINTF("tile selected\n");
-            Game_UpdateGameState(game, GAME_STATE_PLAYER_TURN);
-        }
-        // Return without selecting on B
-        else if (Input_IsButtonPressed(KEY_B)) {
-            CTR_PRINTF("selection cancelled\n");
-            Game_UpdateGameState(game, GAME_STATE_PLAYER_TURN);
-        } else {
-            // 4 input directions to select tile
-            if (Input_IsButtonPressed(KEY_DUP)) {
-                if (!(game->selected_tile_pos.y <= 0))
-                    game->selected_tile_pos = (vec2_t){game->selected_tile_pos.x, game->selected_tile_pos.y - 1};
-            } else if (Input_IsButtonPressed(KEY_DDOWN)) {
-                if (!(game->selected_tile_pos.y >= game->grid.grid_h - 1))
-                    game->selected_tile_pos = (vec2_t){game->selected_tile_pos.x, game->selected_tile_pos.y + 1};
-            }  else if (Input_IsButtonPressed(KEY_DLEFT)) {
-                if (!(game->selected_tile_pos.x <= 0))
-                    game->selected_tile_pos = (vec2_t){game->selected_tile_pos.x - 1, game->selected_tile_pos.y};
-            } else if (Input_IsButtonPressed(KEY_DRIGHT)) {
-                if (!(game->selected_tile_pos.x >= game->grid.grid_w - 1))
-                    game->selected_tile_pos = (vec2_t){game->selected_tile_pos.x + 1, game->selected_tile_pos.y};
-            }
-            // Focus is selected tile
-            game->focus_pos = Grid_GridFloatPosToWorldPos(&game->grid, game->selected_tile_pos);
-        }
-
-        // OPPONENTS TURN
+    if (game->state == GAME_STATE_PLAYER_TURN) {
+        Game_DoPlayerTurn(game);
+    } else if (game->state == GAME_STATE_PLAYER_ACTING) {
+        Game_DoPlayerActing(game);
     } else if (game->state == GAME_STATE_OPPONENT_TURN) {
-        // Do the opponent AI
-        AI_EnqueueAIActions(&game->ai, &game->board);
-        Board_ExecuteQueue(&game->board);
-
-        // Immediately change to acting state
-        Game_UpdateGameState(game, GAME_STATE_OPPONENT_ACTING);
-
-        // OPPONENTS ACTING
+        Game_DoOpponentTurn(game);
     } else if (game->state == GAME_STATE_OPPONENT_ACTING) {
-        // Wait until all actions complete
-        if (!game->board.action_queue_executing) {
-            // Return to player turn
-            Game_UpdateGameState(game, GAME_STATE_PLAYER_TURN);
-        } else {
-            game->focus_pos = Character_GetCenterPosition(Board_GetCurrentActingCharacter(&game->board), &game->grid);
-        }
+        Game_DoOpponentActing(game);
+    } else if (game->state == GAME_STATE_SELECTING_TILE) {
+        Game_DoSelectingTile(game);
     }
-
     // Move camera to focused target
     game->view_pos = Vec2_Lerp(game->view_pos, game->focus_pos, 0.1f);
 }
@@ -128,6 +62,81 @@ void Game_Draw(game_t* game) {
     C2D_ViewReset();
 }
 
+void Game_DoPlayerTurn(game_t* game) {
+    if (Input_IsButtonPressed(KEY_B)) {
+        Board_UndoLastPlayerControlledCharacterAction(&game->board);
+    }
+    game->focus_pos =
+        Character_GetCenterPosition(Board_GetCurrentSelectedPlayerControlledCharacter(&game->board), &game->grid);
+}
+
+void Game_DoPlayerActing(game_t* game) {
+    // All player characters have executed queued actions
+    if (!game->board.action_queue_executing) {
+        Game_UpdateGameState(game, GAME_STATE_OPPONENT_TURN);
+    } else {
+        game->focus_pos = Character_GetCenterPosition(Board_GetCurrentActingCharacter(&game->board), &game->grid);
+    }
+}
+
+void Game_DoOpponentTurn(game_t* game) {
+    // Do the opponent AI
+    AI_EnqueueAIActions(&game->ai, &game->board);
+    Board_ExecuteQueue(&game->board);
+
+    // Immediately change to acting state
+    Game_UpdateGameState(game, GAME_STATE_OPPONENT_ACTING);
+}
+
+void Game_DoOpponentActing(game_t* game) {
+    // Wait until all actions complete
+    if (!game->board.action_queue_executing) {
+        // Return to player turn
+        Game_UpdateGameState(game, GAME_STATE_PLAYER_TURN);
+    } else {
+        game->focus_pos = Character_GetCenterPosition(Board_GetCurrentActingCharacter(&game->board), &game->grid);
+    }
+}
+
+void Game_DoSelectingTile(game_t* game) {
+    character_t* current = Board_GetCurrentSelectedPlayerControlledCharacter(&game->board);
+
+    if (Input_IsButtonPressed(KEY_A)) {
+        character_action_t action = (character_action_t){.type = CHARACTER_ACTION_MOVE,
+                                                         .character = current,
+                                                         .duration = 1.0f,
+                                                         .initialized = true,
+                                                         .move_source = current->tile_pos,
+                                                         .move_destination_count = 1};
+        action.move_destinations[0] = game->selected_tile_pos;
+        Board_EnqueuePlayerControlledCharacterAction(&game->board, action);
+        current->moved = true;
+        CTR_PRINTF("tile selected\n");
+        memset(game->selected_tiles, 0, sizeof(vec2_t));
+        Game_UpdateGameState(game, GAME_STATE_PLAYER_TURN);
+    } else if (Input_IsButtonPressed(KEY_B)) {
+        CTR_PRINTF("selection cancelled\n");
+        memset(game->selected_tiles, 0, sizeof(vec2_t));
+        Game_UpdateGameState(game, GAME_STATE_PLAYER_TURN);
+    } else {
+        if (Input_IsButtonPressed(KEY_DUP)) {
+            if (Game_IsValidTileSelection(game))
+                game->selected_tile_pos = (vec2_t){game->selected_tile_pos.x, game->selected_tile_pos.y - 1};
+        } else if (Input_IsButtonPressed(KEY_DDOWN)) {
+            if (Game_IsValidTileSelection(game))
+                game->selected_tile_pos = (vec2_t){game->selected_tile_pos.x, game->selected_tile_pos.y + 1};
+        } else if (Input_IsButtonPressed(KEY_DLEFT)) {
+            if (Game_IsValidTileSelection(game))
+                game->selected_tile_pos = (vec2_t){game->selected_tile_pos.x - 1, game->selected_tile_pos.y};
+        } else if (Input_IsButtonPressed(KEY_DRIGHT)) {
+            if (Game_IsValidTileSelection(game))
+                game->selected_tile_pos = (vec2_t){game->selected_tile_pos.x + 1, game->selected_tile_pos.y};
+        }
+
+        game->focus_pos = Grid_GridFloatPosToWorldPos(&game->grid, game->selected_tile_pos);
+    }
+}
+
 character_t* Game_CreateCharacterAt(game_t* game, character_type_e type, bool is_player_controlled, float tile_x,
                                     float tile_y) {
     character_t* character = Board_NewCharacter(&game->board);
@@ -135,6 +144,13 @@ character_t* Game_CreateCharacterAt(game_t* game, character_type_e type, bool is
 
     return character;
 }
+
+bool Game_IsValidTileSelection(game_t* game) {
+    return (game->selected_tile_pos.y > 0 && game->selected_tile_pos.y < game->grid.grid_h - 1 &&
+            game->selected_tile_pos.x > 0 && game->selected_tile_pos.x < game->grid.grid_w - 1);
+}
+
+void Game_UpdateSelectedTiles(game_t* game) {}
 
 void Game_UpdateGameState(game_t* game, game_state_e state) {
     if (state == GAME_STATE_NONE) return;

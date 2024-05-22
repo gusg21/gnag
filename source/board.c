@@ -134,7 +134,6 @@ u32 Board_EnqueueAllPlayerControlledCharacterActionsToMainActionQueue(board_t* b
             if (action->action.type == CHARACTER_ACTION_MOVE) {
                 action->action.character->moved = false;
             }
-
             Board_EnqueueAction(board, action->action);
             actions_queued++;
         }
