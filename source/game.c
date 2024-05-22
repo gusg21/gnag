@@ -57,7 +57,7 @@ void Game_Update(game_t* game, float delta_secs) {
                                                              .move_destination_count = 1};
             action.move_destinations[0] = game->selected_tile_pos;
             Board_EnqueuePlayerControlledCharacterAction(&game->board, action);
-            current->moves_left = 0;
+            current->moved = true;
             CTR_PRINTF("tile selected\n");
             Game_UpdateGameState(game, GAME_STATE_PLAYER_TURN);
         }

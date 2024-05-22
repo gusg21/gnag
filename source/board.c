@@ -38,9 +38,7 @@ void Board_Update(board_t* board, float delta_secs) {
                 Board_ClearQueue(board);
             }
         }
-
         CharacterAction_Run(Board_GetCurrentAction(board), board);
-        Board_GetCurrentAction(board)->character->moves_left = Board_GetCurrentAction(board)->character->move_speed;
     }
 }
 
@@ -101,22 +99,23 @@ void Board_UndoLastPlayerControlledCharacterAction(board_t* board) {
 
         board->current_player_controlled_character_index = Board_GetIndexByCharacter(board, current_char);
 
+        if (board->player_controlled_action_queue[board->next_player_controlled_action_index].action.type == CHARACTER_ACTION_MOVE) {
+            current_char->moved = false;
+        }
+
         board->player_controlled_action_queue[board->next_player_controlled_action_index] =
             (ordered_character_action_t){};
 
         CTR_PRINTF("action order %ld removed\n", board->next_player_controlled_action_top_order);
 
-        // Check if character has now not acted and reset move speed
+        // Check if character has now not acted
         board->player_controlled_characters_acted_flags[board->current_player_controlled_character_index] = false;
-        current_char->moves_left = current_char->move_speed;
         for (u32 index = 0; index < BOARD_MAX_PLAYER_CONTROLLED_CHARACTER_ACTION_QUEUE_LENGTH; index++) {
             ordered_character_action_t* action = &board->player_controlled_action_queue[index];
             if (action->action.initialized) {
                 if (action->action.character == current_char) {
                     board->player_controlled_characters_acted_flags[board->current_player_controlled_character_index] =
                         true;
-                } else if (action->action.type == CHARACTER_ACTION_MOVE) {
-                    current_char->moves_left -= action->action.move_destination_count;
                 }
             }
         }
@@ -131,6 +130,11 @@ u32 Board_EnqueueAllPlayerControlledCharacterActionsToMainActionQueue(board_t* b
         ordered_character_action_t* action = &board->player_controlled_action_queue[action_index];
         if (action->initialized) {
             CTR_PRINTF("player action type %d order %ld\n", action->action.type, action->order);
+
+            if (action->action.type == CHARACTER_ACTION_MOVE) {
+                action->action.character->moved = false;
+            }
+
             Board_EnqueueAction(board, action->action);
             actions_queued++;
         }

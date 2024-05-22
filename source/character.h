@@ -25,9 +25,9 @@ typedef struct {
     vec2_t tile_pos;
     C2D_Sprite sprite;
     bool is_player_controlled;
+    bool moved;
     float health;
     u32 move_speed;
-    u32 moves_left;
 
 } character_t;
 
