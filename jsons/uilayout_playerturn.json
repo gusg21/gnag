@@ -6,7 +6,7 @@
             "Pos": [4, 4],
             "Size": [24, 24],
             "Sprite Index": 9,
-            "Color": [0.7, 0.7, 0.7, 1.0],
+            "Color": [0.8, 0.8, 0.8, 1.0],
             "Callback": 3,
             "Updater": 1
         },
@@ -16,7 +16,7 @@
             "Pos": [292, 4],
             "Size": [24, 24],
             "Sprite Index": 10,
-            "Color": [0.7, 0.7, 0.7, 1.0],
+            "Color": [0.8, 0.8, 0.8, 1.0],
             "Callback": 4,
             "Updater": 1
         },
@@ -26,7 +26,7 @@
             "Pos": [4, 44],
             "Size": [152, 32],
             "Sprite Index": 0,
-            "Color": [0.7, 0.2, 0.3, 1.0],
+            "Color": [0.5, 0.2, 0.7, 1.0],
             "Callback": 1,
             "Updater": 2
         },
@@ -36,7 +36,7 @@
             "Pos": [4, 80],
             "Size": [116, 32],
             "Sprite Index": 0,
-            "Color": [0.1, 1.0, 0.4, 1.0],
+            "Color": [0.5, 0.2, 0.7, 1.0],
             "Callback": 0,
             "Updater": 0
         },
@@ -46,7 +46,7 @@
             "Pos": [4, 116],
             "Size": [116, 32],
             "Sprite Index": 0,
-            "Color": [0.1, 1.0, 0.4, 1.0],
+            "Color": [0.5, 0.2, 0.7, 1.0],
             "Callback": 0,
             "Updater": 0
 
@@ -57,7 +57,7 @@
             "Pos": [4, 152],
             "Size": [116, 32],
             "Sprite Index": 0,
-            "Color": [0.1, 1.0, 0.4, 1.0],
+            "Color": [0.5, 0.2, 0.7, 1.0],
             "Callback": 0,
             "Updater": 0
 
@@ -101,7 +101,7 @@
             "Pos": [164, 204],
             "Size": [152, 32],
             "Sprite Index": 0,
-            "Color": [0.0, 1.0, 0.0, 1.0],
+            "Color": [0.2, 0.7, 0.2, 1.0],
             "Callback": 2,
             "Updater": 3
 
@@ -115,7 +115,7 @@
             "Pos": [164, 44],
             "Size": [152, 156],
             "Sprite Index": 0,
-            "Color": [1.0, 0.7, 0.7, 1.0],
+            "Color": [0.5, 0.7, 1.0, 1.0],
             "Render On Top": false,
             "Updater": 0
         },
@@ -125,7 +125,7 @@
             "Pos": [4, 188],
             "Size": [152, 48],
             "Sprite Index": 0,
-            "Color": [1.0, 1.0, 0.2, 1.0],
+            "Color": [0.5, 0.7, 1.0, 1.0],
             "Render On Top": false,
             "Updater": 0
         },
@@ -135,7 +135,17 @@
             "Pos": [32, 4],
             "Size": [256, 32],
             "Sprite Index": 0,
-            "Color": [1.0, 1.0, 0.2, 1.0],
+            "Color": [0.5, 0.7, 1.0, 1.0],
+            "Render On Top": false,
+            "Updater": 0
+        },
+        {
+            "Index": 3,
+            "Name": "Energy Bar Border",
+            "Pos": [35, 27],
+            "Size": [250, 6],
+            "Sprite Index": 0,
+            "Color": [0.1, 0.1, 0.1, 1.0],
             "Render On Top": false,
             "Updater": 0
         }
@@ -148,19 +158,9 @@
             "Pos": [36, 28],
             "Size": [248, 4],
             "Background Color": [0.2, 0.2, 0.2, 1.0],
-            "Fill Color": [0.2, 0.6, 1.0, 1.0],
+            "Fill Color": [0.5, 0.2, 0.7, 1.0],
             "Max Value": 5.0,
             "Updater": 2
-        },
-        {
-            "Index": 1,
-            "Name": "Health Bar",
-            "Pos": [8, 224],
-            "Size": [92, 8],
-            "Background Color": [0.2, 0.2, 0.2, 1.0],
-            "Fill Color": [1.0, 0.2, 0.2, 1.0],
-            "Max Value": 100.0,
-            "Updater": 1
         }
     ],
 
@@ -168,16 +168,30 @@
         {
             "Index": 0,
             "Initial Text": "Howdy!",
-            "Pos": [160, 4],
+            "Pos": [160, 6],
             "Centered": true,
             "Updater": 1
         },
         {
             "Index": 1,
-            "Initial Text": "Info Panel Text",
+            "Initial Text": "Info Panel",
             "Pos": [240, 48],
             "Centered": true,
             "Updater": 2
+        },
+        {
+            "Index": 2,
+            "Initial Text": "Move",
+            "Pos": [80, 50],
+            "Centered": true,
+            "Updater": 0
+        },
+        {
+            "Index": 3,
+            "Initial Text": "Confirm",
+            "Pos": [240, 210],
+            "Centered": true,
+            "Updater": 0
         }
     ]
 }
