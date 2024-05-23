@@ -61,9 +61,8 @@ void Game_Draw(game_t* game) {
         for (u32 i = 1; i <= game->current_tile_index; i++) {
             vec2_t line_start_pos = Grid_GridFloatPosToWorldPos(&game->grid, game->selected_tiles[i - 1]);
             vec2_t line_end_pos = Grid_GridFloatPosToWorldPos(&game->grid, game->selected_tiles[i]);
-            C2D_DrawLine(line_start_pos.x, line_start_pos.y, C2D_Color32f(0.f, 0.f, 1.f, 1.f),
-                         line_end_pos.x, line_end_pos.y, C2D_Color32f(0.f, 0.f, 1.f, 1.f),
-                         2.f, 1.f);
+            C2D_DrawLine(line_start_pos.x, line_start_pos.y, C2D_Color32f(0.f, 0.f, 1.f, 1.f), line_end_pos.x,
+                         line_end_pos.y, C2D_Color32f(0.f, 0.f, 1.f, 1.f), 2.f, 1.f);
         }
     }
 
@@ -72,7 +71,13 @@ void Game_Draw(game_t* game) {
 
 void Game_DoPlayerTurn(game_t* game) {
     if (Input_IsButtonPressed(KEY_B)) {
-        Board_UndoLastPlayerControlledCharacterAction(&game->board);
+        if (game->board.next_player_controlled_action_index > 0) {
+            Board_UndoLastPlayerControlledCharacterAction(&game->board);
+        } else {
+            game->board
+                .player_controlled_characters_acted_flags[game->board.current_player_controlled_character_index] =
+                false;
+        }
     }
     game->focus_pos =
         Character_GetCenterPosition(Board_GetCurrentSelectedPlayerControlledCharacter(&game->board), &game->grid);
@@ -134,16 +139,20 @@ void Game_DoSelectingTile(game_t* game) {
         vec2_t next_tile_pos = {};
 
         if (Input_IsButtonPressed(KEY_DUP)) {
-            next_tile_pos = (vec2_t){game->selected_tiles[game->current_tile_index].x, game->selected_tiles[game->current_tile_index].y - 1};
+            next_tile_pos = (vec2_t){game->selected_tiles[game->current_tile_index].x,
+                                     game->selected_tiles[game->current_tile_index].y - 1};
             Game_UpdateSelectedTiles(game, next_tile_pos);
         } else if (Input_IsButtonPressed(KEY_DDOWN)) {
-            next_tile_pos = (vec2_t){game->selected_tiles[game->current_tile_index].x, game->selected_tiles[game->current_tile_index].y + 1};
+            next_tile_pos = (vec2_t){game->selected_tiles[game->current_tile_index].x,
+                                     game->selected_tiles[game->current_tile_index].y + 1};
             Game_UpdateSelectedTiles(game, next_tile_pos);
         } else if (Input_IsButtonPressed(KEY_DLEFT)) {
-            next_tile_pos = (vec2_t){game->selected_tiles[game->current_tile_index].x - 1, game->selected_tiles[game->current_tile_index].y};
+            next_tile_pos = (vec2_t){game->selected_tiles[game->current_tile_index].x - 1,
+                                     game->selected_tiles[game->current_tile_index].y};
             Game_UpdateSelectedTiles(game, next_tile_pos);
         } else if (Input_IsButtonPressed(KEY_DRIGHT)) {
-            next_tile_pos = (vec2_t){game->selected_tiles[game->current_tile_index].x + 1, game->selected_tiles[game->current_tile_index].y};
+            next_tile_pos = (vec2_t){game->selected_tiles[game->current_tile_index].x + 1,
+                                     game->selected_tiles[game->current_tile_index].y};
             Game_UpdateSelectedTiles(game, next_tile_pos);
         }
 
@@ -162,18 +171,18 @@ character_t* Game_CreateCharacterAt(game_t* game, character_type_e type, bool is
 bool Game_IsValidTileSelection(game_t* game, vec2_t next_tile_pos) {
     return
         // Position in grid
-        (next_tile_pos.y >= 0 && next_tile_pos.y <= game->grid.grid_h - 1 &&
-        next_tile_pos.x >= 0 && next_tile_pos.x <= game->grid.grid_w - 1 &&
-        // Move speed & backtracking
-        (!(game->current_tile_index >= Board_GetCurrentSelectedPlayerControlledCharacter(&game->board)->move_speed) ||
-        (next_tile_pos.x == game->selected_tiles[game->current_tile_index - 1].x && 
-        next_tile_pos.y == game->selected_tiles[game->current_tile_index - 1].y)));
+        (next_tile_pos.y >= 0 && next_tile_pos.y <= game->grid.grid_h - 1 && next_tile_pos.x >= 0 &&
+         next_tile_pos.x <= game->grid.grid_w - 1 &&
+         // Move speed & backtracking
+         (!(game->current_tile_index >= Board_GetCurrentSelectedPlayerControlledCharacter(&game->board)->move_speed) ||
+          (next_tile_pos.x == game->selected_tiles[game->current_tile_index - 1].x &&
+           next_tile_pos.y == game->selected_tiles[game->current_tile_index - 1].y)));
 }
 
 void Game_UpdateSelectedTiles(game_t* game, vec2_t next_tile_pos) {
     if (Game_IsValidTileSelection(game, next_tile_pos)) {
-        if (next_tile_pos.x == game->selected_tiles[game->current_tile_index - 1].x && 
-        next_tile_pos.y == game->selected_tiles[game->current_tile_index - 1].y) {
+        if (next_tile_pos.x == game->selected_tiles[game->current_tile_index - 1].x &&
+            next_tile_pos.y == game->selected_tiles[game->current_tile_index - 1].y) {
             game->current_tile_index--;
             game->selected_tiles[game->current_tile_index] = next_tile_pos;
         } else {
@@ -207,7 +216,8 @@ void Game_UpdateGameState(game_t* game, game_state_e state) {
             return;
         case GAME_STATE_SELECTING_TILE:
             CTR_PRINTF("STATE player selecting tile\n");
-            game->selected_tiles[game->current_tile_index] = Board_GetCurrentSelectedPlayerControlledCharacter(&game->board)->tile_pos;
+            game->selected_tiles[game->current_tile_index] =
+                Board_GetCurrentSelectedPlayerControlledCharacter(&game->board)->tile_pos;
             return;
 
         default:

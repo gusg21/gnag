@@ -72,9 +72,9 @@ void UIScripts_TestButton(button_t* button) { CTR_PRINTF("works\n"); }
 void UIScripts_Move(button_t* button) { Game_UpdateGameState(UIScripts_S_Game, GAME_STATE_SELECTING_TILE); }
 
 void UIScripts_Confirm(button_t* button) {
-    UIScripts_S_Game->board.player_controlled_characters_acted_flags[Board_GetIndexByCharacter(
-            &UIScripts_S_Game->board, Board_GetCurrentSelectedPlayerControlledCharacter(&UIScripts_S_Game->board))] =
-            true;
+    UIScripts_S_Game->board
+        .player_controlled_characters_acted_flags[UIScripts_S_Game->board.current_player_controlled_character_index] =
+        true;
     if (Board_HaveAllPlayerControlledCharactersActed(&UIScripts_S_Game->board)) {
         u32 actions_queued =
             Board_EnqueueAllPlayerControlledCharacterActionsToMainActionQueue(&UIScripts_S_Game->board);
