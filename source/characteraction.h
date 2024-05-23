@@ -5,13 +5,14 @@
 
 #include "character.h"
 
-#define CHARACTER_ACTION_MAX_MOVE_DESTINATIONS 16
+#define CHARACTER_ACTION_MAX_TILES_SELECTED 16
 
 struct board_s;
 
 typedef enum {
     CHARACTER_ACTION_NONE, // Nothing
     CHARACTER_ACTION_MOVE, // Move the character to multiple position
+    CHARACTER_ACTION_ABILITY, // Do action targeting some tiles from the player, and resolve hazards
 } character_action_type_e;
 
 typedef struct {
@@ -21,9 +22,9 @@ typedef struct {
     character_t* character;
     float duration;
 
-    vec2_t move_source;
-    vec2_t move_destinations[CHARACTER_ACTION_MAX_MOVE_DESTINATIONS];
-    u32 move_destination_count; // No .initialized for vec2_t
+    vec2_t char_pos;
+    vec2_t tile_selections[CHARACTER_ACTION_MAX_TILES_SELECTED];
+    u32 tile_selections_count; // No .initialized for vec2_t
 } character_action_t;
 
 typedef struct {

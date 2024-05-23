@@ -20,6 +20,14 @@ typedef enum {
 
 } game_state_e;
 
+typedef enum {
+	SELECTING_TILE_NONE, // Should never be this when selecting a tile
+	SELECTING_TILE_SINGLE, // Selects a tile anywhere on the board
+	SELECTING_TILE_MOVE, // Same as single but draws line and has distance limit
+	SELECTING_TILE_LINE, // Returns a line of tiles with a distance, also use this for single tile adjacent only
+	SELECTING_TILE_CONE, // Returns a cone of tiles from the player with a width and distance
+} selecting_tile_type_e;
+
 typedef struct game_s {
 	game_state_e state;
 
@@ -30,9 +38,8 @@ typedef struct game_s {
 	vec2_t view_pos;
 	vec2_t focus_pos;
 
-	vec2_t selected_tiles[CHARACTER_ACTION_MAX_MOVE_DESTINATIONS];
-	vec2_t selected_tile_pos;
-	vec2_t prev_tile_pos;
+	selecting_tile_type_e st_type;
+	vec2_t selected_tiles[CHARACTER_ACTION_MAX_TILES_SELECTED];
 	u32 current_tile_index;
 
 } game_t;
@@ -54,5 +61,6 @@ hazard_t* Game_CreateHazardAt(game_t* game, hazard_type_e type, float tile_x, fl
 bool Game_IsValidTileSelection(game_t* game, vec2_t next_tile_pos);
 void Game_UpdateSelectedTiles(game_t* game, vec2_t next_tile_pos);
 void Game_UpdateGameState(game_t* game, game_state_e state);
+void Game_UpdateSelectionType(game_t* game, selecting_tile_type_e type);
 
 #endif // GAME_H

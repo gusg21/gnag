@@ -11,17 +11,20 @@ void CharacterAction_Run(character_action_t* action, board_t* board) {
             character_t* target = action->character;
             float t = Board_GetNormalizedActionTime(board);
             if (!(t >= 1.0f)) {
-                float move_count = action->move_destination_count;
+                float move_count = action->tile_selections_count;
 
                 int destination_index = (int)floorf(t * move_count);
-                vec2_t destination = action->move_destinations[destination_index];
+                vec2_t destination = action->tile_selections[destination_index];
                 vec2_t source =
-                    destination_index <= 0 ? action->move_source : action->move_destinations[destination_index - 1];
+                    destination_index <= 0 ? action->char_pos : action->tile_selections[destination_index - 1];
                 float segment_t = (t * move_count) - destination_index;
                 target->tile_pos = Vec2_Lerp(source, destination, segment_t);
             }
             
             break;
+        }
+        case CHARACTER_ACTION_ABILITY: {
+            // a BUNCH of logic :sob:
         }
         case CHARACTER_ACTION_NONE: {
             break;

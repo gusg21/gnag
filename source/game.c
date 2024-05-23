@@ -53,17 +53,28 @@ void Game_Draw(game_t* game) {
     if (game->state == GAME_STATE_SELECTING_TILE) {
         C2D_Sprite tile_selected_sprite;
         C2D_SpriteFromSheet(&tile_selected_sprite, game->sheet, sprites_selectedtile_idx);
-        vec2_t world_pos = Grid_GridFloatPosToWorldPos(&game->grid, game->selected_tiles[game->current_tile_index]);
-        C2D_SpriteSetPos(&tile_selected_sprite, world_pos.x, world_pos.y);
         C2D_SpriteSetCenter(&tile_selected_sprite, 0.5f, 0.75f);
-        C2D_SpriteSetDepth(&tile_selected_sprite, 0.5f);
-        C2D_DrawSprite(&tile_selected_sprite);
+        C2D_SpriteSetDepth(&tile_selected_sprite, 0.1f);
 
-        for (u32 i = 1; i <= game->current_tile_index; i++) {
-            vec2_t line_start_pos = Grid_GridFloatPosToWorldPos(&game->grid, game->selected_tiles[i - 1]);
-            vec2_t line_end_pos = Grid_GridFloatPosToWorldPos(&game->grid, game->selected_tiles[i]);
-            C2D_DrawLine(line_start_pos.x, line_start_pos.y, C2D_Color32f(0.f, 0.f, 1.f, 1.f), line_end_pos.x,
-                         line_end_pos.y, C2D_Color32f(0.f, 0.f, 1.f, 1.f), 2.f, 1.f);
+        if (game->st_type == SELECTING_TILE_MOVE || game->st_type == SELECTING_TILE_SINGLE) {
+            vec2_t world_pos = Grid_GridFloatPosToWorldPos(&game->grid, game->selected_tiles[game->current_tile_index]);
+            C2D_SpriteSetPos(&tile_selected_sprite, world_pos.x, world_pos.y);
+            C2D_DrawSprite(&tile_selected_sprite);
+        } else if (game->st_type == SELECTING_TILE_LINE || game->st_type == SELECTING_TILE_CONE) {
+            for (u32 i = 0; i <= game->current_tile_index; i++) {
+                vec2_t world_pos = Grid_GridFloatPosToWorldPos(&game->grid, game->selected_tiles[i]);
+                C2D_SpriteSetPos(&tile_selected_sprite, world_pos.x, world_pos.y);
+                C2D_DrawSprite(&tile_selected_sprite);
+            }
+        }
+
+        if (game->st_type == SELECTING_TILE_MOVE) {
+            for (u32 i = 1; i <= game->current_tile_index; i++) {
+                vec2_t line_start_pos = Grid_GridFloatPosToWorldPos(&game->grid, game->selected_tiles[i - 1]);
+                vec2_t line_end_pos = Grid_GridFloatPosToWorldPos(&game->grid, game->selected_tiles[i]);
+                C2D_DrawLine(line_start_pos.x, line_start_pos.y, C2D_Color32f(0.f, 0.f, 1.f, 1.f), line_end_pos.x,
+                             line_end_pos.y, C2D_Color32f(0.f, 0.f, 1.f, 1.f), 2.f, 1.f);
+            }
         }
     }
 
@@ -79,9 +90,9 @@ void Game_DoPlayerTurn(game_t* game) {
                 .player_controlled_characters_acted_flags[game->board.current_player_controlled_character_index] =
                 false;
         }
-    } else if (Input_IsButtonPressed(KEY_L)){
+    } else if (Input_IsButtonPressed(KEY_L)) {
         Board_SelectPreviousPlayerControlledCharacter(&game->board);
-    } else if (Input_IsButtonPressed(KEY_R)){
+    } else if (Input_IsButtonPressed(KEY_R)) {
         Board_SelectNextPlayerControlledCharacter(&game->board);
     }
 
@@ -119,50 +130,84 @@ void Game_DoOpponentActing(game_t* game) {
 
 void Game_DoSelectingTile(game_t* game) {
     character_t* current = Board_GetCurrentSelectedPlayerControlledCharacter(&game->board);
+    if (game->st_type == SELECTING_TILE_LINE || game->st_type == SELECTING_TILE_CONE) {
+        if (Input_IsButtonPressed(KEY_A)) {
+            if (game->selected_tiles[game->current_tile_index].x != current->tile_pos.x || 
+                game->selected_tiles[game->current_tile_index].y != current->tile_pos.y) {
+                CTR_PRINTF("line selected\n");
+                memset(game->selected_tiles, 0, sizeof(vec2_t));
+                game->current_tile_index = 0;
+                Game_UpdateGameState(game, GAME_STATE_PLAYER_TURN);
+            }
+        } else if (Input_IsButtonPressed(KEY_B)) {
+            CTR_PRINTF("selection cancelled\n");
+            memset(game->selected_tiles, 0, sizeof(vec2_t));
+            game->current_tile_index = 0;
+            Game_UpdateGameState(game, GAME_STATE_PLAYER_TURN);
+        } else {
+            vec2_t next_tile_pos = {};
 
-    if (Input_IsButtonPressed(KEY_A)) {
-        character_action_t action = (character_action_t){.type = CHARACTER_ACTION_MOVE,
-                                                         .character = current,
-                                                         .duration = 1.0f,
-                                                         .initialized = true,
-                                                         .move_source = current->tile_pos,
-                                                         .move_destination_count = game->current_tile_index};
-        for (u32 i = 0; i < game->current_tile_index; i++) {
-            action.move_destinations[i] = game->selected_tiles[i + 1];
+            if (Input_IsButtonPressed(KEY_DUP)) {
+                next_tile_pos = (vec2_t){current->tile_pos.x, current->tile_pos.y - 1};
+                Game_UpdateSelectedTiles(game, next_tile_pos);
+            } else if (Input_IsButtonPressed(KEY_DDOWN)) {
+                next_tile_pos = (vec2_t){current->tile_pos.x, current->tile_pos.y + 1};
+                Game_UpdateSelectedTiles(game, next_tile_pos);
+            } else if (Input_IsButtonPressed(KEY_DLEFT)) {
+                next_tile_pos = (vec2_t){current->tile_pos.x - 1, current->tile_pos.y};
+                Game_UpdateSelectedTiles(game, next_tile_pos);
+            } else if (Input_IsButtonPressed(KEY_DRIGHT)) {
+                next_tile_pos = (vec2_t){current->tile_pos.x + 1, current->tile_pos.y};
+                Game_UpdateSelectedTiles(game, next_tile_pos);
+            }
+
+            game->focus_pos = Grid_GridFloatPosToWorldPos(&game->grid, game->selected_tiles[game->current_tile_index]);
         }
-        Board_EnqueuePlayerControlledCharacterAction(&game->board, action);
-        current->moved = true;
-        CTR_PRINTF("tile selected\n");
-        memset(game->selected_tiles, 0, sizeof(vec2_t));
-        game->current_tile_index = 0;
-        Game_UpdateGameState(game, GAME_STATE_PLAYER_TURN);
-    } else if (Input_IsButtonPressed(KEY_B)) {
-        CTR_PRINTF("selection cancelled\n");
-        memset(game->selected_tiles, 0, sizeof(vec2_t));
-        game->current_tile_index = 0;
-        Game_UpdateGameState(game, GAME_STATE_PLAYER_TURN);
-    } else {
-        vec2_t next_tile_pos = {};
+    } else if (game->st_type == SELECTING_TILE_MOVE) {
+        if (Input_IsButtonPressed(KEY_A)) {
+            character_action_t action = (character_action_t){.type = CHARACTER_ACTION_MOVE,
+                                                             .character = current,
+                                                             .duration = 1.0f,
+                                                             .initialized = true,
+                                                             .char_pos = current->tile_pos,
+                                                             .tile_selections_count = game->current_tile_index};
+            for (u32 i = 0; i < game->current_tile_index; i++) {
+                action.tile_selections[i] = game->selected_tiles[i + 1];
+            }
+            Board_EnqueuePlayerControlledCharacterAction(&game->board, action);
+            current->moved = true;
+            memset(game->selected_tiles, 0, sizeof(vec2_t));
+            game->current_tile_index = 0;
+            CTR_PRINTF("tile selected\n");
+            Game_UpdateGameState(game, GAME_STATE_PLAYER_TURN);
+        } else if (Input_IsButtonPressed(KEY_B)) {
+            CTR_PRINTF("selection cancelled\n");
+            memset(game->selected_tiles, 0, sizeof(vec2_t));
+            game->current_tile_index = 0;
+            Game_UpdateGameState(game, GAME_STATE_PLAYER_TURN);
+        } else {
+            vec2_t next_tile_pos = {};
 
-        if (Input_IsButtonPressed(KEY_DUP)) {
-            next_tile_pos = (vec2_t){game->selected_tiles[game->current_tile_index].x,
-                                     game->selected_tiles[game->current_tile_index].y - 1};
-            Game_UpdateSelectedTiles(game, next_tile_pos);
-        } else if (Input_IsButtonPressed(KEY_DDOWN)) {
-            next_tile_pos = (vec2_t){game->selected_tiles[game->current_tile_index].x,
-                                     game->selected_tiles[game->current_tile_index].y + 1};
-            Game_UpdateSelectedTiles(game, next_tile_pos);
-        } else if (Input_IsButtonPressed(KEY_DLEFT)) {
-            next_tile_pos = (vec2_t){game->selected_tiles[game->current_tile_index].x - 1,
-                                     game->selected_tiles[game->current_tile_index].y};
-            Game_UpdateSelectedTiles(game, next_tile_pos);
-        } else if (Input_IsButtonPressed(KEY_DRIGHT)) {
-            next_tile_pos = (vec2_t){game->selected_tiles[game->current_tile_index].x + 1,
-                                     game->selected_tiles[game->current_tile_index].y};
-            Game_UpdateSelectedTiles(game, next_tile_pos);
+            if (Input_IsButtonPressed(KEY_DUP)) {
+                next_tile_pos = (vec2_t){game->selected_tiles[game->current_tile_index].x,
+                                         game->selected_tiles[game->current_tile_index].y - 1};
+                Game_UpdateSelectedTiles(game, next_tile_pos);
+            } else if (Input_IsButtonPressed(KEY_DDOWN)) {
+                next_tile_pos = (vec2_t){game->selected_tiles[game->current_tile_index].x,
+                                         game->selected_tiles[game->current_tile_index].y + 1};
+                Game_UpdateSelectedTiles(game, next_tile_pos);
+            } else if (Input_IsButtonPressed(KEY_DLEFT)) {
+                next_tile_pos = (vec2_t){game->selected_tiles[game->current_tile_index].x - 1,
+                                         game->selected_tiles[game->current_tile_index].y};
+                Game_UpdateSelectedTiles(game, next_tile_pos);
+            } else if (Input_IsButtonPressed(KEY_DRIGHT)) {
+                next_tile_pos = (vec2_t){game->selected_tiles[game->current_tile_index].x + 1,
+                                         game->selected_tiles[game->current_tile_index].y};
+                Game_UpdateSelectedTiles(game, next_tile_pos);
+            }
+
+            game->focus_pos = Grid_GridFloatPosToWorldPos(&game->grid, game->selected_tiles[game->current_tile_index]);
         }
-
-        game->focus_pos = Grid_GridFloatPosToWorldPos(&game->grid, game->selected_tiles[game->current_tile_index]);
     }
 }
 
@@ -188,18 +233,38 @@ bool Game_IsValidTileSelection(game_t* game, vec2_t next_tile_pos) {
         game->current_tile_index < Board_GetCurrentSelectedPlayerControlledCharacter(&game->board)->move_speed;
     bool is_backtrack = next_tile_pos.x == game->selected_tiles[game->current_tile_index - 1].x &&
                         next_tile_pos.y == game->selected_tiles[game->current_tile_index - 1].y;
-    return in_bounds && (in_range || is_backtrack);
+    if (game->st_type == SELECTING_TILE_MOVE) {
+        return in_bounds && (in_range || is_backtrack);
+    } else {
+        return in_bounds;
+    }
 }
 
 void Game_UpdateSelectedTiles(game_t* game, vec2_t next_tile_pos) {
     if (Game_IsValidTileSelection(game, next_tile_pos)) {
-        if (next_tile_pos.x == game->selected_tiles[game->current_tile_index - 1].x &&
-            next_tile_pos.y == game->selected_tiles[game->current_tile_index - 1].y) {
-            game->current_tile_index--;
-            game->selected_tiles[game->current_tile_index] = next_tile_pos;
-        } else {
-            game->current_tile_index++;
-            game->selected_tiles[game->current_tile_index] = next_tile_pos;
+        switch (game->st_type) {
+            case SELECTING_TILE_SINGLE:
+                game->selected_tiles[game->current_tile_index] = next_tile_pos;
+                return;
+            case SELECTING_TILE_MOVE:
+                if (next_tile_pos.x == game->selected_tiles[game->current_tile_index - 1].x &&
+                    next_tile_pos.y == game->selected_tiles[game->current_tile_index - 1].y) {
+                    game->current_tile_index--;
+                    game->selected_tiles[game->current_tile_index] = next_tile_pos;
+                } else {
+                    game->current_tile_index++;
+                    game->selected_tiles[game->current_tile_index] = next_tile_pos;
+                }
+                return;
+            case SELECTING_TILE_LINE:
+                game->selected_tiles[game->current_tile_index] = next_tile_pos;
+                return;
+            case SELECTING_TILE_CONE:
+                game->selected_tiles[game->current_tile_index] = next_tile_pos;
+                return;
+
+            default:
+                // do nothing
         }
     }
 }
@@ -230,6 +295,30 @@ void Game_UpdateGameState(game_t* game, game_state_e state) {
             CTR_PRINTF("STATE player selecting tile\n");
             game->selected_tiles[game->current_tile_index] =
                 Board_GetCurrentSelectedPlayerControlledCharacter(&game->board)->tile_pos;
+            return;
+
+        default:
+            // do nothing
+    }
+}
+
+void Game_UpdateSelectionType(game_t* game, selecting_tile_type_e type) {
+    if (type == SELECTING_TILE_NONE) return;
+
+    game->st_type = type;
+
+    switch (type) {
+        case SELECTING_TILE_SINGLE:
+            CTR_PRINTF("ST single\n");
+            return;
+        case SELECTING_TILE_MOVE:
+            CTR_PRINTF("ST move\n");
+            return;
+        case SELECTING_TILE_LINE:
+            CTR_PRINTF("ST line\n");
+            return;
+        case SELECTING_TILE_CONE:
+            CTR_PRINTF("ST cone\n");
             return;
 
         default:

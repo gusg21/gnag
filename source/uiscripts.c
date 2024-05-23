@@ -19,6 +19,8 @@ void (*UIScripts_GetButtonCallbackByType(button_callback_type_e type))(button_t*
             return UIScripts_PrevPlayerCharacter;
         case BUTTON_CALLBACK_NEXT_CHARACTER:
             return UIScripts_NextPlayerCharacter;
+        case BUTTON_CALLBACK_TEST:
+            return UIScripts_TestButton;
 
         default:
             return NULL;
@@ -82,11 +84,13 @@ void (*UIScripts_GetTextUpdaterByType(text_updater_type_e type))(text_t*) {
 
 void UIScripts_TestButton(button_t* button) {
     UNUSED(button);
-    CTR_PRINTF("works\n");
+    Game_UpdateSelectionType(UIScripts_S_Game, SELECTING_TILE_LINE);
+    Game_UpdateGameState(UIScripts_S_Game, GAME_STATE_SELECTING_TILE);
 }
 
 void UIScripts_Move(button_t* button) {
     UNUSED(button);
+    Game_UpdateSelectionType(UIScripts_S_Game, SELECTING_TILE_MOVE);
     Game_UpdateGameState(UIScripts_S_Game, GAME_STATE_SELECTING_TILE);
 }
 

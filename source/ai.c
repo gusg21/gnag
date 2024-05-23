@@ -18,10 +18,10 @@ void AI_EnqueueAIActions(ai_t* ai, board_t* board) {
                                                              .character = character,
                                                              .duration = 1.0f,
                                                              .initialized = true,
-                                                             .move_source = character->tile_pos,
-                                                             .move_destination_count = 2};
-            action.move_destinations[0] = (vec2_t){character->tile_pos.x - 1, character->tile_pos.y};
-            action.move_destinations[1] = (vec2_t){character->tile_pos.x, character->tile_pos.y - 1};
+                                                             .char_pos = character->tile_pos,
+                                                             .tile_selections_count = 2};
+            action.tile_selections[0] = (vec2_t){character->tile_pos.x - 1, character->tile_pos.y};
+            action.tile_selections[1] = (vec2_t){character->tile_pos.x, character->tile_pos.y - 1};
             Board_EnqueueAction(board, action);
         }
     }
