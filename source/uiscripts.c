@@ -55,8 +55,6 @@ void (*UIScripts_GetFillBarUpdaterByType(fill_bar_updater_type_e type))(fill_bar
     }
 }
 
-
-
 void (*UIScripts_GetTextUpdaterByType(text_updater_type_e type))(text_t*) {
     switch (type) {
         case TEXT_UPDATER_NONE:
@@ -71,11 +69,12 @@ void (*UIScripts_GetTextUpdaterByType(text_updater_type_e type))(text_t*) {
 
 void UIScripts_TestButton(button_t* button) { CTR_PRINTF("works\n"); }
 
-void UIScripts_Move(button_t* button) {
-    Game_UpdateGameState(UIScripts_S_Game, GAME_STATE_SELECTING_TILE);
-}
+void UIScripts_Move(button_t* button) { Game_UpdateGameState(UIScripts_S_Game, GAME_STATE_SELECTING_TILE); }
 
 void UIScripts_Confirm(button_t* button) {
+    UIScripts_S_Game->board.player_controlled_characters_acted_flags[Board_GetIndexByCharacter(
+            &UIScripts_S_Game->board, Board_GetCurrentSelectedPlayerControlledCharacter(&UIScripts_S_Game->board))] =
+            true;
     if (Board_HaveAllPlayerControlledCharactersActed(&UIScripts_S_Game->board)) {
         u32 actions_queued =
             Board_EnqueueAllPlayerControlledCharacterActionsToMainActionQueue(&UIScripts_S_Game->board);
@@ -98,35 +97,26 @@ void UIScripts_PrevPlayerCharacter(button_t* button) {
 }
 
 void UIScripts_ButtonPlayerTurnUpdater(button_t* button) {
-    if (UIScripts_S_Game->state == GAME_STATE_PLAYER_TURN)
-    {
+    if (UIScripts_S_Game->state == GAME_STATE_PLAYER_TURN) {
         button->pressable = true;
-    }
-    else
-    {
+    } else {
         button->pressable = false;
     }
 }
 
 void UIScripts_ButtonMoveUpdater(button_t* button) {
     if (UIScripts_S_Game->state == GAME_STATE_PLAYER_TURN &&
-        !Board_GetCurrentSelectedPlayerControlledCharacter(&UIScripts_S_Game->board)->moved)
-    {
+        !Board_GetCurrentSelectedPlayerControlledCharacter(&UIScripts_S_Game->board)->moved) {
         button->pressable = true;
-    }
-    else
-    {
+    } else {
         button->pressable = false;
     }
 }
 
 void UIScripts_ButtonConfirmUpdater(button_t* button) {
-    if (UIScripts_S_Game->state == GAME_STATE_PLAYER_TURN)
-    {
+    if (UIScripts_S_Game->state == GAME_STATE_PLAYER_TURN) {
         button->pressable = true;
-    }
-    else
-    {
+    } else {
         button->pressable = false;
     }
 }
@@ -137,7 +127,8 @@ void UIScripts_FillBarHealthUpdater(fill_bar_t* fill_bar) {
 }
 
 void UIScripts_FillBarMovementUpdater(fill_bar_t* fill_bar) {
-    FillBar_SetValue(fill_bar, Board_GetCurrentSelectedPlayerControlledCharacter(&UIScripts_S_Game->board)->move_speed - UIScripts_S_Game->current_tile_index);
+    FillBar_SetValue(fill_bar, Board_GetCurrentSelectedPlayerControlledCharacter(&UIScripts_S_Game->board)->move_speed -
+                                   UIScripts_S_Game->current_tile_index);
 }
 
 void UIScripts_TextSelectedCharacterNameUpdater(text_t* text) {
