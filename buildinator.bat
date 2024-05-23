@@ -32,5 +32,6 @@ echo [41m# Failed to build![0m
 echo [92m# Built GNAG.3dsx[0m
 
 :END
+pause
 
     
