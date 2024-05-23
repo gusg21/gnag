@@ -1,7 +1,7 @@
 #include "character.h"
 
-#include "sprites.h"
 #include "board.h"
+#include "sprites.h"
 
 static u32 S_GetSpriteIndexForCharacterType(character_type_e type) {
     switch (type) {
@@ -19,7 +19,7 @@ static u32 S_GetSpriteIndexForCharacterType(character_type_e type) {
     }
 }
 
-void Character_Init(character_t* character, C2D_SpriteSheet sheet, character_type_e type, bool is_player_controlled,
+void Character_Init(character_t* character, character_type_e type, bool is_player_controlled,
                     u32 start_x, u32 start_y) {
     character->initialized = true;
     character->tile_pos.x = start_x;
@@ -29,17 +29,18 @@ void Character_Init(character_t* character, C2D_SpriteSheet sheet, character_typ
     character->moved = false;
     character->health = CHARACTER_MAX_HEALTH;
     character->move_speed = CHARACTER_MOVE_SPEED;
-
-    C2D_SpriteFromSheet(&character->sprite, sheet, S_GetSpriteIndexForCharacterType(type));
-    C2D_SpriteSetCenter(&character->sprite, 0.5f, 1.0f);  // Bottom center
-    C2D_SpriteSetDepth(&character->sprite, 0.f);
 }
 
-void Character_Draw(character_t* character, grid_t* grid) {
+void Character_Draw(character_t* character, C2D_SpriteSheet sheet, grid_t* grid) {
     vec2_t world_pos = Grid_GridFloatPosToWorldPos(grid, character->tile_pos);
     world_pos.y += 10.f;
-    C2D_SpriteSetPos(&character->sprite, world_pos.x, world_pos.y);
-    C2D_DrawSprite(&character->sprite);
+
+    C2D_Sprite character_sprite;
+    C2D_SpriteFromSheet(&character_sprite, sheet, S_GetSpriteIndexForCharacterType(character->type));
+    C2D_SpriteSetCenter(&character_sprite, 0.5f, 1.0f);  // Bottom center
+    C2D_SpriteSetDepth(&character_sprite, 0.f);
+    C2D_SpriteSetPos(&character_sprite, world_pos.x, world_pos.y);
+    C2D_DrawSprite(&character_sprite);
 }
 
 const char* Character_GetName(character_t* character) {

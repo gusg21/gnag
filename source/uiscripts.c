@@ -67,11 +67,18 @@ void (*UIScripts_GetTextUpdaterByType(text_updater_type_e type))(text_t*) {
     }
 }
 
-void UIScripts_TestButton(button_t* button) { CTR_PRINTF("works\n"); }
+void UIScripts_TestButton(button_t* button) {
+    UNUSED(button);
+    CTR_PRINTF("works\n");
+}
 
-void UIScripts_Move(button_t* button) { Game_UpdateGameState(UIScripts_S_Game, GAME_STATE_SELECTING_TILE); }
+void UIScripts_Move(button_t* button) {
+    UNUSED(button);
+    Game_UpdateGameState(UIScripts_S_Game, GAME_STATE_SELECTING_TILE);
+}
 
 void UIScripts_Confirm(button_t* button) {
+    UNUSED(button);
     UIScripts_S_Game->board
         .player_controlled_characters_acted_flags[UIScripts_S_Game->board.current_player_controlled_character_index] =
         true;
@@ -84,15 +91,17 @@ void UIScripts_Confirm(button_t* button) {
         CTR_PRINTF("%ld actions queued\n", actions_queued);
     } else {
         CTR_PRINTF("selecting next char\n");
-        Board_SelectNotYetActedCharacter(&UIScripts_S_Game->board);
+        Board_SelectNotYetActedPlayerControlledCharacter(&UIScripts_S_Game->board);
     }
 }
 
 void UIScripts_NextPlayerCharacter(button_t* button) {
+    UNUSED(button);
     Board_SelectNextPlayerControlledCharacter(&UIScripts_S_Game->board);
 }
 
 void UIScripts_PrevPlayerCharacter(button_t* button) {
+    UNUSED(button);
     Board_SelectPreviousPlayerControlledCharacter(&UIScripts_S_Game->board);
 }
 

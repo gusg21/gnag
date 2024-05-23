@@ -57,8 +57,17 @@ int main() {
     Game_CreateCharacterAt(game, CHAR_UGLY, true, 7.f, 8.f);
     Game_CreateCharacterAt(game, CHAR_ENEMY, false, 2.f, 9.f);
     Board_BuildPlayerControlledCharacterIndex(&game->board);
-    Grid_GetTileAt(&game->grid, 0, 0)->is_spikes = true;
-	Grid_Build(&game->grid);
+
+    // Spike border
+    for (u32 i = 0; i < game->grid.grid_w; i++) {
+        Game_CreateHazardAt(game, HAZARD_SPIKES, i, 0.f);
+        Game_CreateHazardAt(game, HAZARD_SPIKES, i, game->grid.grid_h - 1);
+    }
+
+    for (u32 i = 1; i < game->grid.grid_h - 1; i++) {
+        Game_CreateHazardAt(game, HAZARD_SPIKES, 0.f, i);
+        Game_CreateHazardAt(game, HAZARD_SPIKES, game->grid.grid_w - 1, i);
+    }
     
 	// Create and Init Bottom Screen UI
     ui_layout_t button_layout;

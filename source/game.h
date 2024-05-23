@@ -49,6 +49,7 @@ void Game_DoOpponentActing(game_t* game);
 void Game_DoSelectingTile(game_t* game);
 
 character_t* Game_CreateCharacterAt(game_t* game, character_type_e type, bool is_player_controlled, float tile_x, float tile_y);
+hazard_t* Game_CreateHazardAt(game_t* game, hazard_type_e type, float tile_x, float tile_y);
 
 bool Game_IsValidTileSelection(game_t* game, vec2_t next_tile_pos);
 void Game_UpdateSelectedTiles(game_t* game, vec2_t next_tile_pos);

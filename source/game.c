@@ -47,8 +47,9 @@ void Game_Draw(game_t* game) {
     C2D_ViewTranslate(-game->view_pos.x + TOP_SCREEN_WIDTH / 2, -game->view_pos.y + TOP_SCREEN_HEIGHT / 2);
 
     Grid_Draw(&game->grid);
-    Board_Draw(&game->board, &game->grid);
+    Board_Draw(&game->board, game->sheet, &game->grid);
 
+    // Draw tile selection cursor
     if (game->state == GAME_STATE_SELECTING_TILE) {
         C2D_Sprite tile_selected_sprite;
         C2D_SpriteFromSheet(&tile_selected_sprite, game->sheet, sprites_selectedtile_idx);
@@ -163,20 +164,26 @@ void Game_DoSelectingTile(game_t* game) {
 character_t* Game_CreateCharacterAt(game_t* game, character_type_e type, bool is_player_controlled, float tile_x,
                                     float tile_y) {
     character_t* character = Board_NewCharacter(&game->board);
-    Character_Init(character, game->sheet, type, is_player_controlled, tile_x, tile_y);
+    Character_Init(character, type, is_player_controlled, tile_x, tile_y);
 
     return character;
 }
 
+hazard_t* Game_CreateHazardAt(game_t* game, hazard_type_e type, float tile_x, float tile_y) {
+    hazard_t* hazard = Board_NewHazard(&game->board);
+    Hazard_Init(hazard, tile_x, tile_y, type);
+
+    return hazard;
+}
+
 bool Game_IsValidTileSelection(game_t* game, vec2_t next_tile_pos) {
-    return
-        // Position in grid
-        (next_tile_pos.y >= 0 && next_tile_pos.y <= game->grid.grid_h - 1 && next_tile_pos.x >= 0 &&
-         next_tile_pos.x <= game->grid.grid_w - 1 &&
-         // Move speed & backtracking
-         (!(game->current_tile_index >= Board_GetCurrentSelectedPlayerControlledCharacter(&game->board)->move_speed) ||
-          (next_tile_pos.x == game->selected_tiles[game->current_tile_index - 1].x &&
-           next_tile_pos.y == game->selected_tiles[game->current_tile_index - 1].y)));
+    bool in_bounds = next_tile_pos.y >= 0 && next_tile_pos.y <= game->grid.grid_h - 1 && next_tile_pos.x >= 0 &&
+                     next_tile_pos.x <= game->grid.grid_w - 1;
+    bool in_range =
+        game->current_tile_index < Board_GetCurrentSelectedPlayerControlledCharacter(&game->board)->move_speed;
+    bool is_backtrack = next_tile_pos.x == game->selected_tiles[game->current_tile_index - 1].x &&
+                        next_tile_pos.y == game->selected_tiles[game->current_tile_index - 1].y;
+    return in_bounds && (in_range || is_backtrack);
 }
 
 void Game_UpdateSelectedTiles(game_t* game, vec2_t next_tile_pos) {

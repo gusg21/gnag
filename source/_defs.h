@@ -5,6 +5,8 @@
 
 #define CTR_PRINTF(fmt, ...) fprintf(stderr, "[GNAG-INFO] " fmt __VA_OPT__(,) __VA_ARGS__)
 
+#define UNUSED(x) (void)(x)
+
 #define MIN(x,y) (x < y) ? x : y
 #define MAX(x,y) (x > y) ? x : y
 

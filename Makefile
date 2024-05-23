@@ -47,7 +47,7 @@ GFXBUILD	:=	$(ROMFS)/gfx
 #---------------------------------------------------------------------------------
 ARCH	:=	-march=armv6k -mtune=mpcore -mfloat-abi=hard -mtp=soft
 
-CFLAGS	:=	-g -Wall -Werror -O2 -mword-relocations \
+CFLAGS	:=	-g -Wall -Werror -Wextra -O2 -mword-relocations \
 			-ffunction-sections \
 			$(ARCH)
 

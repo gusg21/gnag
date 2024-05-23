@@ -97,7 +97,7 @@ void UILayout_LoadButtonsFromJSON(ui_layout_t* layout, cJSON* json) {
         if (updater_type != NULL) {  // optional
             layout->button_datas[index].updater_type = updater_type->valueint;
         } else {
-            layout->button_datas[index].updater_type = BUTTON_CALLBACK_NONE;
+            layout->button_datas[index].updater_type = BUTTON_UPDATER_NONE;
         }
 
         // Mark Button Data as initialized

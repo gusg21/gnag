@@ -12,6 +12,7 @@ void Board_Init(board_t* board) {
            sizeof(bool) * BOARD_MAX_PLAYER_CONTROLLED_CHARACTER_COUNT);
     memset(board->player_controlled_action_queue, 0,
            sizeof(ordered_character_action_t) * BOARD_MAX_PLAYER_CONTROLLED_CHARACTER_ACTION_QUEUE_LENGTH);
+    memset(board->hazards, 0, sizeof(hazard_t) * BOARD_MAX_HAZARDS);
 
     board->next_character_index = 0;
     board->action_read_index = 0;
@@ -23,6 +24,8 @@ void Board_Init(board_t* board) {
 
     board->next_player_controlled_action_index = 0;
     board->next_player_controlled_action_top_order = 0;
+
+    board->next_hazard_index = 0;
 }
 
 void Board_Update(board_t* board, float delta_secs) {
@@ -42,10 +45,17 @@ void Board_Update(board_t* board, float delta_secs) {
     }
 }
 
-void Board_Draw(board_t* board, grid_t* grid) {
-    for (u32 characterIndex = 0; characterIndex < BOARD_MAX_CHARACTER_COUNT; characterIndex++) {
-        character_t* character = &board->characters[characterIndex];
-        if (character->initialized) Character_Draw(character, grid);
+void Board_Draw(board_t* board, C2D_SpriteSheet sheet, grid_t* grid) {
+    // Draw hazards
+    for (u32 hazard_index = 0; hazard_index < BOARD_MAX_HAZARDS; hazard_index++) {
+        hazard_t* hazard = &board->hazards[hazard_index];
+        if (hazard->initialized) Hazard_Draw(hazard, sheet, grid);
+    }
+
+    // Draw characters
+    for (u32 character_index = 0; character_index < BOARD_MAX_CHARACTER_COUNT; character_index++) {
+        character_t* character = &board->characters[character_index];
+        if (character->initialized) Character_Draw(character, sheet, grid);
     }
 }
 
@@ -99,7 +109,8 @@ void Board_UndoLastPlayerControlledCharacterAction(board_t* board) {
 
         board->current_player_controlled_character_index = Board_GetIndexByCharacter(board, current_char);
 
-        if (board->player_controlled_action_queue[board->next_player_controlled_action_index].action.type == CHARACTER_ACTION_MOVE) {
+        if (board->player_controlled_action_queue[board->next_player_controlled_action_index].action.type ==
+            CHARACTER_ACTION_MOVE) {
             current_char->moved = false;
         }
 
@@ -184,7 +195,7 @@ character_t* Board_GetCurrentSelectedPlayerControlledCharacter(board_t* board) {
     return board->player_controlled_characters[board->current_player_controlled_character_index];
 }
 
-s32 Board_GetPlayerControlledCharacterCount(board_t* board) {
+u32 Board_GetPlayerControlledCharacterCount(board_t* board) {
     for (u32 index = 0; index < BOARD_MAX_PLAYER_CONTROLLED_CHARACTER_COUNT; index++) {
         if (board->player_controlled_characters[index] == NULL ||
             !board->player_controlled_characters[index]->initialized) {
@@ -194,7 +205,7 @@ s32 Board_GetPlayerControlledCharacterCount(board_t* board) {
     return 0;
 }
 
-void Board_SelectNotYetActedCharacter(board_t* board) {
+void Board_SelectNotYetActedPlayerControlledCharacter(board_t* board) {
     for (u32 index = 0; index < BOARD_MAX_PLAYER_CONTROLLED_CHARACTER_COUNT; index++) {
         // if exists a PCC that's actually real (non-NULL) and also has not acted, select it
         if (board->player_controlled_characters[index] != NULL &&
@@ -209,13 +220,13 @@ void Board_SelectNotYetActedCharacter(board_t* board) {
 void Board_SelectPreviousPlayerControlledCharacter(board_t* board) {
     board->current_player_controlled_character_index--;
     if (board->current_player_controlled_character_index < 0) {
-        board->current_player_controlled_character_index = Board_GetPlayerControlledCharacterCount(board) - 1;
+        board->current_player_controlled_character_index = ((s32)Board_GetPlayerControlledCharacterCount(board)) - 1;
     }
 }
 
 void Board_SelectNextPlayerControlledCharacter(board_t* board) {
     board->current_player_controlled_character_index++;
-    if (board->current_player_controlled_character_index > Board_GetPlayerControlledCharacterCount(board) - 1) {
+    if (board->current_player_controlled_character_index > ((s32)Board_GetPlayerControlledCharacterCount(board)) - 1) {
         board->current_player_controlled_character_index = 0;
     }
 }
@@ -266,4 +277,11 @@ u32 Board_GetIndexByCharacter(board_t* board, character_t* character) {
     }
     CTR_PRINTF("PCC not found");
     return BOARD_MAX_PLAYER_CONTROLLED_CHARACTER_COUNT;
+}
+
+hazard_t* Board_NewHazard(board_t* board) {
+    hazard_t* hazard = &board->hazards[board->next_hazard_index];
+    board->next_hazard_index++;
+    
+    return hazard;
 }
