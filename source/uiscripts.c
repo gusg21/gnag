@@ -55,6 +55,19 @@ void (*UIScripts_GetFillBarUpdaterByType(fill_bar_updater_type_e type))(fill_bar
     }
 }
 
+void (*UIScripts_GetImageUpdaterByType(image_updater_type_e type))(image_t*) {
+    switch (type) {
+        case IMAGE_UPDATER_NONE:
+            return NULL;
+        // Enemy themed BG vs player themed BG? Character themed BG?
+        case IMAGE_UPDATER_INFO:
+            return NULL;
+
+        default:
+            return NULL;
+    }
+}
+
 void (*UIScripts_GetTextUpdaterByType(text_updater_type_e type))(text_t*) {
     switch (type) {
         case TEXT_UPDATER_NONE:

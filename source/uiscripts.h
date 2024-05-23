@@ -4,6 +4,7 @@
 #include "button.h"
 #include "fillbar.h"
 #include "text.h"
+#include "image.h"
 
 typedef struct game_s game_t;
 
@@ -11,6 +12,7 @@ void UIScripts_SetGame(game_t* game);
 void (*UIScripts_GetButtonCallbackByType(button_callback_type_e type))(button_t*);
 void (*UIScripts_GetButtonUpdaterByType(button_updater_type_e type))(button_t*);
 void (*UIScripts_GetFillBarUpdaterByType(fill_bar_updater_type_e type))(fill_bar_t*);
+void (*UIScripts_GetImageUpdaterByType(image_updater_type_e type))(image_t*);
 void (*UIScripts_GetTextUpdaterByType(text_updater_type_e type))(text_t*);
 
 // Callbacks

@@ -5,7 +5,7 @@
             "Name": "Character Select Left",
             "Pos": [4, 4],
             "Size": [24, 24],
-            "Sprite Index": 1,
+            "Sprite Index": 9,
             "Color": [0.7, 0.7, 0.7, 1.0],
             "Callback": 3,
             "Updater": 1
@@ -15,7 +15,7 @@
             "Name": "Character Select Right",
             "Pos": [292, 4],
             "Size": [24, 24],
-            "Sprite Index": 1,
+            "Sprite Index": 10,
             "Color": [0.7, 0.7, 0.7, 1.0],
             "Callback": 4,
             "Updater": 1
@@ -25,7 +25,7 @@
             "Name": "Move",
             "Pos": [4, 44],
             "Size": [152, 32],
-            "Sprite Index": 1,
+            "Sprite Index": 0,
             "Color": [0.7, 0.2, 0.3, 1.0],
             "Callback": 1,
             "Updater": 2
@@ -35,7 +35,7 @@
             "Name": "Action 1",
             "Pos": [4, 80],
             "Size": [116, 32],
-            "Sprite Index": 1,
+            "Sprite Index": 0,
             "Color": [0.1, 1.0, 0.4, 1.0],
             "Callback": 0,
             "Updater": 0
@@ -45,7 +45,7 @@
             "Name": "Action 2",
             "Pos": [4, 116],
             "Size": [116, 32],
-            "Sprite Index": 1,
+            "Sprite Index": 0,
             "Color": [0.1, 1.0, 0.4, 1.0],
             "Callback": 0,
             "Updater": 0
@@ -56,7 +56,7 @@
             "Name": "Action 3",
             "Pos": [4, 152],
             "Size": [116, 32],
-            "Sprite Index": 1,
+            "Sprite Index": 0,
             "Color": [0.1, 1.0, 0.4, 1.0],
             "Callback": 0,
             "Updater": 0
@@ -67,7 +67,7 @@
             "Name": "Action 1 Special",
             "Pos": [124, 80],
             "Size": [32, 32],
-            "Sprite Index": 1,
+            "Sprite Index": 2,
             "Color": [0.1, 1.0, 0.4, 1.0],
             "Callback": 0,
             "Updater": 0
@@ -78,7 +78,7 @@
             "Name": "Action 2 Special",
             "Pos": [124, 116],
             "Size": [32, 32],
-            "Sprite Index": 1,
+            "Sprite Index": 2,
             "Color": [0.1, 1.0, 0.4, 1.0],
             "Callback": 0,
             "Updater": 0
@@ -89,30 +89,8 @@
             "Name": "Action 3 Special",
             "Pos": [124, 152],
             "Size": [32, 32],
-            "Sprite Index": 1,
+            "Sprite Index": 2,
             "Color": [0.1, 1.0, 0.4, 1.0],
-            "Callback": 0,
-            "Updater": 0
-
-        },
-        {
-            "Index": 9,
-            "Name": "Player Panel",
-            "Pos": [4, 188],
-            "Size": [152, 48],
-            "Sprite Index": 1,
-            "Color": [1.0, 1.0, 0.2, 1.0],
-            "Callback": 0,
-            "Updater": 0
-
-        },
-        {
-            "Index": 10,
-            "Name": "Info Panel",
-            "Pos": [164, 44],
-            "Size": [152, 156],
-            "Sprite Index": 1,
-            "Color": [0.2, 0.2, 0.2, 1.0],
             "Callback": 0,
             "Updater": 0
 
@@ -121,8 +99,8 @@
             "Index": 11,
             "Name": "Confirm",
             "Pos": [164, 204],
-            "Size": [150, 32],
-            "Sprite Index": 1,
+            "Size": [152, 32],
+            "Sprite Index": 0,
             "Color": [0.0, 1.0, 0.0, 1.0],
             "Callback": 2,
             "Updater": 3
@@ -130,12 +108,45 @@
         }
     ],
 
+    "Images": [
+        {
+            "Index": 0,
+            "Name": "Info Panel",
+            "Pos": [164, 44],
+            "Size": [152, 156],
+            "Sprite Index": 0,
+            "Color": [1.0, 0.7, 0.7, 1.0],
+            "Render On Top": false,
+            "Updater": 0
+        },
+        {
+            "Index": 1,
+            "Name": "Player Panel",
+            "Pos": [4, 188],
+            "Size": [152, 48],
+            "Sprite Index": 0,
+            "Color": [1.0, 1.0, 0.2, 1.0],
+            "Render On Top": false,
+            "Updater": 0
+        },
+        {
+            "Index": 2,
+            "Name": "Top Panel",
+            "Pos": [32, 4],
+            "Size": [256, 32],
+            "Sprite Index": 0,
+            "Color": [1.0, 1.0, 0.2, 1.0],
+            "Render On Top": false,
+            "Updater": 0
+        }
+    ],
+
     "Fillbars": [
         {
             "Index": 0,
             "Name": "Energy Bar",
-            "Pos": [4, 32],
-            "Size": [312, 8],
+            "Pos": [36, 28],
+            "Size": [248, 4],
             "Background Color": [0.2, 0.2, 0.2, 1.0],
             "Fill Color": [0.2, 0.6, 1.0, 1.0],
             "Max Value": 5.0,
@@ -160,6 +171,13 @@
             "Pos": [160, 4],
             "Centered": true,
             "Updater": 1
+        },
+        {
+            "Index": 1,
+            "Initial Text": "Info Panel Text",
+            "Pos": [240, 48],
+            "Centered": true,
+            "Updater": 2
         }
     ]
 }

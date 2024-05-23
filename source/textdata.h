@@ -7,7 +7,8 @@
 
 typedef enum {
     TEXT_UPDATER_NONE,
-    TEXT_UPDATER_SELECTED_CHARACTER_NAME
+    TEXT_UPDATER_SELECTED_CHARACTER_NAME,
+    TEXT_UPDATER_INFO_PANEL
 } text_updater_type_e;
 
 typedef struct text_data_s {

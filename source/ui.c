@@ -14,6 +14,14 @@ void UI_Init(ui_t* ui, game_t* game, ui_layout_t* layout) {
 void UI_Destroy(ui_t* ui) { C2D_SpriteSheetFree(ui->sheet); }
 
 void UI_Update(ui_t* ui) {
+    // Update Images
+    for (u32 i = 0; i < UILAYOUT_MAX_IMAGE_COUNT; i++) {
+        image_t* image = &ui->images[i];
+        if (image->initialized) {
+            Image_Update(image);
+        }
+    }
+
     // Update buttons
     for (u32 i = 0; i < UILAYOUT_MAX_BUTTON_COUNT; i++) {
         button_t* button = &ui->buttons[i];
@@ -40,6 +48,14 @@ void UI_Update(ui_t* ui) {
 }
 
 void UI_Draw(ui_t* ui) {
+    // Draw Images
+    for (u32 i = 0; i < UILAYOUT_MAX_IMAGE_COUNT; i++) {
+        image_t* image = &ui->images[i];
+        if (image->initialized) {
+            Image_Draw(image);
+        }
+    }
+
     // Draw Buttons
     for (u32 i = 0; i < UILAYOUT_MAX_BUTTON_COUNT; i++) {
         button_t* button = &ui->buttons[i];
@@ -69,6 +85,7 @@ void UI_CreateFromLayout(ui_t* ui, ui_layout_t* layout) {
     memset(ui->buttons, 0, sizeof(button_t) * UILAYOUT_MAX_BUTTON_COUNT);
     memset(ui->fill_bars, 0, sizeof(fill_bar_t) * UILAYOUT_MAX_FILL_BAR_COUNT);
     memset(ui->texts, 0, sizeof(text_t) * UILAYOUT_MAX_TEXT_COUNT);
+    memset(ui->images, 0, sizeof(image_t) * UILAYOUT_MAX_IMAGE_COUNT);
 
     // Load buttons
     for (u32 i = 0; i < UILAYOUT_MAX_BUTTON_COUNT; i++) {
@@ -90,9 +107,16 @@ void UI_CreateFromLayout(ui_t* ui, ui_layout_t* layout) {
             Text_Init(&ui->texts[i], layout->text_datas[i]);
         }
     }
+
+    // Load images
+    for (u32 i = 0; i < UILAYOUT_MAX_IMAGE_COUNT; i++) {
+        if (layout->image_datas[i].initialized) {
+            Image_Init(&ui->images[i], layout->image_datas[i], ui->sheet);
+        }
+    }
 }
 
-void UI_DrawUIImage(ui_t* ui, u32 sprite_idx, vec2_t pos, vec2_t piv) {
+void UI_DrawSimpleSprite(ui_t* ui, u32 sprite_idx, vec2_t pos, vec2_t piv) {
     C2D_Sprite sprite;
     C2D_SpriteFromSheet(&sprite, ui->sheet, sprite_idx);
     C2D_SpriteSetCenter(&sprite, piv.x, piv.y);

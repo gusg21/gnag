@@ -24,9 +24,9 @@ void Text_Update(text_t* text) {
 
 void Text_Draw(text_t* text) {
     if (text->centered)
-        C2D_DrawText(&text->text, C2D_AlignCenter, text->pos.x, text->pos.y, 0.f, 1.0f, 1.0f);
+        C2D_DrawText(&text->text, C2D_AlignCenter, text->pos.x, text->pos.y, 0.f, 0.8f, 0.8f);
     else
-        C2D_DrawText(&text->text, C2D_AlignLeft, text->pos.x, text->pos.y, 0.f, 1.0f, 1.0f);
+        C2D_DrawText(&text->text, C2D_AlignLeft, text->pos.x, text->pos.y, 0.f, 0.8f, 0.8f);
 }
 
 void Text_SetText(text_t* text, const char* characters) {

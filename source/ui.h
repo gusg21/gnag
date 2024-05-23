@@ -7,6 +7,7 @@
 #include "button.h"
 #include "fillbar.h"
 #include "text.h"
+#include "image.h"
 
 typedef struct game_s game_t;
 
@@ -16,6 +17,7 @@ typedef struct {
     button_t buttons[UILAYOUT_MAX_BUTTON_COUNT];
     fill_bar_t fill_bars[UILAYOUT_MAX_FILL_BAR_COUNT];
     text_t texts[UILAYOUT_MAX_TEXT_COUNT];
+    image_t images[UILAYOUT_MAX_IMAGE_COUNT];
 } ui_t;
 
 void UI_Init(ui_t* ui, game_t* game, ui_layout_t* ui_layout);
@@ -24,8 +26,5 @@ void UI_Update(ui_t* ui);
 void UI_Draw(ui_t* ui);
 
 void UI_CreateFromLayout(ui_t* ui, ui_layout_t* ui_layout);
-
-// Simpler drawing for multiple UI sprites
-void UI_DrawUIImage(ui_t* ui, u32 sprite_idx, vec2_t pos, vec2_t piv);
 
 #endif
