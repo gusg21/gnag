@@ -20,6 +20,12 @@ void Hazard_Draw(hazard_t* hazard, C2D_SpriteSheet sheet, grid_t* grid) {
         C2D_SpriteSetCenter(&hazard_sprite, 0.5f, 0.75f);
         break;
     }
+    case HAZARD_WATER:
+    {
+        C2D_SpriteFromSheet(&hazard_sprite, sheet, sprites_watertile_idx);
+        C2D_SpriteSetCenter(&hazard_sprite, 0.5f, 0.6f);
+        break;
+    }
 
     case HAZARD_NONE:
     default:

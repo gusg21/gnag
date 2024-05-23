@@ -68,6 +68,8 @@ int main() {
         Game_CreateHazardAt(game, HAZARD_SPIKES, 0.f, i);
         Game_CreateHazardAt(game, HAZARD_SPIKES, game->grid.grid_w - 1, i);
     }
+
+    Game_CreateHazardAt(game, HAZARD_WATER, 1.f, 1.f);
     
 	// Create and Init Bottom Screen UI
     ui_layout_t button_layout;
