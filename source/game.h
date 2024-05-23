@@ -40,6 +40,8 @@ typedef struct game_s {
 
 	selecting_tile_type_e st_type;
 	vec2_t selected_tiles[CHARACTER_ACTION_MAX_TILES_SELECTED];
+	u32 tile_select_length;
+	u32 tile_select_width;
 	u32 current_tile_index;
 
 } game_t;
@@ -61,6 +63,6 @@ hazard_t* Game_CreateHazardAt(game_t* game, hazard_type_e type, float tile_x, fl
 bool Game_IsValidTileSelection(game_t* game, vec2_t next_tile_pos);
 void Game_UpdateSelectedTiles(game_t* game, vec2_t next_tile_pos);
 void Game_UpdateGameState(game_t* game, game_state_e state);
-void Game_UpdateSelectionType(game_t* game, selecting_tile_type_e type);
+void Game_UpdateSelectionType(game_t* game, selecting_tile_type_e type, u32 sel_length, u32 sel_width);
 
 #endif // GAME_H
