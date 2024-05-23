@@ -30,8 +30,10 @@ typedef struct game_s {
 	vec2_t view_pos;
 	vec2_t focus_pos;
 
-	vec2_t* selected_tiles; 
+	vec2_t selected_tiles[CHARACTER_ACTION_MAX_MOVE_DESTINATIONS];
 	vec2_t selected_tile_pos;
+	vec2_t prev_tile_pos;
+	u32 current_tile_index;
 
 } game_t;
 
@@ -48,8 +50,8 @@ void Game_DoSelectingTile(game_t* game);
 
 character_t* Game_CreateCharacterAt(game_t* game, character_type_e type, bool is_player_controlled, float tile_x, float tile_y);
 
-bool Game_IsValidTileSelection(game_t* game);
-void Game_UpdateSelectedTiles(game_t* game);
+bool Game_IsValidTileSelection(game_t* game, vec2_t next_tile_pos);
+void Game_UpdateSelectedTiles(game_t* game, vec2_t next_tile_pos);
 void Game_UpdateGameState(game_t* game, game_state_e state);
 
 #endif // GAME_H
