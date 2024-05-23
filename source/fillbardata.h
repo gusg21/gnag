@@ -5,7 +5,8 @@
 
 typedef enum {
     FILL_BAR_UPDATER_NONE,
-    FILL_BAR_UPDATER_HEALTH
+    FILL_BAR_UPDATER_HEALTH,
+    FILL_BAR_UPDATER_MOVEMENT
 } fill_bar_updater_type_e;
 
 typedef struct {

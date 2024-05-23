@@ -25,6 +25,7 @@ void UIScripts_ButtonPlayerTurnUpdater(button_t* button);
 void UIScripts_ButtonMoveUpdater(button_t* button);
 void UIScripts_ButtonConfirmUpdater(button_t* button);
 void UIScripts_FillBarHealthUpdater(fill_bar_t* fill_bar);
+void UIScripts_FillBarMovementUpdater(fill_bar_t* fill_bar);
 void UIScripts_TextSelectedCharacterNameUpdater(text_t* text);
 
 #endif // UI_SCRIPTS_H

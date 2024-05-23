@@ -47,6 +47,8 @@ void (*UIScripts_GetFillBarUpdaterByType(fill_bar_updater_type_e type))(fill_bar
             return NULL;
         case FILL_BAR_UPDATER_HEALTH:
             return UIScripts_FillBarHealthUpdater;
+        case FILL_BAR_UPDATER_MOVEMENT:
+            return UIScripts_FillBarMovementUpdater;
 
         default:
             return NULL;
@@ -132,6 +134,10 @@ void UIScripts_ButtonConfirmUpdater(button_t* button) {
 void UIScripts_FillBarHealthUpdater(fill_bar_t* fill_bar) {
     // Update no matter the state :)
     FillBar_SetValue(fill_bar, Board_GetCurrentSelectedPlayerControlledCharacter(&UIScripts_S_Game->board)->health);
+}
+
+void UIScripts_FillBarMovementUpdater(fill_bar_t* fill_bar) {
+    FillBar_SetValue(fill_bar, Board_GetCurrentSelectedPlayerControlledCharacter(&UIScripts_S_Game->board)->move_speed - UIScripts_S_Game->current_tile_index);
 }
 
 void UIScripts_TextSelectedCharacterNameUpdater(text_t* text) {
