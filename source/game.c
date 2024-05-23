@@ -79,7 +79,12 @@ void Game_DoPlayerTurn(game_t* game) {
                 .player_controlled_characters_acted_flags[game->board.current_player_controlled_character_index] =
                 false;
         }
+    } else if (Input_IsButtonPressed(KEY_L)){
+        Board_SelectPreviousPlayerControlledCharacter(&game->board);
+    } else if (Input_IsButtonPressed(KEY_R)){
+        Board_SelectNextPlayerControlledCharacter(&game->board);
     }
+
     game->focus_pos =
         Character_GetCenterPosition(Board_GetCurrentSelectedPlayerControlledCharacter(&game->board), &game->grid);
 }
