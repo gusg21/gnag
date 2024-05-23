@@ -8,7 +8,7 @@
             "Sprite Index": 1,
             "Color": [0.7, 0.7, 0.7, 1.0],
             "Callback": 3,
-            "Updater": 0
+            "Updater": 1
         },
         {
             "Index": 1,
@@ -18,7 +18,7 @@
             "Sprite Index": 1,
             "Color": [0.7, 0.7, 0.7, 1.0],
             "Callback": 4,
-            "Updater": 0
+            "Updater": 1
         },
         {
             "Index": 2,
