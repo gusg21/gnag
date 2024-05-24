@@ -253,10 +253,8 @@ void UILayout_LoadTextsFromJSON(ui_layout_t* layout, cJSON* json) {
         cJSON* updater_type = cJSON_GetObjectItem(text, "Updater");
         if (updater_type != NULL) {  // optional
             layout->text_datas[index].updater_type = updater_type->valueint;
-            CTR_PRINTF("Text updater type# %d\n", updater_type->valueint);
         } else {
             layout->text_datas[index].updater_type = TEXT_UPDATER_NONE;
-            CTR_PRINTF("No updater field for text, loading 0\n");
         }
 
         // Mark Fill Bar Data as initialized

@@ -7,5 +7,3 @@ ColumnLimit: 120
 DerivePointerAlignment: false
 PointerAlignment: Left
 IncludeBlocks: Preserve
-
-...

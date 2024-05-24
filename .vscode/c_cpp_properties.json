@@ -6,7 +6,9 @@
                 "${workspaceFolder}/**",
                 "C:\\devkitPro\\libctru\\include",
                 "C:\\devkitPro\\devkitARM\\arm-none-eabi\\include",
-                "${workspaceFolder}/build/"
+                "${workspaceFolder}/build/",
+                "C:\\devkitPro\\portlibs\\3ds\\include",
+                "C:\\devkitPro\\portlibs\\3ds\\include\\opus",
             ],
             "defines": [
                 "_DEBUG",

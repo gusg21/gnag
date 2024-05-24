@@ -8,3 +8,5 @@ build/
 gnag.elf
 
 romfs/
+
+tools/

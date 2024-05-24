@@ -12,6 +12,7 @@
 #include <time.h>
 
 #include "_defs.h"
+#include "audio.h"
 #include "button.h"
 #include "game.h"
 #include "input.h"
@@ -31,14 +32,23 @@ int main() {
     consoleDebugInit(debugDevice_SVC);
 
     CTR_PRINTF("gnag main()\n");
+    CTR_PRINTF("available memory: %ld\n", osGetMemRegionSize(MEMREGION_APPLICATION));
 
     // Init libs
     romfsInit();
+    ndspInit();
     cfguInit();
     gfxInitDefault();
     C3D_Init(C3D_DEFAULT_CMDBUF_SIZE);
     C2D_Init(C2D_DEFAULT_MAX_OBJECTS);
     C2D_Prepare();
+
+    // 804Mhz mode
+    osSetSpeedupEnable(true);
+
+    // Load audio
+    audio_t audio;
+    Audio_Init(&audio);
 
     // Create screens
     C3D_RenderTarget* top_screen = C2D_CreateScreenTarget(GFX_TOP, GFX_LEFT);
