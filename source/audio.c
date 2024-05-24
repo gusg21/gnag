@@ -60,7 +60,7 @@ static bool Audio_FillWaveBuffer(OggOpusFile* opus_file, ndspWaveBuf* wave_buffe
     osTickCounterStart(&wave_fill_timer);
 
     // Decode samples until our waveBuf is full
-    u32 total_samples = 0;
+    s32 total_samples = 0;
     while (total_samples < AUDIO_SAMPLE_COUNT) {
         s16* buffer = wave_buffer->data_pcm16 + (total_samples * AUDIO_CHANNELS_PER_SAMPLE);
         size_t bufferSize = (AUDIO_SAMPLE_COUNT - total_samples) * AUDIO_CHANNELS_PER_SAMPLE;
@@ -107,7 +107,7 @@ static void Audio_DecodingThread(void* audio_ptr) {
     while (true) {  // Whilst the quit flag is unset,
                     // search our waveBufs and fill any that aren't currently
                     // queued for playback (i.e, those that are 'done')
-        CTR_PRINTF("Decoding more data...");
+        CTR_PRINTF("Decoding more data...\n");
 
         for (size_t i = 0; i < AUDIO_NUM_WAVE_BUFFERS; ++i) {
             if (audio->wave_bufs[i].status != NDSP_WBUF_DONE) {
@@ -162,7 +162,7 @@ void Audio_Init(audio_t* audio) {
     // Setup wavebufs
     memset(&audio->wave_bufs, 0, sizeof(ndspWaveBuf) * AUDIO_NUM_WAVE_BUFFERS);
     for (size_t i = 0; i < AUDIO_NUM_WAVE_BUFFERS; i++) {
-        audio->wave_bufs[i].data_vaddr = audio->audio_buf + (AUDIO_WAVE_BUFFER_SIZE * i);
+        audio->wave_bufs[i].data_vaddr = audio->audio_buf + (AUDIO_SAMPLE_COUNT * AUDIO_CHANNELS_PER_SAMPLE * i);
         audio->wave_bufs[i].status = NDSP_WBUF_DONE;
     }
 
