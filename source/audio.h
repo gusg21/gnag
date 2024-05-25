@@ -13,15 +13,33 @@
 #define AUDIO_THREAD_CORE -1               // any core
 #define AUDIO_THREAD_STACK_SIZE 32 * 1024  // 32K stack
 
+#define AUDIO_MAX_AUDIO_INSTANCES 64
+#define AUDIO_NUM_INSTANCE_CHANNELS 23
+
+struct audio_s;
+
 typedef struct {
+    bool playing;
     ndspWaveBuf wave_bufs[AUDIO_NUM_WAVE_BUFFERS];
     s16* audio_buf;
-    LightEvent event;
     Thread decoding_thread_id;
     OggOpusFile* opus_file;
+    u32 channel;
+    struct audio_s* audio;
+} audio_instance_t;
+
+typedef struct audio_s {
+    audio_instance_t instances[AUDIO_MAX_AUDIO_INSTANCES];
+    u32 next_instance_index;
+    u32 playing_channels;
+    LightEvent event;
 } audio_t;
 
 void Audio_Init(audio_t* audio);
+audio_instance_t* Audio_Play(audio_t* audio, const char* opus_path);
+u32 Audio_FindOpenChannel(audio_t* audio);
+void Audio_FlagChannelAsPlaying(audio_t* audio, u32 channel_index);
+void Audio_FlagChannelAsNotPlaying(audio_t* audio, u32 channel_index);
 void Audio_Destroy(audio_t* audio);
 
 #endif  // AUDIO_H

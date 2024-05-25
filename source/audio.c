@@ -3,15 +3,15 @@
 #include <3ds.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include <sys/stat.h>
 #include <string.h>
+#include <sys/stat.h>
 
 #include <opus/opusfile.h>
 
 #include "_defs.h"
 #include "panic.h"
 
-static const char* Audio_ErrorCodeToString(int error) {
+static const char* Audio_S_ErrorCodeToString(int error) {
     switch (error) {
         case OP_FALSE:
             return "OP_FALSE: A request did not succeed.";
@@ -55,10 +55,7 @@ static const char* Audio_ErrorCodeToString(int error) {
 }
 
 // Returns true -> still playing, false -> all done :)
-static bool Audio_FillWaveBuffer(OggOpusFile* opus_file, ndspWaveBuf* wave_buffer) {
-    TickCounter wave_fill_timer;
-    osTickCounterStart(&wave_fill_timer);
-
+static bool Audio_S_FillWaveBuffer(OggOpusFile* opus_file, ndspWaveBuf* wave_buffer, u32 channel) {
     // Decode samples until our waveBuf is full
     s32 total_samples = 0;
     while (total_samples < AUDIO_SAMPLE_COUNT) {
@@ -73,7 +70,7 @@ static bool Audio_FillWaveBuffer(OggOpusFile* opus_file, ndspWaveBuf* wave_buffe
 
             Panic_Panic();
             CTR_PRINTF("op_read_stereo: error %d\n", samples_or_error_code);
-            CTR_PRINTF("%s\n", Audio_ErrorCodeToString(samples_or_error_code));
+            CTR_PRINTF("%s\n", Audio_S_ErrorCodeToString(samples_or_error_code));
             break;
         }
 
@@ -87,11 +84,8 @@ static bool Audio_FillWaveBuffer(OggOpusFile* opus_file, ndspWaveBuf* wave_buffe
 
     // Pass samples to NDSP
     wave_buffer->nsamples = total_samples;
-    ndspChnWaveBufAdd(0, wave_buffer);
+    ndspChnWaveBufAdd(channel, wave_buffer);
     DSP_FlushDataCache(wave_buffer->data_pcm16, total_samples * AUDIO_CHANNELS_PER_SAMPLE * sizeof(int16_t));
-
-    osTickCounterUpdate(&wave_fill_timer);
-    CTR_PRINTF("FillWaveBuffer took %lfms (filled %lfms buffer)\n", osTickCounterRead(&wave_fill_timer), (total_samples / (float)AUDIO_SAMPLE_RATE) * 1000.0f);
 
     return true;
 }
@@ -101,20 +95,21 @@ static void Audio_SoundFrameCallback(void* audio_ptr) {
     LightEvent_Signal(&audio->event);
 }
 
-static void Audio_DecodingThread(void* audio_ptr) {
-    audio_t* audio = (audio_t*)audio_ptr;
+static void AudioInstance_DecodingThread(void* audio_ptr) {
+    audio_instance_t* audio = (audio_instance_t*)audio_ptr;
 
-    while (true) {  // Whilst the quit flag is unset,
+    while (audio->playing) {  // Whilst the quit flag is unset,
                     // search our waveBufs and fill any that aren't currently
                     // queued for playback (i.e, those that are 'done')
-        CTR_PRINTF("Decoding more data...\n");
 
         for (size_t i = 0; i < AUDIO_NUM_WAVE_BUFFERS; ++i) {
             if (audio->wave_bufs[i].status != NDSP_WBUF_DONE) {
                 continue;
             }
 
-            if (!Audio_FillWaveBuffer(audio->opus_file, &audio->wave_bufs[i])) {  // Playback complete
+            if (!Audio_S_FillWaveBuffer(audio->opus_file, &audio->wave_bufs[i], audio->channel)) {  // Playback complete
+                audio->playing = false;
+                Audio_FlagChannelAsNotPlaying(audio->audio, audio->channel);
                 return;
             }
         }
@@ -122,52 +117,64 @@ static void Audio_DecodingThread(void* audio_ptr) {
         // Wait for a signal that we're needed again before continuing,
         // so that we can yield to other things that want to run
         // (Note that the 3DS uses cooperative threading)
-        LightEvent_Wait(&audio->event);
+        LightEvent_Wait(&audio->audio->event);
     }
 }
 
 void Audio_Init(audio_t* audio) {
-    // Load more data event
-    LightEvent_Init(&audio->event, RESET_ONESHOT);
-
-    // Load the opus file
-    int error = 0;
-    const char* opus_file_path = "romfs:/audio/Deep-Threats.opus";
-    audio->opus_file = op_open_file(opus_file_path, &error);
-    if (error != 0) {
-        Panic_Panic();
-        CTR_PRINTF("Failed to load opus file from %s\n", opus_file_path);
-        CTR_PRINTF("%s\n", Audio_ErrorCodeToString(error));
-        return;
-    }
-
-    ndspChnReset(0);
     ndspSetOutputMode(NDSP_OUTPUT_STEREO);
-    ndspChnSetInterp(0, NDSP_INTERP_POLYPHASE);
-    ndspChnSetRate(0, AUDIO_SAMPLE_RATE);
-    ndspChnSetFormat(0, NDSP_FORMAT_STEREO_PCM16);
 
     CTR_PRINTF("WAVE BUFFER SIZE: %d\n", AUDIO_WAVE_BUFFER_SIZE);
     CTR_PRINTF("AUDIO SAMPLE COUNT: %d\n", AUDIO_SAMPLE_COUNT);
 
-    // Allocate audio buffer
-    size_t buffer_size = AUDIO_WAVE_BUFFER_SIZE * AUDIO_NUM_WAVE_BUFFERS;
-    audio->audio_buf = (s16*)linearAlloc(buffer_size);
-    if (!audio->audio_buf) {
-        Panic_Panic();
-        CTR_PRINTF("Failed to allocate audio buffer\n");
-        return;
-    }
-
-    // Setup wavebufs
-    memset(&audio->wave_bufs, 0, sizeof(ndspWaveBuf) * AUDIO_NUM_WAVE_BUFFERS);
-    for (size_t i = 0; i < AUDIO_NUM_WAVE_BUFFERS; i++) {
-        audio->wave_bufs[i].data_vaddr = audio->audio_buf + (AUDIO_SAMPLE_COUNT * AUDIO_CHANNELS_PER_SAMPLE * i);
-        audio->wave_bufs[i].status = NDSP_WBUF_DONE;
-    }
+    // Load more data event
+    LightEvent_Init(&audio->event, RESET_ONESHOT);
 
     // Set the callback
     ndspSetCallback(Audio_SoundFrameCallback, audio);
+
+    audio->next_instance_index = 0;
+}
+
+audio_instance_t* Audio_Play(audio_t* audio, const char* opus_path) {
+    audio_instance_t* audio_instance = &audio->instances[audio->next_instance_index];
+    audio->next_instance_index++;
+    audio_instance->audio = audio;
+    audio_instance->playing = true;
+    audio_instance->channel = Audio_FindOpenChannel(audio);
+    Audio_FlagChannelAsPlaying(audio, audio_instance->channel);
+    CTR_PRINTF("Audio playing on channel %ld\n", audio_instance->channel);
+
+    ndspChnReset(audio_instance->channel);
+    ndspChnSetInterp(audio_instance->channel, NDSP_INTERP_POLYPHASE);
+    ndspChnSetRate(audio_instance->channel, AUDIO_SAMPLE_RATE);
+    ndspChnSetFormat(audio_instance->channel, NDSP_FORMAT_STEREO_PCM16);
+
+    // Load the opus file
+    int error = 0;
+    audio_instance->opus_file = op_open_file(opus_path, &error);
+    if (error != 0) {
+        Panic_Panic();
+        CTR_PRINTF("Failed to load opus file from %s\n", opus_path);
+        CTR_PRINTF("%s\n", Audio_S_ErrorCodeToString(error));
+        return NULL;
+    }
+
+    // Allocate audio buffer
+    size_t buffer_size = AUDIO_WAVE_BUFFER_SIZE * AUDIO_NUM_WAVE_BUFFERS;
+    audio_instance->audio_buf = (s16*)linearAlloc(buffer_size);
+    if (!audio_instance->audio_buf) {
+        Panic_Panic();
+        CTR_PRINTF("Failed to allocate audio buffer\n");
+        return NULL;
+    }
+
+    // Setup wavebufs
+    memset(&audio_instance->wave_bufs, 0, sizeof(ndspWaveBuf) * AUDIO_NUM_WAVE_BUFFERS);
+    for (size_t i = 0; i < AUDIO_NUM_WAVE_BUFFERS; i++) {
+        audio_instance->wave_bufs[i].data_vaddr = audio_instance->audio_buf + (AUDIO_SAMPLE_COUNT * AUDIO_CHANNELS_PER_SAMPLE * i);
+        audio_instance->wave_bufs[i].status = NDSP_WBUF_DONE;
+    }
 
     // Spawn the decoding thread
     int32_t thread_priority = 0x30;
@@ -177,18 +184,42 @@ void Audio_Init(audio_t* audio) {
     thread_priority = MIN(thread_priority, 0x3F);
     thread_priority = MAX(thread_priority, 0x18);
 
-    audio->decoding_thread_id =
-        threadCreate(Audio_DecodingThread, audio, AUDIO_THREAD_STACK_SIZE, thread_priority, AUDIO_THREAD_CORE, false);
+    audio_instance->decoding_thread_id =
+        threadCreate(AudioInstance_DecodingThread, audio_instance, AUDIO_THREAD_STACK_SIZE, thread_priority, AUDIO_THREAD_CORE, false);
 
-    CTR_PRINTF("Thread ID %p\n", audio->decoding_thread_id);
+    CTR_PRINTF("Thread ID %p\n", audio_instance->decoding_thread_id);
+
+    return audio_instance;
+}
+
+u32 Audio_FindOpenChannel(audio_t* audio) {
+    for (u32 channel_index = 0; channel_index < AUDIO_NUM_INSTANCE_CHANNELS; channel_index++) {
+        bool playing = audio->playing_channels & (1 << channel_index);
+        if (!playing) {
+            return channel_index;
+        }
+    }
+    return 0;
+}
+
+void Audio_FlagChannelAsPlaying(audio_t* audio, u32 channel_index) {
+    u32 channel_mask = (1 << channel_index);
+    audio->playing_channels |= channel_mask;
+}
+
+void Audio_FlagChannelAsNotPlaying(audio_t* audio, u32 channel_index) {
+    u32 channel_mask = (1 << channel_index);
+    audio->playing_channels &= ~channel_mask;
 }
 
 void Audio_Destroy(audio_t* audio) {
-    threadJoin(audio->decoding_thread_id, UINT64_MAX);
-    threadFree(audio->decoding_thread_id);
+    UNUSED(audio);
 
-    ndspChnReset(0);
-    linearFree(audio->audio_buf);
+    // threadJoin(audio->decoding_thread_id, UINT64_MAX);
+    // threadFree(audio->decoding_thread_id);
 
-    op_free(audio->opus_file);
+    // ndspChnReset(0);
+    // linearFree(audio->audio_buf);
+
+    // op_free(audio->opus_file);
 }

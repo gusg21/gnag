@@ -47,8 +47,9 @@ int main() {
     osSetSpeedupEnable(true);
 
     // Load audio
-    audio_t audio;
-    Audio_Init(&audio);
+    audio_t* audio = malloc(sizeof(audio_t));
+    Audio_Init(audio);
+    Audio_Play(audio, "romfs:/audio/Deep-Threats.opus");
 
     // Create screens
     C3D_RenderTarget* top_screen = C2D_CreateScreenTarget(GFX_TOP, GFX_LEFT);
@@ -95,6 +96,10 @@ int main() {
     // Main loop
     while (aptMainLoop() && !Panic_IsPanicked()) {
         hidScanInput();
+
+        if (Input_IsButtonPressed(KEY_B)) {
+            Audio_Play(audio, "romfs:/audio/Vaulted.opus");
+        }
 
         float delta_secs = 1.f / 60.f;
 
