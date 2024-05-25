@@ -131,6 +131,11 @@ void Game_DoOpponentActing(game_t* game) {
 void Game_DoSelectingTile(game_t* game) {
     character_t* current = Board_GetCurrentSelectedPlayerControlledCharacter(&game->board);
     if (game->st_type == SELECTING_TILE_LINE || game->st_type == SELECTING_TILE_CONE) {
+        if (game->current_tile_index == 0) {
+            vec2_t next_tile_pos = {};
+            next_tile_pos = (vec2_t){current->tile_pos.x + 1, current->tile_pos.y};
+            Game_UpdateSelectedTiles(game, next_tile_pos);
+        }
         if (Input_IsButtonPressed(KEY_A)) {
             CTR_PRINTF("line selected\n");
             memset(game->selected_tiles, 0, sizeof(vec2_t));
@@ -158,7 +163,8 @@ void Game_DoSelectingTile(game_t* game) {
                 Game_UpdateSelectedTiles(game, next_tile_pos);
             }
 
-            game->focus_pos = Grid_GridFloatPosToWorldPos(&game->grid, game->selected_tiles[game->current_tile_index]);
+            game->focus_pos =
+                Grid_GridFloatPosToWorldPos(&game->grid, game->selected_tiles[game->current_tile_index / 2]);
         }
     } else if (game->st_type == SELECTING_TILE_MOVE) {
         if (Input_IsButtonPressed(KEY_A)) {
@@ -255,7 +261,7 @@ void Game_UpdateSelectedTiles(game_t* game, vec2_t next_tile_pos) {
             case SELECTING_TILE_LINE:
                 if (next_tile_pos.x == game->selected_tiles[game->current_tile_index].x &&
                     next_tile_pos.y == game->selected_tiles[game->current_tile_index].y) {
-                    // Do nothing
+                    CTR_PRINTF("do nothing\n");
                 } else {
                     memset(game->selected_tiles, 0, sizeof(vec2_t));
                     game->current_tile_index = 0;
@@ -265,8 +271,11 @@ void Game_UpdateSelectedTiles(game_t* game, vec2_t next_tile_pos) {
                     float half_width = game->tile_select_width / 2;
                     for (float i = 0; i < game->tile_select_width; i++) {
                         for (float j = 1; j <= game->tile_select_length; j++) {
-                            vec2_t next_in_line = {Board_GetCurrentSelectedPlayerControlledCharacter(&game->board)->tile_pos.x + (line_dir.x * j) + ((i - half_width) * line_dir.y),
-                                                   Board_GetCurrentSelectedPlayerControlledCharacter(&game->board)->tile_pos.y + (line_dir.y * j) + ((i - half_width) * line_dir.x)};
+                            vec2_t next_in_line = {
+                                Board_GetCurrentSelectedPlayerControlledCharacter(&game->board)->tile_pos.x +
+                                    (line_dir.x * j) + ((i - half_width) * line_dir.y),
+                                Board_GetCurrentSelectedPlayerControlledCharacter(&game->board)->tile_pos.y +
+                                    (line_dir.y * j) + ((i - half_width) * line_dir.x)};
                             if (Game_IsValidTileSelection(game, next_in_line)) {
                                 game->selected_tiles[game->current_tile_index] = next_in_line;
                                 if (game->current_tile_index + 1 < game->tile_select_length * game->tile_select_width) {
