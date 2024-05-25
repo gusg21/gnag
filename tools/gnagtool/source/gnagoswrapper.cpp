@@ -5,12 +5,13 @@
 #include "gnagoswrapper.h"
 
 #include <Windows.h>
+#include <Shlwapi.h>
 
 std::string GnagOSWrapper::GetWorkingDirectory() {
 #if WIN32
     TCHAR path[MAX_PATH];
     GetCurrentDirectory(MAX_PATH, path);
-    std::string directory = std::string(path) + "\\";
+    std::string directory = std::string(path) + GnagOSWrapper::GetPathSeparator();
     return directory;
 #else
     return {"/"};
@@ -23,7 +24,7 @@ void GnagOSWrapper::GetFilesInDirectory(std::vector<FileEntry> &filesVec, const 
 
     WIN32_FIND_DATA findData;
 
-    HANDLE handle = FindFirstFile((directory + "\\*").c_str(), &findData);
+    HANDLE handle = FindFirstFile((directory + GnagOSWrapper::GetPathSeparator() + "*").c_str(), &findData);
     if (handle == INVALID_HANDLE_VALUE) {
         *isDirectoryValid = false;
         return;
@@ -33,9 +34,9 @@ void GnagOSWrapper::GetFilesInDirectory(std::vector<FileEntry> &filesVec, const 
     char buffer[bufferSize] = {0};
     do {
         FileEntry entry = {};
-        entry.FileName = std::string {findData.cFileName};
+        entry.FileName = std::string{findData.cFileName};
         entry.IsDirectory = findData.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY;
-        if (entry.IsDirectory) entry.FileName += "/";
+        if (entry.IsDirectory) entry.FileName += GnagOSWrapper::GetPathSeparator();
         filesVec.emplace_back(entry);
     } while (FindNextFile(handle, &findData) != FALSE);
 
@@ -60,9 +61,27 @@ bool GnagOSWrapper::GetGnagPath(std::string &gnagPath) {
     uint32_t bytesWritten = GetEnvironmentVariable("GNAG_PATH", envVarBuffer, envVarBufferSize);
     gnagPath.clear();
     gnagPath.append(envVarBuffer, bytesWritten);
+    gnagPath.append(GnagOSWrapper::GetPathSeparator());
     return bytesWritten > 0;
 }
 
 void GnagOSWrapper::ShowMessageBox(const std::string &message) {
     MessageBox(nullptr, message.c_str(), "Ancient Scroll of GNAG Wisdom", MB_OK);
+}
+
+std::string GnagOSWrapper::GetFileExtension(const std::string &fileName) {
+    size_t extensionIndex = fileName.find_last_of('.');
+    if (extensionIndex == std::string::npos) return "";
+    return fileName.substr(extensionIndex);
+}
+
+std::string GnagOSWrapper::PathFix(const std::string &a, const std::string &b) {
+    CHAR outputCstr[MAX_PATH] = {0};
+    std::string prePath = a + b;
+    PathCanonicalize(outputCstr, prePath.c_str());
+    return std::string{outputCstr};
+}
+
+std::string GnagOSWrapper::GetPathSeparator() {
+    return std::string {"\\"};
 }

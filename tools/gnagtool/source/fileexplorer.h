@@ -26,6 +26,8 @@ private:
     std::vector<FileEntry> m_FilesVec {};
     int32_t m_SelectedFileIndex = 0;
     bool m_IsCurrentPathValid = false;
+
+    std::string GetSelectedFileExtension();
 };
 
 

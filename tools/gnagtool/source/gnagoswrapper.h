@@ -21,6 +21,9 @@ public:
     static void GetFilesInDirectory(std::vector<FileEntry> &filesVec, const std::string &directory, bool* isDirectoryValid = nullptr);
     static bool GetGnagPath(std::string &gnagPath);
     static void ShowMessageBox(const std::string& message);
+    static std::string GetFileExtension(const std::string& fileName);
+    static std::string PathFix(const std::string& a, const std::string& b);
+    static std::string GetPathSeparator();
 };
 
 #endif //GNAGTOOL_GNAGOSWRAPPER_H

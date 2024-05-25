@@ -14,7 +14,7 @@
 
 #endif
 
-FileExplorer::FileExplorer(GnagTool* gnagTool) : ToolGUI(gnagTool) {
+FileExplorer::FileExplorer(GnagTool *gnagTool) : ToolGUI(gnagTool) {
     m_GnagTool = gnagTool;
 
     std::string gnagPath{};
@@ -31,13 +31,16 @@ FileExplorer::FileExplorer(GnagTool* gnagTool) : ToolGUI(gnagTool) {
 void FileExplorer::DoGUI() {
     // Update the listing
     GnagOSWrapper::GetFilesInDirectory(m_FilesVec, m_CurrentPath, &m_IsCurrentPathValid);
-    if (m_SelectedFileIndex >= m_FilesVec.size())
-    {
+    if (m_SelectedFileIndex >= m_FilesVec.size()) {
         m_SelectedFileIndex = -1;
     }
 
     ImGui::Begin("File Explorer", nullptr);
     {
+        if (!ImGui::IsWindowFocused(ImGuiFocusedFlags_RootAndChildWindows)) {
+            m_SelectedFileIndex = -1;
+        }
+
         // Show the listing
         ImGui::Columns(2);
         ImGui::BeginGroup();
@@ -51,11 +54,16 @@ void FileExplorer::DoGUI() {
             } else {
                 for (uint32_t fileIndex = 0; fileIndex < m_FilesVec.size(); fileIndex++) {
                     bool selected = m_SelectedFileIndex == fileIndex;
-                    bool wasSelected = selected;
-                    ImGui::Selectable(m_FilesVec[fileIndex].FileName.c_str(), &selected);
-                    if (wasSelected && !selected) {
-                        m_SelectedFileIndex = -1;
-                    } else if (selected) {
+                    FileEntry* entry = &m_FilesVec[fileIndex];
+                    if (ImGui::Selectable(entry->FileName.c_str(), &selected,
+                                          ImGuiSelectableFlags_AllowDoubleClick)) {
+                        if (ImGui::IsMouseDoubleClicked(0)) {
+                            if (entry->IsDirectory) {
+                                m_CurrentPath = GnagOSWrapper::PathFix(m_CurrentPath, entry->FileName);
+                            }
+                        }
+                    }
+                    if (selected) {
                         m_SelectedFileIndex = (int32_t) fileIndex;
                     }
                 }
@@ -79,8 +87,14 @@ void FileExplorer::DoGUI() {
             // File options
             ImGui::SeparatorText("File Options");
             if (HasFileSelected()) {
-                FileEntry* entry = &m_FilesVec[m_SelectedFileIndex];
+                FileEntry *entry = &m_FilesVec[m_SelectedFileIndex];
                 ImGui::Text("Selected File: %s %s", entry->FileName.c_str(), entry->IsDirectory ? "(directory)" : "");
+
+                if (GetSelectedFileExtension() == ".json") {
+                    if (ImGui::Button("Open as Scenario")) {
+
+                    }
+                }
             } else {
                 ImGui::Text("No file selected");
             }
@@ -92,6 +106,11 @@ void FileExplorer::DoGUI() {
 
 bool FileExplorer::HasFileSelected() const {
     return m_SelectedFileIndex != -1;
+}
+
+std::string FileExplorer::GetSelectedFileExtension() {
+    if (!HasFileSelected()) return "";
+    return GnagOSWrapper::GetFileExtension(m_FilesVec[m_SelectedFileIndex].FileName);
 }
 
 

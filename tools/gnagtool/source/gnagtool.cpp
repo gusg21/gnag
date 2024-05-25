@@ -24,8 +24,19 @@ void GnagTool::InternalGUI() {
     ImGui::Begin("All-powerful GnagTool", NULL, ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoDocking | ImGuiWindowFlags_NoCollapse
                                                 | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoNavFocus | ImGuiWindowFlags_NoDecoration);
     {
-        ImGui::Text("FPS: %.2f", m_FPS);
         m_MenuBarHeight = ImGui::GetWindowHeight();
+
+        ImGui::Columns(10);
+        ImGui::SetColumnWidth(0, 100);
+        ImGui::Text("FPS: %.2f", m_FPS);
+        ImGui::NextColumn();
+        ImGui::SetColumnWidth(1, 300);
+        std::string gnagPath;
+        if (GnagOSWrapper::GetGnagPath(gnagPath)) {
+            ImGui::Text("Gnag Path: %s", gnagPath.c_str());
+        } else {
+            ImGui::Text("Gnag Path: unset");
+        }
     }
     ImGui::End();
 }

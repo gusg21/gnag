@@ -1,8 +1,10 @@
 cmake_minimum_required(VERSION 3.21)
 project(gnagtool LANGUAGES CXX)
 
-option(SDL_STATIC ON)
+set(SDL_STATIC ON)
+set(ENABLE_CJSON_UNINSTALL OFF)
 add_subdirectory(external/SDL)
+add_subdirectory(external/cJSON)
 
 if (WIN32)
     set(WIN32_EXTRAS)
@@ -43,6 +45,8 @@ add_executable(gnagtool_exe ${WIN32_EXTRAS}
         source/scenario.h)
 target_include_directories(gnagtool_exe PUBLIC imgui)
 
+target_link_libraries(gnagtool_exe PUBLIC Shlwapi)
+target_link_libraries(gnagtool_exe PUBLIC ${CJSON_LIB})
 target_link_libraries(gnagtool_exe PUBLIC SDL2::SDL2)
 if (WIN32)
     target_link_libraries(gnagtool_exe PUBLIC SDL2::SDL2main)

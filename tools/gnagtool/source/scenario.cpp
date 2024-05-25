@@ -5,3 +5,7 @@
 #include "scenario.h"
 
 Scenario::Scenario(int gridWidth, int gridHeight) : GridWidth(gridWidth), GridHeight(gridHeight) {}
+
+Scenario Scenario::LoadScenarioFromJSON(const std::string *jsonPath) {
+    return Scenario(0, 0);
+}
