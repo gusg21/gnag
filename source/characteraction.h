@@ -5,7 +5,7 @@
 
 #include "character.h"
 
-#define CHARACTER_ACTION_MAX_TILES_SELECTED 16
+#define CHARACTER_ACTION_MAX_TILES_SELECTED 25
 
 struct board_s;
 

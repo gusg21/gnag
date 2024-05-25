@@ -84,7 +84,7 @@ void (*UIScripts_GetTextUpdaterByType(text_updater_type_e type))(text_t*) {
 
 void UIScripts_TestButton(button_t* button) {
     UNUSED(button);
-    Game_UpdateSelectionType(UIScripts_S_Game, SELECTING_TILE_LINE, 3, 1);
+    Game_UpdateSelectionType(UIScripts_S_Game, SELECTING_TILE_LINE, 3, 3);
     Game_UpdateGameState(UIScripts_S_Game, GAME_STATE_SELECTING_TILE);
 }
 

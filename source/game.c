@@ -132,13 +132,10 @@ void Game_DoSelectingTile(game_t* game) {
     character_t* current = Board_GetCurrentSelectedPlayerControlledCharacter(&game->board);
     if (game->st_type == SELECTING_TILE_LINE || game->st_type == SELECTING_TILE_CONE) {
         if (Input_IsButtonPressed(KEY_A)) {
-            if (game->selected_tiles[game->current_tile_index].x != current->tile_pos.x ||
-                game->selected_tiles[game->current_tile_index].y != current->tile_pos.y) {
-                CTR_PRINTF("line selected\n");
-                memset(game->selected_tiles, 0, sizeof(vec2_t));
-                game->current_tile_index = 0;
-                Game_UpdateGameState(game, GAME_STATE_PLAYER_TURN);
-            }
+            CTR_PRINTF("line selected\n");
+            memset(game->selected_tiles, 0, sizeof(vec2_t));
+            game->current_tile_index = 0;
+            Game_UpdateGameState(game, GAME_STATE_PLAYER_TURN);
         } else if (Input_IsButtonPressed(KEY_B)) {
             CTR_PRINTF("selection cancelled\n");
             memset(game->selected_tiles, 0, sizeof(vec2_t));
@@ -229,8 +226,7 @@ hazard_t* Game_CreateHazardAt(game_t* game, hazard_type_e type, float tile_x, fl
 bool Game_IsValidTileSelection(game_t* game, vec2_t next_tile_pos) {
     bool in_bounds = next_tile_pos.y >= 0 && next_tile_pos.y <= game->grid.grid_h - 1 && next_tile_pos.x >= 0 &&
                      next_tile_pos.x <= game->grid.grid_w - 1;
-    bool in_range =
-        game->current_tile_index < game->tile_select_length;
+    bool in_range = game->current_tile_index < game->tile_select_length;
     bool is_backtrack = next_tile_pos.x == game->selected_tiles[game->current_tile_index - 1].x &&
                         next_tile_pos.y == game->selected_tiles[game->current_tile_index - 1].y;
     if (game->st_type == SELECTING_TILE_MOVE) {
@@ -261,17 +257,22 @@ void Game_UpdateSelectedTiles(game_t* game, vec2_t next_tile_pos) {
                     next_tile_pos.y == game->selected_tiles[game->current_tile_index].y) {
                     // Do nothing
                 } else {
+                    memset(game->selected_tiles, 0, sizeof(vec2_t));
                     game->current_tile_index = 0;
                     vec2_t line_dir = {
                         next_tile_pos.x - Board_GetCurrentSelectedPlayerControlledCharacter(&game->board)->tile_pos.x,
                         next_tile_pos.y - Board_GetCurrentSelectedPlayerControlledCharacter(&game->board)->tile_pos.y};
-                    game->selected_tiles[game->current_tile_index] = next_tile_pos;
-                    for (u32 i = 0; i < game->tile_select_length - 1; i++) {
-                        vec2_t next_in_line = {game->selected_tiles[i].x + line_dir.x,
-                                               game->selected_tiles[i].y + line_dir.y};
-                        if (Game_IsValidTileSelection(game, next_in_line)) {
-                            game->selected_tiles[i+1] = next_in_line;
-                            game->current_tile_index++;
+                    float half_width = game->tile_select_width / 2;
+                    for (float i = 0; i < game->tile_select_width; i++) {
+                        for (float j = 1; j <= game->tile_select_length; j++) {
+                            vec2_t next_in_line = {Board_GetCurrentSelectedPlayerControlledCharacter(&game->board)->tile_pos.x + (line_dir.x * j) + ((i - half_width) * line_dir.y),
+                                                   Board_GetCurrentSelectedPlayerControlledCharacter(&game->board)->tile_pos.y + (line_dir.y * j) + ((i - half_width) * line_dir.x)};
+                            if (Game_IsValidTileSelection(game, next_in_line)) {
+                                game->selected_tiles[game->current_tile_index] = next_in_line;
+                                if (game->current_tile_index + 1 < game->tile_select_length * game->tile_select_width) {
+                                    game->current_tile_index++;
+                                }
+                            }
                         }
                     }
                 }
