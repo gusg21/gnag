@@ -9,4 +9,4 @@ gnag.elf
 
 romfs/
 
-tools/
+cmake-build-debug/
