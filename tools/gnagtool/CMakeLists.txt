@@ -1,16 +1,16 @@
 cmake_minimum_required(VERSION 3.21)
-project(gnagtool LANGUAGES CXX)
+project(gnagtool LANGUAGES CXX C)
 
 set(SDL_STATIC ON)
-set(ENABLE_CJSON_UNINSTALL OFF)
 add_subdirectory(external/SDL)
-add_subdirectory(external/cJSON)
 
 if (WIN32)
     set(WIN32_EXTRAS)
 else ()
     set(WIN32_EXTRAS
-            )
+            source/mouse.cpp
+            source/mouse.h
+    )
 endif ()
 add_executable(gnagtool_exe ${WIN32_EXTRAS}
         imgui/imgui.cpp
@@ -42,11 +42,14 @@ add_executable(gnagtool_exe ${WIN32_EXTRAS}
         source/gnagtool.h
         source/toolgui.cpp
         source/scenario.cpp
-        source/scenario.h)
+        source/scenario.h
+        source/mouse.cpp
+        source/cJSON.c
+
+)
 target_include_directories(gnagtool_exe PUBLIC imgui)
 
 target_link_libraries(gnagtool_exe PUBLIC Shlwapi)
-target_link_libraries(gnagtool_exe PUBLIC ${CJSON_LIB})
 target_link_libraries(gnagtool_exe PUBLIC SDL2::SDL2)
 if (WIN32)
     target_link_libraries(gnagtool_exe PUBLIC SDL2::SDL2main)
@@ -56,3 +59,9 @@ if (WIN32)
             "${PROJECT_BINARY_DIR}/external/SDL/SDL2d.dll"
             $<TARGET_FILE_DIR:gnagtool_exe>)
 endif ()
+
+# Copy Gnag art to output
+add_custom_command(TARGET gnagtool_exe POST_BUILD
+        COMMAND ${CMAKE_COMMAND} -E copy_directory
+        "$ENV{GNAG_PATH}/gfx/"
+        $<TARGET_FILE_DIR:gnagtool_exe>/gfx/)

@@ -5,6 +5,7 @@
 #include "backends/imgui_impl_sdlrenderer2.h"
 #include "backends/imgui_impl_sdl2.h"
 #include "gnagtool.h"
+#include "mouse.h"
 
 int main(int argc, char **argv) {
     SDL_Init(SDL_INIT_EVERYTHING);
@@ -44,6 +45,8 @@ int main(int argc, char **argv) {
                     break;
             }
         }
+
+        Mouse::Update();
 
         gnagTool->Update(deltaTime);
 

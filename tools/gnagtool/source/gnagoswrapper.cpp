@@ -59,10 +59,13 @@ bool GnagOSWrapper::GetGnagPath(std::string &gnagPath) {
     constexpr uint32_t envVarBufferSize = 1024;
     CHAR envVarBuffer[envVarBufferSize] = {0};
     uint32_t bytesWritten = GetEnvironmentVariable("GNAG_PATH", envVarBuffer, envVarBufferSize);
+    bool exists = bytesWritten > 0;
     gnagPath.clear();
-    gnagPath.append(envVarBuffer, bytesWritten);
-    gnagPath.append(GnagOSWrapper::GetPathSeparator());
-    return bytesWritten > 0;
+    if (exists) {
+        gnagPath.append(envVarBuffer, bytesWritten);
+        gnagPath.append(GnagOSWrapper::GetPathSeparator());
+    }
+    return exists;
 }
 
 void GnagOSWrapper::ShowMessageBox(const std::string &message) {
@@ -84,4 +87,8 @@ std::string GnagOSWrapper::PathFix(const std::string &a, const std::string &b) {
 
 std::string GnagOSWrapper::GetPathSeparator() {
     return std::string {"\\"};
+}
+
+void GnagOSWrapper::RunTheBuildinator() {
+    system("start /D \"%GNAG_PATH%\" buildinator.bat");
 }

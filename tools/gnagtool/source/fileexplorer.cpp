@@ -7,6 +7,9 @@
 #include "misc/cpp/imgui_stdlib.h"
 #include "imgui_internal.h"
 #include "gnagoswrapper.h"
+#include "scenario.h"
+#include "scenarioeditor.h"
+#include "gnagtool.h"
 
 #if WIN32
 
@@ -92,7 +95,8 @@ void FileExplorer::DoGUI() {
 
                 if (GetSelectedFileExtension() == ".json") {
                     if (ImGui::Button("Open as Scenario")) {
-
+                        Scenario scenario = Scenario::LoadScenarioFromJSON(m_CurrentPath + entry->FileName);
+                        m_GnagTool->AddGUI(new ScenarioEditor(m_GnagTool, m_GnagTool->GetRenderer(), scenario));
                     }
                 }
             } else {

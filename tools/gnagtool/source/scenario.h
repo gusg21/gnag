@@ -7,17 +7,22 @@
 
 
 #include <string>
+#include <vector>
+
+struct Hazard {
+    int TileX, TileY;
+    int HazardType;
+};
 
 class Scenario {
 public:
-    Scenario(int gridHeight, int gridWidth);
-    Scenario(Scenario&) = default; // We DO want a copy constructor
-    Scenario& operator=(Scenario&) = delete;
+    Scenario(int gridWidth, int gridHeight);
 
-    static Scenario LoadScenarioFromJSON(const std::string* jsonPath);
+    static Scenario LoadScenarioFromJSON(const std::string& jsonPath);
 
     int GridWidth = 0;
     int GridHeight = 0;
+    std::vector<Hazard> Hazards {};
 };
 
 

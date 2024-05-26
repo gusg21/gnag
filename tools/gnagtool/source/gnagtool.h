@@ -12,19 +12,23 @@
 
 class GnagTool {
 public:
-    GnagTool(SDL_Renderer* renderer);
+    explicit GnagTool(SDL_Renderer* renderer);
 
     void Update(float deltaTime);
     void DoGUI();
+    void AddGUI(ToolGUI* gui);
+    SDL_Renderer* GetRenderer() { return m_Renderer; }
 
 private:
     // Refs
     std::vector<ToolGUI*> m_GUIs {};
+    SDL_Renderer* m_Renderer;
 
     // Internals
     float m_FPS = 0.f;
     float m_MenuBarHeight = 0.f;
     void InternalGUI();
+
 };
 
 

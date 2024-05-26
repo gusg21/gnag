@@ -1,0 +1,14 @@
+{
+  "Grid Width": 10,
+  "Grid Height": 5,
+  "Hazards": [
+    {
+      "Tile Pos": [1, 1],
+      "Type": 1
+    },
+    {
+      "Tile Pos": [2, 1],
+      "Type": 1
+    }
+  ]
+}
