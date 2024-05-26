@@ -3,6 +3,26 @@ project(gnagtool LANGUAGES CXX C)
 
 set(SDL_STATIC ON)
 add_subdirectory(external/SDL)
+# Who needs like any of these lmao
+set(SDL2IMAGE_AVIF OFF)
+set(SDL2IMAGE_BMP OFF)
+set(SDL2IMAGE_GIF OFF)
+set(SDL2IMAGE_JPG OFF)
+set(SDL2IMAGE_JXL OFF)
+set(SDL2IMAGE_LBM OFF)
+set(SDL2IMAGE_PCX OFF)
+set(SDL2IMAGE_PNG ON)
+set(SDL2IMAGE_PNM OFF)
+set(SDL2IMAGE_QOI OFF)
+set(SDL2IMAGE_SVG OFF)
+set(SDL2IMAGE_TGA OFF)
+set(SDL2IMAGE_TIF OFF)
+set(SDL2IMAGE_WEBP OFF)
+set(SDL2IMAGE_XCF OFF)
+set(SDL2IMAGE_XPM OFF)
+set(SDL2IMAGE_TGA OFF)
+set(SDL2IMAGE_XV OFF)
+add_subdirectory(external/SDL_image)
 
 if (WIN32)
     set(WIN32_EXTRAS)
@@ -58,7 +78,13 @@ if (WIN32)
             COMMAND ${CMAKE_COMMAND} -E copy_if_different
             "${PROJECT_BINARY_DIR}/external/SDL/SDL2d.dll"
             $<TARGET_FILE_DIR:gnagtool_exe>)
+    add_custom_command(TARGET gnagtool_exe POST_BUILD
+            COMMAND ${CMAKE_COMMAND} -E copy_if_different
+            "${PROJECT_BINARY_DIR}/external/SDL_image/SDL2_imaged.dll"
+            $<TARGET_FILE_DIR:gnagtool_exe>)
 endif ()
+target_link_libraries(gnagtool_exe PUBLIC SDL2_image::SDL2_image)
+
 
 # Copy Gnag art to output
 add_custom_command(TARGET gnagtool_exe POST_BUILD

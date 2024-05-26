@@ -3,9 +3,14 @@
 //
 
 #include "gnagtool.h"
+#include "SDL_image.h"
 
 GnagTool::GnagTool(SDL_Renderer *renderer) : m_Renderer(renderer) {
     m_GUIs.push_back(new FileExplorer(this));
+
+    m_EmptyTileTexture = IMG_LoadTexture(renderer, "gfx/emptytile.png");
+    m_SpikesTileTexture = IMG_LoadTexture(renderer, "gfx/spikes.png");
+    m_QuestionTileTexture = IMG_LoadTexture(renderer, "gfx/questiontile.png");
 }
 
 void GnagTool::DoGUI() {
@@ -13,6 +18,14 @@ void GnagTool::DoGUI() {
         m_GUIs[guiIndex]->DoGUI();
     }
     InternalGUI();
+
+    for (uint32_t guiIndex = 0; guiIndex < m_GUIsToClose.size(); guiIndex++) {
+        auto guiIter = std::find(m_GUIs.begin(), m_GUIs.end(), m_GUIsToClose[guiIndex]);
+        if (guiIter != m_GUIs.end()) {
+            m_GUIs.erase(guiIter);
+        }
+    }
+    m_GUIsToClose.clear();
 }
 
 void GnagTool::InternalGUI() {
@@ -57,8 +70,13 @@ void GnagTool::Update(float deltaTime) {
     }
 
     m_FPS = 1.f / deltaTime;
+    m_DeltaTime = deltaTime;
 }
 
 void GnagTool::AddGUI(ToolGUI *gui) {
     m_GUIs.push_back(gui);
+}
+
+void GnagTool::CloseGUI(ToolGUI *gui) {
+    m_GUIsToClose.push_back(gui);
 }

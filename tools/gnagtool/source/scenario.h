@@ -9,20 +9,33 @@
 #include <string>
 #include <vector>
 
-struct Hazard {
-    int TileX, TileY;
-    int HazardType;
+enum class HazardType {
+    NONE = 0,
+    SPIKES,
+    WATER,
+    COUNT
+};
+
+struct HazardData {
+    HazardType HazardType;
 };
 
 class Scenario {
 public:
     Scenario(int gridWidth, int gridHeight);
 
+    HazardData GetHazardDataAtTile(int tileX, int tileY);
+    void SetHazardDataAtTile(int tileX, int tileY, HazardData data);
+    void Resize(int width, int height);
+
     static Scenario LoadScenarioFromJSON(const std::string& jsonPath);
+    void SaveToJSON(const std::string& jsonPath);
 
     int GridWidth = 0;
     int GridHeight = 0;
-    std::vector<Hazard> Hazards {};
+    std::vector<HazardData> Hazards {};
+
+    bool IsTileInRange(int tileX, int tileY) const;
 };
 
 

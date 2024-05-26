@@ -24,6 +24,7 @@ public:
     static std::string GetFileExtension(const std::string& fileName);
     static std::string PathFix(const std::string& a, const std::string& b);
     static std::string GetPathSeparator();
+    static std::string GetDirectoryFromPath(const std::string& path);
     static void RunTheBuildinator();
 };
 

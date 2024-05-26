@@ -23,29 +23,24 @@ public:
 
 class ScenarioEditor : public ToolGUI {
 public:
-    explicit ScenarioEditor(GnagTool *gnagTool, SDL_Renderer *renderer, const Scenario &scenario);
-
-    void Update(float deltaTime);
+    explicit ScenarioEditor(GnagTool *gnagTool, SDL_Renderer *renderer, const Scenario &scenario, const std::string& fileName);
 
     void DoGUI() override;
 
 private:
     void RenderEditorToTexture(SDL_Texture **texture, ImVec2 editorSize);
-
     void DrawGrid();
-
     void GetWorldPosFromTilePos(int tileX, int tileY, int *worldX, int *worldY) const;
-
     void GetTilePosFromWorldPos(float worldX, float worldY, int *tileX, int *tileY) const;
-
     bool IsTileInSelectionPreview(int tileX, int tileY) const;
+    void GetSelectionBounds(int* left, int* right, int* top, int* bottom) const;
 
     GnagTool *m_GnagTool;
     SDL_Renderer *m_Renderer;
     SDL_Texture *m_EditorTexture;
     ImVec2 m_LastFrameEditorSize{};
-    bool m_Focused = false;
     Scenario m_Scenario;
+    std::string m_FilePath{};
 
     float m_MousePosX = 0;
     float m_MousePosY = 0;
@@ -60,7 +55,11 @@ private:
     TilePos m_SelectionPreviewStart{};
     TilePos m_SelectionPreviewEnd{};
     bool m_SelectionPreviewVisible = false;
-
+    int m_HazardType = 1;
+    int m_ScenarioResizeSize[2] = {10, 10};
+    bool m_WantOpenTileEditor = false;
+    bool m_Focused = false;
+    char m_SaveAsFilePath[256] {0};
 };
 
 

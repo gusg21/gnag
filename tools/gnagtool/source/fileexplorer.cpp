@@ -57,7 +57,7 @@ void FileExplorer::DoGUI() {
             } else {
                 for (uint32_t fileIndex = 0; fileIndex < m_FilesVec.size(); fileIndex++) {
                     bool selected = m_SelectedFileIndex == fileIndex;
-                    FileEntry* entry = &m_FilesVec[fileIndex];
+                    FileEntry *entry = &m_FilesVec[fileIndex];
                     if (ImGui::Selectable(entry->FileName.c_str(), &selected,
                                           ImGuiSelectableFlags_AllowDoubleClick)) {
                         if (ImGui::IsMouseDoubleClicked(0)) {
@@ -95,8 +95,10 @@ void FileExplorer::DoGUI() {
 
                 if (GetSelectedFileExtension() == ".json") {
                     if (ImGui::Button("Open as Scenario")) {
-                        Scenario scenario = Scenario::LoadScenarioFromJSON(m_CurrentPath + entry->FileName);
-                        m_GnagTool->AddGUI(new ScenarioEditor(m_GnagTool, m_GnagTool->GetRenderer(), scenario));
+                        std::string absolutePath = m_CurrentPath + entry->FileName;
+                        Scenario scenario = Scenario::LoadScenarioFromJSON(absolutePath);
+                        m_GnagTool->AddGUI(
+                                new ScenarioEditor(m_GnagTool, m_GnagTool->GetRenderer(), scenario, absolutePath));
                     }
                 }
             } else {
