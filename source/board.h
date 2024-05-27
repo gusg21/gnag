@@ -69,5 +69,6 @@ u32 Board_GetIndexByCharacter(board_t* board, character_t* character);
 
 // Hazard manip
 hazard_t* Board_NewHazard(board_t* board);
+hazard_t* Board_CheckTilesForHazard(board_t* board, vec2_t* tiles_to_check, hazard_type_e type);
 
 #endif // BOARD_H

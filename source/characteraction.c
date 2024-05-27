@@ -30,14 +30,27 @@ void CharacterAction_Run(character_action_t* action, board_t* board) {
                     action->first_frame = false;
 
                     for (u32 i = 0; i < action->tile_selections_count; i++) {
-                        hazard_t* new_hazard = Board_NewHazard(board);
-                        Hazard_Init(new_hazard, action->tile_selections[i].x, action->tile_selections[i].y, action->hazard_type);
-                        CTR_PRINTF("splish splash\n");
+                        bool combined = false;
+                        for (u32 j = 0; j < board->next_hazard_index; j++) {
+                            if (action->tile_selections[i].x == board->hazards[j].tile_pos.x &&
+                                action->tile_selections[i].y == board->hazards[j].tile_pos.y) {
+                                board->hazards[j].type = Hazard_Combine(action->hazard_type, board->hazards[j].type);
+                                combined = true;
+                                CTR_PRINTF("hazards interacted\n");
+                                break;
+                            }
+                        }
+                        if (!combined) {
+                            hazard_t* new_hazard = Board_NewHazard(board);
+                            Hazard_Init(new_hazard, action->tile_selections[i].x, action->tile_selections[i].y,
+                                        action->hazard_type);
+                            CTR_PRINTF("hazard created\n");
+                        }
                     }
                 }
-            }
 
-            break;
+                break;
+            }
         }
         case CHARACTER_ACTION_NONE: {
             break;

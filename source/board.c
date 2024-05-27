@@ -282,6 +282,6 @@ u32 Board_GetIndexByCharacter(board_t* board, character_t* character) {
 hazard_t* Board_NewHazard(board_t* board) {
     hazard_t* hazard = &board->hazards[board->next_hazard_index];
     board->next_hazard_index++;
-    
+
     return hazard;
 }
