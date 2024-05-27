@@ -132,6 +132,18 @@ void Game_DoSelectingTile(game_t* game) {
     character_t* current = Board_GetCurrentSelectedPlayerControlledCharacter(&game->board);
     if (game->st_type == SELECTING_TILE_LINE || game->st_type == SELECTING_TILE_CONE) {
         if (Input_IsButtonPressed(KEY_A)) {
+            character_action_t action = (character_action_t){.type = CHARACTER_ACTION_CREATE_HAZARD,
+                                                             .character = current,
+                                                             .hazard_type = HAZARD_WATER,
+                                                             .duration = 1.0f,
+                                                             .first_frame = true,
+                                                             .initialized = true,
+                                                             .tile_selections_count = game->current_tile_index + 1};
+            for (u32 i = 0; i <= game->current_tile_index; i++) {
+                action.tile_selections[i] = game->selected_tiles[i];
+            }
+            Board_EnqueuePlayerControlledCharacterAction(&game->board, action);
+            current->moved = true;
             CTR_PRINTF("line selected\n");
             memset(game->selected_tiles, 0, sizeof(vec2_t) * CHARACTER_ACTION_MAX_TILES_SELECTED);
             game->current_tile_index = 0;

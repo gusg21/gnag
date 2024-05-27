@@ -4,7 +4,6 @@
 #include "characteraction.h"
 #include "character.h"
 #include "grid.h"
-#include "hazard.h"
 
 #define BOARD_MAX_CHARACTER_COUNT 10
 #define BOARD_MAX_CHARACTER_ACTION_QUEUE_LENGTH 128

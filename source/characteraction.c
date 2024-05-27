@@ -20,11 +20,24 @@ void CharacterAction_Run(character_action_t* action, board_t* board) {
                 float segment_t = (t * move_count) - destination_index;
                 target->tile_pos = Vec2_Lerp(source, destination, segment_t);
             }
-            
+
             break;
         }
-        case CHARACTER_ACTION_ABILITY: {
-            // a BUNCH of logic :sob:
+        case CHARACTER_ACTION_CREATE_HAZARD: {
+            float t = Board_GetNormalizedActionTime(board);
+            if (!(t >= 1.0f)) {
+                if (action->first_frame) {
+                    action->first_frame = false;
+
+                    for (u32 i = 0; i < action->tile_selections_count; i++) {
+                        hazard_t* new_hazard = Board_NewHazard(board);
+                        Hazard_Init(new_hazard, action->tile_selections[i].x, action->tile_selections[i].y, action->hazard_type);
+                        CTR_PRINTF("splish splash\n");
+                    }
+                }
+            }
+
+            break;
         }
         case CHARACTER_ACTION_NONE: {
             break;
