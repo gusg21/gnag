@@ -105,7 +105,20 @@ void Game_DoPlayerActing(game_t* game) {
     if (!game->board.action_queue_executing) {
         Game_UpdateGameState(game, GAME_STATE_OPPONENT_TURN);
     } else {
-        game->focus_pos = Character_GetCenterPosition(Board_GetCurrentActingCharacter(&game->board), &game->grid);
+        character_action_t* current_action = Board_GetCurrentAction(&game->board);
+        switch (current_action->type) {
+            case CHARACTER_ACTION_MOVE:
+                game->focus_pos =
+                    Character_GetCenterPosition(Board_GetCurrentActingCharacter(&game->board), &game->grid);
+                break;
+            case CHARACTER_ACTION_CREATE_HAZARD:
+                game->focus_pos = Grid_GridFloatPosToWorldPos(
+                    &game->grid, current_action->tile_selections[current_action->tile_selections_count / 2]);
+                break;
+            default:
+                Character_GetCenterPosition(Board_GetCurrentActingCharacter(&game->board), &game->grid);
+                break;
+        }
     }
 }
 
