@@ -75,15 +75,15 @@ target_link_libraries(gnagtool_exe PUBLIC Shlwapi)
 target_link_libraries(gnagtool_exe PUBLIC SDL2::SDL2)
 if (WIN32)
     target_link_libraries(gnagtool_exe PUBLIC SDL2::SDL2main)
-    # Copies required DLLs to output :)
-    add_custom_command(TARGET gnagtool_exe POST_BUILD
-            COMMAND ${CMAKE_COMMAND} -E copy_if_different
-            "${PROJECT_BINARY_DIR}/external/SDL/SDL2d.dll"
-            $<TARGET_FILE_DIR:gnagtool_exe>)
-    add_custom_command(TARGET gnagtool_exe POST_BUILD
-            COMMAND ${CMAKE_COMMAND} -E copy_if_different
-            "${PROJECT_BINARY_DIR}/external/SDL_image/SDL2_imaged.dll"
-            $<TARGET_FILE_DIR:gnagtool_exe>)
+#    # Copies required DLLs to output :)
+#    add_custom_command(TARGET gnagtool_exe POST_BUILD
+#            COMMAND ${CMAKE_COMMAND} -E copy_if_different
+#            "${PROJECT_BINARY_DIR}/external/SDL/SDL2d.dll"
+#            $<TARGET_FILE_DIR:gnagtool_exe>)
+#    add_custom_command(TARGET gnagtool_exe POST_BUILD
+#            COMMAND ${CMAKE_COMMAND} -E copy_if_different
+#            "${PROJECT_BINARY_DIR}/external/SDL_image/SDL2_imaged.dll"
+#            $<TARGET_FILE_DIR:gnagtool_exe>)
 endif ()
 target_link_libraries(gnagtool_exe PUBLIC SDL2_image::SDL2_image)
 

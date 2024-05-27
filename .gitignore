@@ -10,6 +10,6 @@ gnag.elf
 
 romfs/
 
-cmake-build-debug/
+cmake-build-*/
 
 imgui.ini
