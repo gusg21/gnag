@@ -1,5 +1,6 @@
 
 build/
+!tools/gnagtool/build/
 
 *.smdh
 
@@ -10,3 +11,5 @@ gnag.elf
 romfs/
 
 cmake-build-debug/
+
+imgui.ini

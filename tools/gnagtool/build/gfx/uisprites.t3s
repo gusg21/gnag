@@ -1,0 +1,12 @@
+--atlas -f rgba8888 -z auto
+none.png
+good.png
+star.png
+button_cpad.png
+button_dpad.png
+button_dpadup.png
+button_dpaddown.png
+button_dpadleft.png
+button_dpadright.png
+button_L.png
+button_R.png

@@ -1,0 +1,10 @@
+--atlas -f rgba8888 -z auto
+emptytile.png
+point.png
+good.png
+bad.png
+spikes.png
+ugly.png
+enemy.png
+selectedtile.png
+watertile.png
