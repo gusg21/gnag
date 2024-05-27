@@ -98,7 +98,7 @@ int main() {
         hidScanInput();
 
         if (Input_IsButtonPressed(KEY_B)) {
-            Audio_Play(audio, "romfs:/audio/Vaulted.opus");
+            //Audio_Play(audio, "romfs:/audio/Vaulted.opus");
         }
 
         float delta_secs = 1.f / 60.f;

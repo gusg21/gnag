@@ -131,19 +131,14 @@ void Game_DoOpponentActing(game_t* game) {
 void Game_DoSelectingTile(game_t* game) {
     character_t* current = Board_GetCurrentSelectedPlayerControlledCharacter(&game->board);
     if (game->st_type == SELECTING_TILE_LINE || game->st_type == SELECTING_TILE_CONE) {
-        if (game->current_tile_index == 0) {
-            vec2_t next_tile_pos = {};
-            next_tile_pos = (vec2_t){current->tile_pos.x + 1, current->tile_pos.y};
-            Game_UpdateSelectedTiles(game, next_tile_pos);
-        }
         if (Input_IsButtonPressed(KEY_A)) {
             CTR_PRINTF("line selected\n");
-            memset(game->selected_tiles, 0, sizeof(vec2_t));
+            memset(game->selected_tiles, 0, sizeof(vec2_t) * CHARACTER_ACTION_MAX_TILES_SELECTED);
             game->current_tile_index = 0;
             Game_UpdateGameState(game, GAME_STATE_PLAYER_TURN);
         } else if (Input_IsButtonPressed(KEY_B)) {
             CTR_PRINTF("selection cancelled\n");
-            memset(game->selected_tiles, 0, sizeof(vec2_t));
+            memset(game->selected_tiles, 0, sizeof(vec2_t) * CHARACTER_ACTION_MAX_TILES_SELECTED);
             game->current_tile_index = 0;
             Game_UpdateGameState(game, GAME_STATE_PLAYER_TURN);
         } else {
@@ -179,13 +174,13 @@ void Game_DoSelectingTile(game_t* game) {
             }
             Board_EnqueuePlayerControlledCharacterAction(&game->board, action);
             current->moved = true;
-            memset(game->selected_tiles, 0, sizeof(vec2_t));
+            memset(game->selected_tiles, 0, sizeof(vec2_t) * CHARACTER_ACTION_MAX_TILES_SELECTED);
             game->current_tile_index = 0;
             CTR_PRINTF("tile selected\n");
             Game_UpdateGameState(game, GAME_STATE_PLAYER_TURN);
         } else if (Input_IsButtonPressed(KEY_B)) {
             CTR_PRINTF("selection cancelled\n");
-            memset(game->selected_tiles, 0, sizeof(vec2_t));
+            memset(game->selected_tiles, 0, sizeof(vec2_t) * CHARACTER_ACTION_MAX_TILES_SELECTED);
             game->current_tile_index = 0;
             Game_UpdateGameState(game, GAME_STATE_PLAYER_TURN);
         } else {
@@ -259,28 +254,26 @@ void Game_UpdateSelectedTiles(game_t* game, vec2_t next_tile_pos) {
                 }
                 return;
             case SELECTING_TILE_LINE:
-                if (next_tile_pos.x == game->selected_tiles[game->current_tile_index].x &&
-                    next_tile_pos.y == game->selected_tiles[game->current_tile_index].y) {
-                    CTR_PRINTF("do nothing\n");
-                } else {
-                    memset(game->selected_tiles, 0, sizeof(vec2_t));
-                    game->current_tile_index = 0;
-                    vec2_t line_dir = {
-                        next_tile_pos.x - Board_GetCurrentSelectedPlayerControlledCharacter(&game->board)->tile_pos.x,
-                        next_tile_pos.y - Board_GetCurrentSelectedPlayerControlledCharacter(&game->board)->tile_pos.y};
-                    float half_width = game->tile_select_width / 2;
-                    for (float i = 0; i < game->tile_select_width; i++) {
-                        for (float j = 1; j <= game->tile_select_length; j++) {
-                            vec2_t next_in_line = {
-                                Board_GetCurrentSelectedPlayerControlledCharacter(&game->board)->tile_pos.x +
-                                    (line_dir.x * j) + ((i - half_width) * line_dir.y),
-                                Board_GetCurrentSelectedPlayerControlledCharacter(&game->board)->tile_pos.y +
-                                    (line_dir.y * j) + ((i - half_width) * line_dir.x)};
-                            if (Game_IsValidTileSelection(game, next_in_line)) {
-                                game->selected_tiles[game->current_tile_index] = next_in_line;
-                                if (game->current_tile_index + 1 < game->tile_select_length * game->tile_select_width) {
-                                    game->current_tile_index++;
-                                }
+                memset(game->selected_tiles, 0, sizeof(vec2_t) * CHARACTER_ACTION_MAX_TILES_SELECTED);
+                game->current_tile_index = 0;
+                vec2_t line_dir = {
+                    next_tile_pos.x - Board_GetCurrentSelectedPlayerControlledCharacter(&game->board)->tile_pos.x,
+                    next_tile_pos.y - Board_GetCurrentSelectedPlayerControlledCharacter(&game->board)->tile_pos.y};
+                float half_width = game->tile_select_width / 2;
+                for (float i = 0; i < game->tile_select_width; i++) {
+                    for (float j = 0; j < game->tile_select_length; j++) {
+                        vec2_t next_in_line = {
+                            Board_GetCurrentSelectedPlayerControlledCharacter(&game->board)->tile_pos.x +
+                                (line_dir.x * (j + 1)) + ((i - half_width) * line_dir.y),
+                            Board_GetCurrentSelectedPlayerControlledCharacter(&game->board)->tile_pos.y +
+                                (line_dir.y * (j + 1)) + ((i - half_width) * line_dir.x)};
+                        if (!Game_IsValidTileSelection(game, next_in_line)) {
+                            game->current_tile_index--;
+                            break;
+                        } else {
+                            game->selected_tiles[game->current_tile_index] = next_in_line;
+                            if (game->current_tile_index + 1 < game->tile_select_length * game->tile_select_width) {
+                                game->current_tile_index++;
                             }
                         }
                     }
@@ -320,8 +313,6 @@ void Game_UpdateGameState(game_t* game, game_state_e state) {
             return;
         case GAME_STATE_SELECTING_TILE:
             CTR_PRINTF("STATE player selecting tile\n");
-            game->selected_tiles[game->current_tile_index] =
-                Board_GetCurrentSelectedPlayerControlledCharacter(&game->board)->tile_pos;
             return;
 
         default:
@@ -343,9 +334,15 @@ void Game_UpdateSelectionType(game_t* game, selecting_tile_type_e type, u32 sel_
             return;
         case SELECTING_TILE_MOVE:
             CTR_PRINTF("ST move\n");
+            game->selected_tiles[game->current_tile_index] =
+                Board_GetCurrentSelectedPlayerControlledCharacter(&game->board)->tile_pos;
             return;
         case SELECTING_TILE_LINE:
             CTR_PRINTF("ST line\n");
+            vec2_t next_tile_pos = {};
+            next_tile_pos = (vec2_t){Board_GetCurrentSelectedPlayerControlledCharacter(&game->board)->tile_pos.x + 1,
+                                     Board_GetCurrentSelectedPlayerControlledCharacter(&game->board)->tile_pos.y};
+            Game_UpdateSelectedTiles(game, next_tile_pos);
             return;
         case SELECTING_TILE_CONE:
             CTR_PRINTF("ST cone\n");

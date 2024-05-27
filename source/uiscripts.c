@@ -84,14 +84,17 @@ void (*UIScripts_GetTextUpdaterByType(text_updater_type_e type))(text_t*) {
 
 void UIScripts_TestButton(button_t* button) {
     UNUSED(button);
-    Game_UpdateSelectionType(UIScripts_S_Game, SELECTING_TILE_LINE, 3, 3);
     Game_UpdateGameState(UIScripts_S_Game, GAME_STATE_SELECTING_TILE);
+    Game_UpdateSelectionType(UIScripts_S_Game, SELECTING_TILE_LINE, 4, 1);
 }
 
 void UIScripts_Move(button_t* button) {
     UNUSED(button);
-    Game_UpdateSelectionType(UIScripts_S_Game, SELECTING_TILE_MOVE, Board_GetCurrentSelectedPlayerControlledCharacter(&UIScripts_S_Game->board)->move_speed, 1);
+
     Game_UpdateGameState(UIScripts_S_Game, GAME_STATE_SELECTING_TILE);
+    Game_UpdateSelectionType(UIScripts_S_Game, SELECTING_TILE_MOVE,
+                             Board_GetCurrentSelectedPlayerControlledCharacter(&UIScripts_S_Game->board)->move_speed,
+                             1);
 }
 
 void UIScripts_Confirm(button_t* button) {
