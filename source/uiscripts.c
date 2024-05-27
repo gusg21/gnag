@@ -19,8 +19,10 @@ void (*UIScripts_GetButtonCallbackByType(button_callback_type_e type))(button_t*
             return UIScripts_PrevPlayerCharacter;
         case BUTTON_CALLBACK_NEXT_CHARACTER:
             return UIScripts_NextPlayerCharacter;
-        case BUTTON_CALLBACK_TEST:
-            return UIScripts_TestButton;
+        case BUTTON_CALLBACK_CUBEOFWATER:
+            return UIScripts_CubeOfWater;
+        case BUTTON_CALLBACK_LINEOFSPIKES:
+            return UIScripts_LineOfSpikes;
 
         default:
             return NULL;
@@ -82,10 +84,18 @@ void (*UIScripts_GetTextUpdaterByType(text_updater_type_e type))(text_t*) {
     }
 }
 
-void UIScripts_TestButton(button_t* button) {
+void UIScripts_CubeOfWater(button_t* button) {
+    UNUSED(button);
+    Game_UpdateGameState(UIScripts_S_Game, GAME_STATE_SELECTING_TILE);
+    Game_UpdateSelectionType(UIScripts_S_Game, SELECTING_TILE_LINE, 3, 3);
+    Game_UpdateSelectionHazardType(UIScripts_S_Game, HAZARD_WATER);
+}
+
+void UIScripts_LineOfSpikes(button_t* button) {
     UNUSED(button);
     Game_UpdateGameState(UIScripts_S_Game, GAME_STATE_SELECTING_TILE);
     Game_UpdateSelectionType(UIScripts_S_Game, SELECTING_TILE_LINE, 4, 1);
+    Game_UpdateSelectionHazardType(UIScripts_S_Game, HAZARD_SPIKES);
 }
 
 void UIScripts_Move(button_t* button) {

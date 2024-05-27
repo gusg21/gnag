@@ -16,7 +16,8 @@ void (*UIScripts_GetImageUpdaterByType(image_updater_type_e type))(image_t*);
 void (*UIScripts_GetTextUpdaterByType(text_updater_type_e type))(text_t*);
 
 // Callbacks
-void UIScripts_TestButton(button_t* button);
+void UIScripts_CubeOfWater(button_t* button);
+void UIScripts_LineOfSpikes(button_t* button);
 void UIScripts_Move(button_t* button);
 void UIScripts_Confirm(button_t* button);
 void UIScripts_NextPlayerCharacter(button_t* button);

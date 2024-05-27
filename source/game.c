@@ -147,7 +147,7 @@ void Game_DoSelectingTile(game_t* game) {
         if (Input_IsButtonPressed(KEY_A)) {
             character_action_t action = (character_action_t){.type = CHARACTER_ACTION_CREATE_HAZARD,
                                                              .character = current,
-                                                             .hazard_type = HAZARD_WATER,
+                                                             .hazard_type = game->st_hazard_type,
                                                              .duration = 1.0f,
                                                              .first_frame = true,
                                                              .initialized = true,
@@ -157,7 +157,6 @@ void Game_DoSelectingTile(game_t* game) {
             }
             Board_EnqueuePlayerControlledCharacterAction(&game->board, action);
             current->moved = true;
-            CTR_PRINTF("line selected\n");
             memset(game->selected_tiles, 0, sizeof(vec2_t) * CHARACTER_ACTION_MAX_TILES_SELECTED);
             game->current_tile_index = 0;
             Game_UpdateGameState(game, GAME_STATE_PLAYER_TURN);
@@ -292,16 +291,16 @@ void Game_UpdateSelectedTiles(game_t* game, vec2_t next_tile_pos) {
                                 (line_dir.x * (j + 1)) + ((i - half_width) * line_dir.y),
                             Board_GetCurrentSelectedPlayerControlledCharacter(&game->board)->tile_pos.y +
                                 (line_dir.y * (j + 1)) + ((i - half_width) * line_dir.x)};
-                        if (!Game_IsValidTileSelection(game, next_in_line)) {
-                            game->current_tile_index--;
-                            break;
-                        } else {
+                        if (Game_IsValidTileSelection(game, next_in_line)) {
                             game->selected_tiles[game->current_tile_index] = next_in_line;
                             if (game->current_tile_index + 1 < game->tile_select_length * game->tile_select_width) {
                                 game->current_tile_index++;
                             }
                         }
                     }
+                }
+                if (!(game->current_tile_index + 1 >= game->tile_select_length * game->tile_select_width)) {
+                    game->current_tile_index--;
                 }
                 return;
             case SELECTING_TILE_CONE:
@@ -377,3 +376,5 @@ void Game_UpdateSelectionType(game_t* game, selecting_tile_type_e type, u32 sel_
             // do nothing
     }
 }
+
+void Game_UpdateSelectionHazardType(game_t* game, hazard_type_e type) { game->st_hazard_type = type; }
