@@ -1,0 +1,6 @@
+[submodule "tools/gnagtool/external/SDL"]
+	url = https://github.com/libsdl-org/SDL
+[submodule "tools/gnagtool/external/SDL_image"]
+	url = https://github.com/libsdl-org/SDL_image
+[submodule "tools/gnagtool/imgui"]
+	url = https://github.com/ocornut/imgui
