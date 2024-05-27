@@ -90,7 +90,7 @@ std::string GnagOSWrapper::GetPathSeparator() {
 }
 
 void GnagOSWrapper::RunTheBuildinator() {
-    system("start /D \"%GNAG_PATH%\" buildinator.bat");
+    system("\"%GNAG_PATH%\\buildinator.bat\" /nopause");
 }
 
 std::string GnagOSWrapper::GetDirectoryFromPath(const std::string &path) {
@@ -100,4 +100,8 @@ std::string GnagOSWrapper::GetDirectoryFromPath(const std::string &path) {
         directory = path.substr(0, last_slash_idx);
     }
     return directory;
+}
+
+void GnagOSWrapper::RunTheAddressFinder() {
+    system("start cmd /c \"%GNAG_PATH%\\addressfinder.bat\"");
 }

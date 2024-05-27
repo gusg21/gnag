@@ -2,8 +2,6 @@
 // Created by Angus Goucher on 5/25/2024.
 //
 
-#include <cstdio>
-
 #include <vector>
 
 #include "scenarioeditor.h"
@@ -27,6 +25,7 @@ ScenarioEditor::ScenarioEditor(GnagTool *gnagTool, SDL_Renderer *renderer, const
 
 void ScenarioEditor::DoGUI() {
     bool open = true;
+    ImGui::SetNextWindowSize({500, 500}, ImGuiCond_FirstUseEver);
     if (ImGui::Begin("Scenario Editor", &open)) {
         // Info
         ImGui::Text("Editing file %s", m_FilePath.c_str());

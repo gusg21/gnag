@@ -38,6 +38,7 @@ void FileExplorer::DoGUI() {
         m_SelectedFileIndex = -1;
     }
 
+    ImGui::SetNextWindowSize({500, 500}, ImGuiCond_FirstUseEver);
     ImGui::Begin("File Explorer", nullptr);
     {
         if (!ImGui::IsWindowFocused(ImGuiFocusedFlags_RootAndChildWindows)) {

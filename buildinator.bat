@@ -17,6 +17,7 @@ if %ERRORLEVEL% equ 0 (
 
 echo.
 
+cd %GNAG_PATH%
 make
 
 if %ERRORLEVEL% equ 0 (
@@ -27,9 +28,11 @@ if %ERRORLEVEL% equ 0 (
 
 :ERROR
 echo [41m# Failed to build![0m
+goto :END
 
 :OK
 echo [92m# Built GNAG.3dsx[0m
+goto :END
 
 :END
 if "%~1" neq "/nopause" (

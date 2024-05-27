@@ -26,6 +26,7 @@ public:
     static std::string GetPathSeparator();
     static std::string GetDirectoryFromPath(const std::string& path);
     static void RunTheBuildinator();
+    static void RunTheAddressFinder();
 };
 
 #endif //GNAGTOOL_GNAGOSWRAPPER_H

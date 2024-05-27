@@ -29,6 +29,7 @@ void GnagTool::DoGUI() {
 }
 
 void GnagTool::InternalGUI() {
+
     ImGuiViewport *viewport = ImGui::GetMainViewport();
     ImGui::SetNextWindowPos(ImVec2(viewport->Pos.x, viewport->Pos.y));
     ImGui::SetNextWindowSize(ImVec2(viewport->Size.x, m_MenuBarHeight));
@@ -40,27 +41,31 @@ void GnagTool::InternalGUI() {
     {
         m_MenuBarHeight = ImGui::GetWindowHeight();
 
-        ImGui::Columns(10);
-        ImGui::SetColumnWidth(0, 125);
-        {
-            if (ImGui::Button("Run Buildinator")) {
-                GnagOSWrapper::RunTheBuildinator();
-            }
+        if (ImGui::Button("Buildinator")) {
+            GnagOSWrapper::RunTheBuildinator();
         }
-        ImGui::NextColumn();
-        ImGui::SetColumnWidth(1, 100);
-        { ImGui::Text("FPS: %.2f", m_FPS); }
-        ImGui::NextColumn();
-        ImGui::SetColumnWidth(2, 300);
-        {
+        ImGui::SameLine();
+        if (ImGui::Button("Address Finder")) {
+            GnagOSWrapper::RunTheAddressFinder();
+        }
+        ImGui::SameLine();
+        ImGui::Bullet();
+        ImGui::Text("FPS: %.2f", m_FPS);
+        ImGui::SameLine();
+        ImGui::Bullet();
+        ImGui::Text("Info");
+        if (ImGui::BeginItemTooltip()) {
             std::string gnagPath;
             if (GnagOSWrapper::GetGnagPath(gnagPath)) {
                 ImGui::Text("Gnag Path: %s", gnagPath.c_str());
             } else {
                 ImGui::Text("Gnag Path: unset");
             }
+            ImGui::EndTooltip();
         }
     }
+
+
     ImGui::End();
 }
 
