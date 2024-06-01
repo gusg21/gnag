@@ -20,6 +20,22 @@ struct HazardData {
     HazardType HazardType;
 };
 
+enum class CharacterType {
+    NONE = 0,
+    GOOD,
+    BAD,
+    UGLY,
+    ENEMY,
+    COUNT
+};
+
+struct CharacterData {
+    int TileX;
+    int TileY;
+    CharacterType Type;
+    bool IsPlayerControlled;
+};
+
 class Scenario {
 public:
     Scenario(int gridWidth, int gridHeight);
@@ -34,6 +50,7 @@ public:
     int GridWidth = 0;
     int GridHeight = 0;
     std::vector<HazardData> Hazards {};
+    std::vector<CharacterData> Characters {};
 
     bool IsTileInRange(int tileX, int tileY) const;
 };

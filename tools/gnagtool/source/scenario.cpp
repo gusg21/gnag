@@ -12,39 +12,6 @@ Scenario::Scenario(int gridWidth, int gridHeight) : GridWidth(gridWidth), GridHe
     Hazards.resize(gridWidth * gridHeight);
 }
 
-Scenario Scenario::LoadScenarioFromJSON(const std::string &jsonPath) {
-    // Load the file
-    char jsonBuffer[jsonBufferSize] = {0};
-    FILE *jsonFile;
-    fopen_s(&jsonFile, jsonPath.c_str(), "r");
-    fread(jsonBuffer, sizeof(char), jsonBufferSize, jsonFile);
-    fclose(jsonFile);
-
-    // Parse the JSON
-    cJSON *scenarioJson = cJSON_Parse(jsonBuffer);
-    int gridWidth = (int) cJSON_GetNumberValue(cJSON_GetObjectItem(scenarioJson, "Grid Width"));
-    int gridHeight = (int) cJSON_GetNumberValue(cJSON_GetObjectItem(scenarioJson, "Grid Height"));
-
-    Scenario scenario = Scenario{gridWidth, gridHeight};
-
-    // Load hazards
-    cJSON *hazardArray = cJSON_GetObjectItem(scenarioJson, "Hazards");
-    cJSON *hazardJSON;
-    cJSON_ArrayForEach(hazardJSON, hazardArray) {
-        cJSON *tilePos = cJSON_GetObjectItem(hazardJSON, "Tile Pos");
-        int tileX = (int) cJSON_GetNumberValue(cJSON_GetArrayItem(tilePos, 0));
-        int tileY = (int) cJSON_GetNumberValue(cJSON_GetArrayItem(tilePos, 1));
-
-        int hazardType = (int) cJSON_GetNumberValue(cJSON_GetObjectItem(hazardJSON, "Type"));
-
-        scenario.SetHazardDataAtTile(tileX, tileY, HazardData{
-                static_cast<HazardType>(hazardType)
-        });
-    }
-
-    return scenario;
-}
-
 HazardData Scenario::GetHazardDataAtTile(int tileX, int tileY) {
     if (!IsTileInRange(tileX, tileY)) {
         return HazardData{
@@ -72,6 +39,55 @@ void Scenario::Resize(int width, int height) {
     Hazards.resize(width * height);
 }
 
+Scenario Scenario::LoadScenarioFromJSON(const std::string &jsonPath) {
+    // Load the file
+    char jsonBuffer[jsonBufferSize] = {0};
+    FILE *jsonFile;
+    fopen_s(&jsonFile, jsonPath.c_str(), "r");
+    fread(jsonBuffer, sizeof(char), jsonBufferSize, jsonFile);
+    fclose(jsonFile);
+
+    // Parse the JSON
+    cJSON *scenarioJson = cJSON_Parse(jsonBuffer);
+    int gridWidth = (int) cJSON_GetNumberValue(cJSON_GetObjectItem(scenarioJson, "Grid Width"));
+    int gridHeight = (int) cJSON_GetNumberValue(cJSON_GetObjectItem(scenarioJson, "Grid Height"));
+
+    Scenario scenario = Scenario{gridWidth, gridHeight};
+
+    // Load hazards
+    cJSON *hazardArray = cJSON_GetObjectItem(scenarioJson, "Hazards");
+    cJSON *hazardJson;
+    cJSON_ArrayForEach(hazardJson, hazardArray) {
+        cJSON *tilePos = cJSON_GetObjectItem(hazardJson, "Tile Pos");
+        int tileX = (int) cJSON_GetNumberValue(cJSON_GetArrayItem(tilePos, 0));
+        int tileY = (int) cJSON_GetNumberValue(cJSON_GetArrayItem(tilePos, 1));
+
+        int hazardType = (int) cJSON_GetNumberValue(cJSON_GetObjectItem(hazardJson, "Type"));
+
+        scenario.SetHazardDataAtTile(tileX, tileY, HazardData{
+                static_cast<HazardType>(hazardType)
+        });
+    }
+
+    // Load characters
+    cJSON *characterArray = cJSON_GetObjectItem(scenarioJson, "Characters");
+    cJSON *characterJson;
+    cJSON_ArrayForEach(characterJson, characterArray) {
+        cJSON *tilePos = cJSON_GetObjectItem(characterJson, "Tile Pos");
+        int tileX = (int) cJSON_GetNumberValue(cJSON_GetArrayItem(tilePos, 0));
+        int tileY = (int) cJSON_GetNumberValue(cJSON_GetArrayItem(tilePos, 1));
+
+        int characterType = (int) cJSON_GetNumberValue(cJSON_GetObjectItem(characterJson, "Type"));
+        bool playerControlled = cJSON_IsTrue(cJSON_GetObjectItem(characterJson, "Player Controlled"));
+
+        scenario.Characters.push_back(CharacterData {
+                tileX, tileY, (CharacterType) characterType, playerControlled
+        });
+    }
+
+    return scenario;
+}
+
 void Scenario::SaveToJSON(const std::string &jsonPath) {
     cJSON *scenarioJson = cJSON_CreateObject();
 
@@ -96,6 +112,23 @@ void Scenario::SaveToJSON(const std::string &jsonPath) {
 
             cJSON_AddItemToArray(hazardArray, hazardJson);
         }
+    }
+
+    cJSON *characterArray = cJSON_CreateArray();
+    cJSON_AddItemToObject(scenarioJson, "Characters", characterArray);
+    for (uint32_t characterIndex = 0; characterIndex < Characters.size(); characterIndex++) {
+        CharacterData character = Characters[characterIndex];
+
+        cJSON *characterJson = cJSON_CreateObject();
+        cJSON *characterTilePosJson = cJSON_AddArrayToObject(characterJson, "Tile Pos");
+
+        cJSON_AddNumberToObject(characterJson, "Type", (int) character.Type);
+        cJSON_AddBoolToObject(characterJson, "Player Controlled", character.IsPlayerControlled);
+
+        cJSON_AddItemToArray(characterTilePosJson, cJSON_CreateNumber(character.TileX));
+        cJSON_AddItemToArray(characterTilePosJson, cJSON_CreateNumber(character.TileY));
+
+        cJSON_AddItemToArray(characterArray, characterJson);
     }
 
     char jsonBuffer[jsonBufferSize] = {0};

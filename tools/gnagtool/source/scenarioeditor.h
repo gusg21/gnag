@@ -30,8 +30,9 @@ public:
 private:
     void RenderEditorToTexture(SDL_Texture **texture, ImVec2 editorSize);
     void DrawGrid();
-    void GetWorldPosFromTilePos(int tileX, int tileY, int *worldX, int *worldY) const;
+    void GetWorldPosFromTilePos(int tileX, int tileY, float *worldX, float *worldY) const;
     void GetTilePosFromWorldPos(float worldX, float worldY, int *tileX, int *tileY) const;
+    void GetScreenPosFromWorldPos(float worldX, float worldY, float* screenX, float* screenY) const;
     bool IsTileInSelectionPreview(int tileX, int tileY) const;
     void GetSelectionBounds(int* left, int* right, int* top, int* bottom) const;
 
@@ -49,8 +50,8 @@ private:
     float m_ViewWidth = 0;
     float m_ViewHeight = 0;
     float m_ViewPanSpeed = 300.f;
-    int m_TileWidth = 64.f;
-    int m_TileHeight = 32.f;
+    float m_TileWidth = 64.f;
+    float m_TileHeight = 32.f;
     std::vector<TilePos> m_Selection{};
     TilePos m_SelectionPreviewStart{};
     TilePos m_SelectionPreviewEnd{};

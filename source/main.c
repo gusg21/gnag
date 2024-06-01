@@ -62,25 +62,12 @@ int main() {
     // Init the game
     Game_Init(game);
 
-	// Put in testing characters; will eventually be loaded from a scenario struct
-    Game_CreateCharacterAt(game, CHAR_GOOD, true, 5.f, 5.f);
-    Game_CreateCharacterAt(game, CHAR_BAD, true, 2.f, 3.f);
-    Game_CreateCharacterAt(game, CHAR_UGLY, true, 7.f, 8.f);
-    Game_CreateCharacterAt(game, CHAR_ENEMY, false, 2.f, 9.f);
-    Board_BuildPlayerControlledCharacterIndex(&game->board);
-
-    // Spike border
-    for (u32 i = 0; i < game->grid.grid_w; i++) {
-        Game_CreateHazardAt(game, HAZARD_SPIKES, i, 0.f);
-        Game_CreateHazardAt(game, HAZARD_SPIKES, i, game->grid.grid_h - 1);
-    }
-
-    for (u32 i = 1; i < game->grid.grid_h - 1; i++) {
-        Game_CreateHazardAt(game, HAZARD_SPIKES, 0.f, i);
-        Game_CreateHazardAt(game, HAZARD_SPIKES, game->grid.grid_w - 1, i);
-    }
-
-    Game_CreateHazardAt(game, HAZARD_WATER, 1.f, 1.f);
+    // Load scenario
+    scenario_t scenario1;
+    Scenario_LoadFromJSON(&scenario1, "romfs:/jsons/scenario1.json");
+    
+    // Run scenario
+    Game_LoadScenario(game, &scenario1);
     
 	// Create and Init Bottom Screen UI
     ui_layout_t button_layout;

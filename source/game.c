@@ -81,6 +81,31 @@ void Game_Draw(game_t* game) {
     C2D_ViewReset();
 }
 
+void Game_LoadScenario(game_t* game, scenario_t* scenario) {
+    Grid_Init(&game->grid, game->sheet, scenario->grid_width, scenario->grid_height, GAME_WORLD_CENTER_X,
+              GAME_WORLD_CENTER_Y);
+    Board_Init(&game->board);
+
+    for (u32 hazard_index = 0; hazard_index < SCENARIO_MAX_HAZARDS; hazard_index++) {
+        hazard_data_t* hazard_data = &scenario->hazards[hazard_index];
+
+        if (hazard_data->initialized) {
+            Game_CreateHazard(game, hazard_data->type, hazard_data->tile_pos.x, hazard_data->tile_pos.y);
+        }
+    }
+
+    for (u32 character_index = 0; character_index < SCENARIO_MAX_CHARACTERS; character_index++) {
+        character_data_t* character_data = &scenario->characters[character_index];
+
+        if (character_data->initialized) {
+            Game_CreateCharacter(game, character_data->type, character_data->is_player_controlled,
+                             character_data->tile_pos.x, character_data->tile_pos.y);
+        }   
+    }
+
+    Board_BuildPlayerControlledCharacterIndex(&game->board);
+}
+
 void Game_DoPlayerTurn(game_t* game) {
     if (Input_IsButtonPressed(KEY_B)) {
         if (game->board.next_player_controlled_action_index > 0) {
@@ -233,15 +258,15 @@ void Game_DoSelectingTile(game_t* game) {
     }
 }
 
-character_t* Game_CreateCharacterAt(game_t* game, character_type_e type, bool is_player_controlled, float tile_x,
-                                    float tile_y) {
+character_t* Game_CreateCharacter(game_t* game, character_type_e type, bool is_player_controlled, float tile_x,
+                                  float tile_y) {
     character_t* character = Board_NewCharacter(&game->board);
     Character_Init(character, type, is_player_controlled, tile_x, tile_y);
 
     return character;
 }
 
-hazard_t* Game_CreateHazardAt(game_t* game, hazard_type_e type, float tile_x, float tile_y) {
+hazard_t* Game_CreateHazard(game_t* game, hazard_type_e type, float tile_x, float tile_y) {
     hazard_t* hazard = Board_NewHazard(&game->board);
     Hazard_Init(hazard, tile_x, tile_y, type);
 

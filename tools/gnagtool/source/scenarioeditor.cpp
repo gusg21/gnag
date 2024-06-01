@@ -17,10 +17,7 @@ ScenarioEditor::ScenarioEditor(GnagTool *gnagTool, SDL_Renderer *renderer, const
 
     m_EditorTexture = SDL_CreateTexture(renderer, SDL_PIXELFORMAT_RGBA8888, SDL_TEXTUREACCESS_TARGET, 640, 480);
 
-    int centerX, centerY;
-    GetWorldPosFromTilePos(scenario.GridWidth / 2, scenario.GridHeight / 2, &centerX, &centerY);
-    m_ViewX = (float) centerX;
-    m_ViewY = (float) centerY;
+    GetWorldPosFromTilePos(scenario.GridWidth / 2, scenario.GridHeight / 2, &m_ViewX, &m_ViewY);
 }
 
 void ScenarioEditor::DoGUI() {
@@ -51,91 +48,121 @@ void ScenarioEditor::DoGUI() {
             ImGui::OpenPopup("SaveScenarioAs");
         }
 
-        // Mouse
-        ImVec2 availSize = ImGui::GetContentRegionAvail();
-        ImVec2 screenPos = ImGui::GetCursorScreenPos();
-        ImVec2 mousePos = ImGui::GetMousePos();
-        m_MousePosX = mousePos.x - screenPos.x;
-        m_MousePosY = mousePos.y - screenPos.y;
+        ImGui::Columns(2);
+        ImGui::SetColumnWidth(0, 200);
+        ImGui::BeginChild("Character List");
+        {
+            if (ImGui::Button("+ Character")) {
+                m_Scenario.Characters.push_back(CharacterData{
+                        0, 0, CharacterType::GOOD
+                });
+            }
 
-        int tileX, tileY;
-        GetTilePosFromWorldPos(m_MousePosX + m_ViewX - (m_ViewWidth / 2.f),
-                               m_MousePosY + m_ViewY - (m_ViewHeight / 2.f), &tileX, &tileY);
+            for (uint32_t characterIndex = 0; characterIndex < m_Scenario.Characters.size(); characterIndex++) {
+                CharacterData *character = &m_Scenario.Characters[characterIndex];
+                ImGui::PushID((int)characterIndex);
+                if (ImGui::CollapsingHeader("Character")) {
+                    ImGui::InputInt2("Tile Pos", &character->TileX);
+                    ImGui::InputInt("Type", reinterpret_cast<int *>(&character->Type));
+                    character->Type = static_cast<CharacterType>(
+                            SDL_clamp(static_cast<int>(character->Type), 0, static_cast<int>(CharacterType::COUNT))
+                    );
+                    ImGui::Checkbox("Player Controlled", &character->IsPlayerControlled);
+                }
+                ImGui::PopID();
+            }
+        }
+        ImGui::EndChild();
+        ImGui::NextColumn();
+        ImGui::BeginChild("Tile Grid Editor");
+        {
+            // Mouse
+            ImVec2 availSize = ImGui::GetContentRegionAvail();
+            ImVec2 screenPos = ImGui::GetCursorScreenPos();
+            ImVec2 mousePos = ImGui::GetMousePos();
+            m_MousePosX = mousePos.x - screenPos.x;
+            m_MousePosY = mousePos.y - screenPos.y;
 
-        if (!ImGui::IsPopupOpen("TileEditor")) {
-            bool inRange = m_Scenario.IsTileInRange(tileX, tileY);
-            if (ImGui::IsMouseClicked(ImGuiMouseButton_Left) && inRange) {
-                // Selection
-                m_SelectionPreviewStart = {tileX, tileY};
-                m_SelectionPreviewEnd = {tileX, tileY};
-                m_SelectionPreviewVisible = true;
-            } else if (ImGui::IsMouseDown(ImGuiMouseButton_Left) && inRange) {
-                m_SelectionPreviewEnd = {tileX, tileY};
-                m_SelectionPreviewVisible = true;
-            } else if (ImGui::IsMouseReleased(ImGuiMouseButton_Left) && inRange && m_SelectionPreviewVisible) {
-                m_SelectionPreviewVisible = false;
+            int tileX, tileY;
+            GetTilePosFromWorldPos(m_MousePosX + m_ViewX - (m_ViewWidth / 2.f),
+                                   m_MousePosY + m_ViewY - (m_ViewHeight / 2.f), &tileX, &tileY);
 
-                m_Selection.clear();
+            if (!ImGui::IsPopupOpen("TileEditor")) {
+                bool inRange = m_Scenario.IsTileInRange(tileX, tileY);
+                if (ImGui::IsMouseClicked(ImGuiMouseButton_Left) && inRange) {
+                    // Selection
+                    m_SelectionPreviewStart = {tileX, tileY};
+                    m_SelectionPreviewEnd = {tileX, tileY};
+                    m_SelectionPreviewVisible = true;
+                } else if (ImGui::IsMouseDown(ImGuiMouseButton_Left) && inRange) {
+                    m_SelectionPreviewEnd = {tileX, tileY};
+                    m_SelectionPreviewVisible = true;
+                } else if (ImGui::IsMouseReleased(ImGuiMouseButton_Left) && inRange && m_SelectionPreviewVisible) {
+                    m_SelectionPreviewVisible = false;
+
+                    m_Selection.clear();
+                    int left, right, top, bottom;
+                    GetSelectionBounds(&left, &right, &top, &bottom);
+                    for (int xx = left; xx <= right; ++xx) {
+                        for (int yy = top; yy <= bottom; ++yy) {
+                            m_Selection.push_back({xx, yy});
+                        }
+                    }
+
+                    if (ImGui::IsWindowFocused() && !m_Selection.empty()) {
+                        ImGui::OpenPopup("TileEditor");
+                    }
+                }
+
+                if (!inRange &&
+                    (ImGui::IsMouseClicked(ImGuiMouseButton_Left) || ImGui::IsMouseReleased(ImGuiMouseButton_Right))) {
+                    m_Selection.clear();
+                }
+            }
+
+            if (ImGui::IsWindowFocused()) {
+                float deltaTime = m_GnagTool->GetDeltaTime();
+                if (ImGui::IsKeyDown(ImGuiKey_A)) {
+                    m_ViewX -= m_ViewPanSpeed * deltaTime;
+                }
+                if (ImGui::IsKeyDown(ImGuiKey_D)) {
+                    m_ViewX += m_ViewPanSpeed * deltaTime;
+                }
+                if (ImGui::IsKeyDown(ImGuiKey_W)) {
+                    m_ViewY -= m_ViewPanSpeed * deltaTime;
+                }
+                if (ImGui::IsKeyDown(ImGuiKey_S)) {
+                    m_ViewY += m_ViewPanSpeed * deltaTime;
+                }
+            }
+
+            // Render
+            RenderEditorToTexture(&m_EditorTexture, availSize);
+            ImGui::Image(m_EditorTexture, availSize, ImVec2{0, 0}, ImVec2{1, 1});
+
+            // Tile Editor
+            if (ImGui::BeginPopup("TileEditor")) {
+                ImGui::InputInt("Hazard Type", &m_HazardType);
+                m_HazardType = SDL_clamp(m_HazardType, 0, (int) HazardType::COUNT - 1);
+
                 int left, right, top, bottom;
                 GetSelectionBounds(&left, &right, &top, &bottom);
                 for (int xx = left; xx <= right; ++xx) {
                     for (int yy = top; yy <= bottom; ++yy) {
-                        m_Selection.push_back({xx, yy});
+                        HazardData data = m_Scenario.GetHazardDataAtTile(xx, yy);
+                        data.HazardType = static_cast<HazardType>(m_HazardType);
+                        m_Scenario.SetHazardDataAtTile(xx, yy, data);
                     }
                 }
 
-                if (ImGui::IsWindowFocused() && !m_Selection.empty()) {
-                    ImGui::OpenPopup("TileEditor");
-                }
-            }
+                ImGui::Text("Selection %d, %d, %d, %d", left, right, top, bottom);
+                ImGui::Text("Start %d, %d - End %d, %d", m_SelectionPreviewStart.X, m_SelectionPreviewStart.Y,
+                            m_SelectionPreviewEnd.X, m_SelectionPreviewEnd.Y);
 
-            if (!inRange &&
-                (ImGui::IsMouseClicked(ImGuiMouseButton_Left) || ImGui::IsMouseReleased(ImGuiMouseButton_Right))) {
-                m_Selection.clear();
+                ImGui::EndPopup();
             }
         }
-
-        if (ImGui::IsWindowFocused()) {
-            float deltaTime = m_GnagTool->GetDeltaTime();
-            if (ImGui::IsKeyDown(ImGuiKey_A)) {
-                m_ViewX -= m_ViewPanSpeed * deltaTime;
-            }
-            if (ImGui::IsKeyDown(ImGuiKey_D)) {
-                m_ViewX += m_ViewPanSpeed * deltaTime;
-            }
-            if (ImGui::IsKeyDown(ImGuiKey_W)) {
-                m_ViewY -= m_ViewPanSpeed * deltaTime;
-            }
-            if (ImGui::IsKeyDown(ImGuiKey_S)) {
-                m_ViewY += m_ViewPanSpeed * deltaTime;
-            }
-        }
-
-        // Render
-        RenderEditorToTexture(&m_EditorTexture, availSize);
-        ImGui::Image(m_EditorTexture, availSize, ImVec2{0, 0}, ImVec2{1, 1});
-
-        // Tile Editor
-        if (ImGui::BeginPopup("TileEditor")) {
-            ImGui::InputInt("Hazard Type", &m_HazardType);
-            m_HazardType = SDL_clamp(m_HazardType, 0, (int) HazardType::COUNT - 1);
-
-            int left, right, top, bottom;
-            GetSelectionBounds(&left, &right, &top, &bottom);
-            for (int xx = left; xx <= right; ++xx) {
-                for (int yy = top; yy <= bottom; ++yy) {
-                    HazardData data = m_Scenario.GetHazardDataAtTile(xx, yy);
-                    data.HazardType = static_cast<HazardType>(m_HazardType);
-                    m_Scenario.SetHazardDataAtTile(xx, yy, data);
-                }
-            }
-
-            ImGui::Text("Selection %d, %d, %d, %d", left, right, top, bottom);
-            ImGui::Text("Start %d, %d - End %d, %d", m_SelectionPreviewStart.X, m_SelectionPreviewStart.Y,
-                        m_SelectionPreviewEnd.X, m_SelectionPreviewEnd.Y);
-
-            ImGui::EndPopup();
-        }
+        ImGui::EndChild();
 
         // Resize Scenario
         if (ImGui::BeginPopup("ResizeScenario")) {
@@ -156,7 +183,8 @@ void ScenarioEditor::DoGUI() {
         // Save Scenario As
         if (ImGui::BeginPopup("SaveScenarioAs")) {
             bool wantsSave = false;
-            wantsSave = wantsSave || ImGui::InputText("Save As", m_SaveAsFilePath, 256, ImGuiInputTextFlags_EnterReturnsTrue);
+            wantsSave = wantsSave ||
+                        ImGui::InputText("Save As", m_SaveAsFilePath, 256, ImGuiInputTextFlags_EnterReturnsTrue);
             wantsSave = wantsSave || ImGui::Button("Save");
 
             if (wantsSave) {
@@ -190,6 +218,18 @@ void ScenarioEditor::RenderEditorToTexture(SDL_Texture **texture, ImVec2 editorS
     SDL_RenderClear(m_Renderer);
     {
         DrawGrid();
+
+        for (uint32_t characterIndex = 0; characterIndex < m_Scenario.Characters.size(); characterIndex++) {
+            CharacterData *character = &m_Scenario.Characters[characterIndex];
+            float worldX, worldY;
+            GetWorldPosFromTilePos(character->TileX, character->TileY, &worldX, &worldY);
+            float screenX, screenY;
+            GetScreenPosFromWorldPos(worldX, worldY, &screenX, &screenY);
+            SDL_Rect dst = {
+                    static_cast<int>(screenX - 32), static_cast<int>(screenY - 86), 64, 96
+            };
+            SDL_RenderCopy(m_Renderer, m_GnagTool->GetCharacterTexture(character->Type), nullptr, &dst);
+        }
     }
     SDL_RenderPresent(m_Renderer);
 
@@ -204,10 +244,10 @@ void ScenarioEditor::RenderEditorToTexture(SDL_Texture **texture, ImVec2 editorS
 void ScenarioEditor::DrawGrid() {
     for (int xx = m_Scenario.GridWidth - 1; xx >= 0; xx--) {
         for (int yy = 0; yy < m_Scenario.GridHeight; yy++) {
-            int worldX, worldY;
+            float worldX, worldY;
             GetWorldPosFromTilePos(xx, yy, &worldX, &worldY);
-            worldX += (int) (-m_ViewX + (m_ViewWidth / 2.f));
-            worldY += (int) (-m_ViewY + (m_ViewHeight / 2.f));
+            float screenX, screenY;
+            GetScreenPosFromWorldPos(worldX, worldY, &screenX, &screenY);
 
             // Render sprites
             SDL_Texture *tileTex;
@@ -220,7 +260,7 @@ void ScenarioEditor::DrawGrid() {
                 tileTex = m_GnagTool->GetQuestionTileTexture();
             }
             SDL_Rect dest = {
-                    worldX - 32, worldY - 48, 64, 64
+                    static_cast<int>(screenX - 32), static_cast<int>(screenY - 48), 64, 64
             };
             SDL_RenderCopy(m_Renderer, tileTex, nullptr, &dest);
 
@@ -234,22 +274,22 @@ void ScenarioEditor::DrawGrid() {
             }
 
             SDL_Point gridTilePoints[5] = {
-                    {worldX - m_TileWidth / 2, worldY},
-                    {worldX,                   worldY - m_TileHeight / 2},
-                    {worldX + m_TileWidth / 2, worldY},
-                    {worldX,                   worldY + m_TileHeight / 2},
-                    {worldX - m_TileWidth / 2, worldY}
+                    {static_cast<int>(screenX - m_TileWidth / 2), static_cast<int>(screenY)},
+                    {static_cast<int>(screenX),                   static_cast<int>(screenY - m_TileHeight / 2)},
+                    {static_cast<int>(screenX + m_TileWidth / 2), static_cast<int>(screenY)},
+                    {static_cast<int>(screenX),                   static_cast<int>(screenY + m_TileHeight / 2)},
+                    {static_cast<int>(screenX - m_TileWidth / 2), static_cast<int>(screenY)}
             };
             SDL_RenderDrawLines(m_Renderer, gridTilePoints, 5);
         }
     }
 }
 
-void ScenarioEditor::GetWorldPosFromTilePos(int tileX, int tileY, int *worldX, int *worldY) const {
-    int halfTileWidth = m_TileWidth / 2;
-    int halfTileHeight = m_TileHeight / 2;
-    *worldX = (tileY + tileX) * halfTileWidth;
-    *worldY = (tileY - tileX) * halfTileHeight;
+void ScenarioEditor::GetWorldPosFromTilePos(int tileX, int tileY, float *worldX, float *worldY) const {
+    float halfTileWidth = (float) m_TileWidth / 2.f;
+    float halfTileHeight = (float) m_TileHeight / 2.f;
+    *worldX = (float) (tileY + tileX) * halfTileWidth;
+    *worldY = (float) (tileY - tileX) * halfTileHeight;
 }
 
 void ScenarioEditor::GetTilePosFromWorldPos(float worldX, float worldY, int *tileX, int *tileY) const {
@@ -270,4 +310,9 @@ void ScenarioEditor::GetSelectionBounds(int *left, int *right, int *top, int *bo
     *right = SDL_max(m_SelectionPreviewStart.X, m_SelectionPreviewEnd.X);
     *top = SDL_min(m_SelectionPreviewStart.Y, m_SelectionPreviewEnd.Y);
     *bottom = SDL_max(m_SelectionPreviewStart.Y, m_SelectionPreviewEnd.Y);
+}
+
+void ScenarioEditor::GetScreenPosFromWorldPos(float worldX, float worldY, float *screenX, float *screenY) const {
+    *screenX = worldX + -m_ViewX + m_ViewWidth / 2.f;
+    *screenY = worldY + -m_ViewY + m_ViewHeight / 2.f;
 }

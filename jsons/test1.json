@@ -34,5 +34,9 @@
 		}, {
 			"Tile Pos":	[9, 2],
 			"Type":	1
+		}],
+	"Characters":	[{
+			"Tile Pos":	[7, 3],
+			"Type":	3
 		}]
 }

@@ -25,6 +25,11 @@ public:
     SDL_Texture* GetEmptyTileTexture() { return m_EmptyTileTexture; }
     SDL_Texture* GetSpikesTileTexture() { return m_SpikesTileTexture; }
     SDL_Texture* GetQuestionTileTexture() { return m_SpikesTileTexture; }
+    SDL_Texture* GetCharacterTexture(CharacterType type) {
+        int index = static_cast<int>(type);
+        if (index >= m_CharacterTextures.size()) return m_QuestionCharacterTexture;
+        return m_CharacterTextures[index];
+    }
 
 private:
     // Refs
@@ -35,12 +40,15 @@ private:
     SDL_Texture* m_EmptyTileTexture;
     SDL_Texture* m_SpikesTileTexture;
     SDL_Texture* m_QuestionTileTexture;
+    SDL_Texture* m_QuestionCharacterTexture;
+    std::vector<SDL_Texture*> m_CharacterTextures{};
 
     // Internals
     float m_FPS = 0.f;
     float m_DeltaTime = 0.f;
     float m_MenuBarHeight = 0.f;
     std::vector<ToolGUI*> m_GUIsToClose{};
+    bool m_RebuildBuildinator = false;
     void InternalGUI();
 };
 

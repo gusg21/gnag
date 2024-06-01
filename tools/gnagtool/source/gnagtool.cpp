@@ -11,6 +11,15 @@ GnagTool::GnagTool(SDL_Renderer *renderer) : m_Renderer(renderer) {
     m_EmptyTileTexture = IMG_LoadTexture(renderer, "gfx/emptytile.png");
     m_SpikesTileTexture = IMG_LoadTexture(renderer, "gfx/spikes.png");
     m_QuestionTileTexture = IMG_LoadTexture(renderer, "gfx/questiontile.png");
+
+    m_QuestionCharacterTexture = IMG_LoadTexture(renderer, "gfx/questioncharacter.png");
+    m_CharacterTextures = {
+            IMG_LoadTexture(renderer, "gfx/questioncharacter.png"),
+            IMG_LoadTexture(renderer, "gfx/good.png"),
+            IMG_LoadTexture(renderer, "gfx/bad.png"),
+            IMG_LoadTexture(renderer, "gfx/ugly.png"),
+            IMG_LoadTexture(renderer, "gfx/enemy.png"),
+    };
 }
 
 void GnagTool::DoGUI() {
@@ -42,8 +51,13 @@ void GnagTool::InternalGUI() {
         m_MenuBarHeight = ImGui::GetWindowHeight();
 
         if (ImGui::Button("Buildinator")) {
+            if (m_RebuildBuildinator) {
+                GnagOSWrapper::RunTheBuildinatorCleaner();
+            }
             GnagOSWrapper::RunTheBuildinator();
         }
+        ImGui::SameLine();
+        ImGui::Checkbox("Rebuild", &m_RebuildBuildinator);
         ImGui::SameLine();
         if (ImGui::Button("Address Finder")) {
             GnagOSWrapper::RunTheAddressFinder();

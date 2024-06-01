@@ -105,3 +105,7 @@ std::string GnagOSWrapper::GetDirectoryFromPath(const std::string &path) {
 void GnagOSWrapper::RunTheAddressFinder() {
     system("start cmd /c \"%GNAG_PATH%\\addressfinder.bat\"");
 }
+
+void GnagOSWrapper::RunTheBuildinatorCleaner() {
+    system("\"%GNAG_PATH%\\cleanbuildinator.bat\" /nopause");
+}

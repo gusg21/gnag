@@ -6,6 +6,7 @@
 #include "_defs.h"
 #include "panic.h"
 #include "uisprites.h"
+#include "jsonhelper.h"
 
 #define UILAYOUT_MAX_FILE_SIZE 8192
 
@@ -18,26 +19,7 @@ void UILayout_InitFromFile(ui_layout_t* layout, const char* filename) {
 }
 
 void UILayout_LoadNewLayoutFromFile(ui_layout_t* layout, const char* filename) {
-    FILE* fptr = fopen(filename, "r");
-    if (fptr == NULL) {
-        Panic_Panic();
-        CTR_PRINTF("Unable to open file %s\n", filename);
-    }
-
-    char* buffer = malloc(sizeof(char) * UILAYOUT_MAX_FILE_SIZE);
-    fread(buffer, sizeof(char), UILAYOUT_MAX_FILE_SIZE, fptr);
-    fclose(fptr);
-
-    cJSON* json = cJSON_Parse(buffer);
-    if (json == NULL) {
-        Panic_Panic();
-        size_t error_byte_offset = (size_t)cJSON_GetErrorPtr() - (size_t)buffer;
-        char* begin = &buffer[MAX(error_byte_offset - 50, 0)];
-        size_t length = 50;
-        CTR_PRINTF("Error loading JSON from %s\n", filename);
-        CTR_PRINTF("%*.*s\n", length, length, begin);
-        CTR_PRINTF("%d bytes from start of file\n", error_byte_offset);
-    }
+    cJSON* json = JSONHelper_LoadCJSONFromFile(filename, UILAYOUT_MAX_FILE_SIZE);
 
     UILayout_LoadButtonsFromJSON(layout, json);
     UILayout_LoadFillBarsFromJSON(layout, json);
@@ -45,7 +27,6 @@ void UILayout_LoadNewLayoutFromFile(ui_layout_t* layout, const char* filename) {
     UILayout_LoadImagesFromJSON(layout, json);
 
     cJSON_Delete(json);
-    free(buffer);
 }
 
 void UILayout_LoadButtonsFromJSON(ui_layout_t* layout, cJSON* json) {

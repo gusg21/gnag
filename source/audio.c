@@ -99,8 +99,8 @@ static void AudioInstance_DecodingThread(void* audio_ptr) {
     audio_instance_t* audio = (audio_instance_t*)audio_ptr;
 
     while (audio->playing) {  // Whilst the quit flag is unset,
-                    // search our waveBufs and fill any that aren't currently
-                    // queued for playback (i.e, those that are 'done')
+                              // search our waveBufs and fill any that aren't currently
+                              // queued for playback (i.e, those that are 'done')
 
         for (size_t i = 0; i < AUDIO_NUM_WAVE_BUFFERS; ++i) {
             if (audio->wave_bufs[i].status != NDSP_WBUF_DONE) {
@@ -172,7 +172,8 @@ audio_instance_t* Audio_Play(audio_t* audio, const char* opus_path) {
     // Setup wavebufs
     memset(&audio_instance->wave_bufs, 0, sizeof(ndspWaveBuf) * AUDIO_NUM_WAVE_BUFFERS);
     for (size_t i = 0; i < AUDIO_NUM_WAVE_BUFFERS; i++) {
-        audio_instance->wave_bufs[i].data_vaddr = audio_instance->audio_buf + (AUDIO_SAMPLE_COUNT * AUDIO_CHANNELS_PER_SAMPLE * i);
+        audio_instance->wave_bufs[i].data_vaddr =
+            audio_instance->audio_buf + (AUDIO_SAMPLE_COUNT * AUDIO_CHANNELS_PER_SAMPLE * i);
         audio_instance->wave_bufs[i].status = NDSP_WBUF_DONE;
     }
 
@@ -185,7 +186,8 @@ audio_instance_t* Audio_Play(audio_t* audio, const char* opus_path) {
     thread_priority = MAX(thread_priority, 0x18);
 
     audio_instance->decoding_thread_id =
-        threadCreate(AudioInstance_DecodingThread, audio_instance, AUDIO_THREAD_STACK_SIZE, thread_priority, AUDIO_THREAD_CORE, false);
+        threadCreate(AudioInstance_DecodingThread, audio_instance, AUDIO_THREAD_STACK_SIZE, thread_priority,
+                     AUDIO_THREAD_CORE, false);
 
     CTR_PRINTF("Thread ID %p\n", audio_instance->decoding_thread_id);
 

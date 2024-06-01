@@ -6,6 +6,7 @@
 #include "board.h"
 #include "grid.h"
 #include "ai.h"
+#include "scenario.h"
 
 #define GAME_MAX_ACTORS 1024
 
@@ -51,6 +52,7 @@ void Game_Init(game_t* game);
 void Game_Destroy(game_t* game);
 void Game_Update(game_t* game, float delta_secs);
 void Game_Draw(game_t* game);
+void Game_LoadScenario(game_t* game, scenario_t* scenario);
 
 void Game_DoPlayerTurn(game_t* game);
 void Game_DoPlayerActing(game_t* game);
@@ -58,8 +60,8 @@ void Game_DoOpponentTurn(game_t* game);
 void Game_DoOpponentActing(game_t* game);
 void Game_DoSelectingTile(game_t* game);
 
-character_t* Game_CreateCharacterAt(game_t* game, character_type_e type, bool is_player_controlled, float tile_x, float tile_y);
-hazard_t* Game_CreateHazardAt(game_t* game, hazard_type_e type, float tile_x, float tile_y);
+character_t* Game_CreateCharacter(game_t* game, character_type_e type, bool is_player_controlled, float tile_x, float tile_y);
+hazard_t* Game_CreateHazard(game_t* game, hazard_type_e type, float tile_x, float tile_y);
 
 bool Game_IsValidTileSelection(game_t* game, vec2_t next_tile_pos);
 void Game_UpdateSelectedTiles(game_t* game, vec2_t next_tile_pos);
