@@ -36,6 +36,7 @@ BUILD		:=	build
 SOURCES		:=	source
 DATA		:=	data
 JSONS		:= 	jsons
+AUDIOS		:= 	audio/opus
 INCLUDES	:=	include
 GRAPHICS	:=	gfx
 #GFXBUILD	:=	$(BUILD)
@@ -91,6 +92,7 @@ SHLISTFILES	:=	$(foreach dir,$(SOURCES),$(notdir $(wildcard $(dir)/*.shlist)))
 GFXFILES	:=	$(foreach dir,$(GRAPHICS),$(notdir $(wildcard $(dir)/*.t3s)))
 BINFILES	:=	$(foreach dir,$(DATA),$(notdir $(wildcard $(dir)/*.*)))
 JSONFILES	:=  $(foreach dir,$(JSONS),$(notdir $(wildcard $(dir)/*.json*)))
+AUDIOFILES	:=  $(foreach dir,$(AUDIOS),$(notdir $(wildcard $(dir)/*.opus*)))
 
 $(info CFILES is $(CFILES))
 $(info CPPFILES is $(CPPFILES))
@@ -98,6 +100,7 @@ $(info SFILES is $(SFILES))
 $(info GFXFILES is $(GFXFILES))
 $(info BINFILES is $(BINFILES))
 $(info JSONFILES is $(JSONFILES))
+$(info AUDIOFILES is $(AUDIOFILES))
 
 #---------------------------------------------------------------------------------
 # use CXX for linking C++ projects, CC for standard C
@@ -170,7 +173,7 @@ endif
 .PHONY: all clean
 
 #---------------------------------------------------------------------------------
-all: $(BUILD)  $(GFXBUILD) $(DEPSDIR) jsoncopy $(ROMFS_T3XFILES) $(T3XHFILES)
+all: $(BUILD)  $(GFXBUILD) $(DEPSDIR) jsoncopy audiocopy $(ROMFS_T3XFILES) $(T3XHFILES)
 	@$(MAKE) --no-print-directory -C $(BUILD) -f $(CURDIR)/Makefile
 
 $(BUILD):
@@ -190,6 +193,11 @@ jsoncopy:
 	@rm -rf $(CURDIR)/romfs/jsons/
 	@mkdir -p "$(CURDIR)/romfs/jsons/"
 	@for u in $(JSONFILES); do echo $$u; cp -f $(CURDIR)/$(JSONS)/$$u $(CURDIR)/romfs/jsons/; done
+
+audiocopy:
+	@rm -rf $(CURDIR)/romfs/audio/
+	@mkdir -p "$(CURDIR)/romfs/audio/"
+	@for u in $(AUDIOFILES); do echo $$u; cp -f $(CURDIR)/$(AUDIOS)/$$u $(CURDIR)/romfs/audio/; done
 
 #---------------------------------------------------------------------------------
 clean:
