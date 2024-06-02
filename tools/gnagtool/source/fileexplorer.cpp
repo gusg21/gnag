@@ -3,13 +3,13 @@
 //
 
 #include "fileexplorer.h"
-#include "imgui.h"
-#include "misc/cpp/imgui_stdlib.h"
-#include "imgui_internal.h"
 #include "gnagoswrapper.h"
+#include "gnagtool.h"
+#include "imgui.h"
+#include "imgui_internal.h"
+#include "misc/cpp/imgui_stdlib.h"
 #include "scenario.h"
 #include "scenarioeditor.h"
-#include "gnagtool.h"
 
 #if WIN32
 
@@ -17,10 +17,11 @@
 
 #endif
 
-FileExplorer::FileExplorer(GnagTool *gnagTool) : ToolGUI(gnagTool) {
+FileExplorer::FileExplorer(GnagTool *gnagTool)
+        : ToolGUI(gnagTool) {
     m_GnagTool = gnagTool;
 
-    std::string gnagPath{};
+    std::string gnagPath { };
     bool pathFound = GnagOSWrapper::GetGnagPath(gnagPath);
     if (pathFound) {
         m_CurrentPath = gnagPath;
@@ -38,7 +39,7 @@ void FileExplorer::DoGUI() {
         m_SelectedFileIndex = -1;
     }
 
-    ImGui::SetNextWindowSize({500, 500}, ImGuiCond_FirstUseEver);
+    ImGui::SetNextWindowSize({ 500, 500 }, ImGuiCond_FirstUseEver);
     ImGui::Begin("File Explorer", nullptr);
     {
         if (!ImGui::IsWindowFocused(ImGuiFocusedFlags_RootAndChildWindows)) {
@@ -82,7 +83,6 @@ void FileExplorer::DoGUI() {
                 ImGui::EndDisabled();
             }
             ImGui::EndDisabled();
-
         }
         ImGui::EndGroup();
         ImGui::NextColumn();
@@ -97,7 +97,8 @@ void FileExplorer::DoGUI() {
                 if (GetSelectedFileExtension() == ".json") {
                     if (ImGui::Button("Open as Scenario")) {
                         std::string absolutePath = m_CurrentPath + entry->FileName;
-                        Scenario scenario = Scenario::LoadScenarioFromJSON(absolutePath);
+                        Scenario scenario;
+                        scenario.LoadFromJSON(absolutePath);
                         m_GnagTool->AddGUI(
                                 new ScenarioEditor(m_GnagTool, m_GnagTool->GetRenderer(), scenario, absolutePath));
                     }
@@ -119,6 +120,3 @@ std::string FileExplorer::GetSelectedFileExtension() {
     if (!HasFileSelected()) return "";
     return GnagOSWrapper::GetFileExtension(m_FilesVec[m_SelectedFileIndex].FileName);
 }
-
-
-

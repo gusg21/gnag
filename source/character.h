@@ -4,19 +4,13 @@
 #include <3ds.h>
 #include <citro2d.h>
 
+#include "characterdata.h"
 #include "vec2.h"
-#include "grid.h"
 
 #define CHARACTER_MAX_HEALTH 100.f
 #define CHARACTER_MOVE_SPEED 5
 
-typedef enum {
-    CHAR_NONE,
-    CHAR_GOOD,
-    CHAR_BAD,
-    CHAR_UGLY,
-    CHAR_ENEMY
-} character_type_e;
+typedef struct grid_s grid_t;
 
 typedef struct {
     bool initialized;

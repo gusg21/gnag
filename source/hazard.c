@@ -42,8 +42,8 @@ void Hazard_Draw(hazard_t* hazard, C2D_SpriteSheet sheet, grid_t* grid) {
     C2D_DrawSprite(&hazard_sprite);
 }
 
-hazard_type_e Hazard_Combine(hazard_type_e hazardtype1, hazard_type_e hazardtype2) {
-    u32 min = MIN(hazardtype1, hazardtype2);
-    u32 max = MAX(hazardtype1, hazardtype2);
+hazard_type_e Hazard_Combine(hazard_type_e hazard_type_1, hazard_type_e hazard_type_2) {
+    u32 min = MIN(hazard_type_1, hazard_type_2);
+    u32 max = MAX(hazard_type_1, hazard_type_2);
     return hazard_lut[max + (min * hazard_lut_width)];
 }

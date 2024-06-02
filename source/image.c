@@ -27,7 +27,7 @@ void Image_Draw(image_t* image) {
     if (image->render_on_top) {
         C2D_SpriteSetDepth(&image->sprite, 0.1f);
     }
-    C2D_DrawRectSolid(image->pos.x, image->pos.y, 0, image->size.x, image->size.y, image->color);
+    C2D_DrawRectSolid(image->pos.x, image->pos.y, 0, image->size.x, image->size.y, ColorF_ToU32(image->color));
     C2D_SpriteSetCenter(&image->sprite, .5f, .5f);
     C2D_SpriteSetPos(&image->sprite, image->pos.x, image->pos.y);
     C2D_DrawSprite(&image->sprite);

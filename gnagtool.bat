@@ -1,3 +1,4 @@
 @echo off
 
-tools\gnagtool\build\gnagtool_exe.exe
+cd tools\gnagtool\build
+gnagtool_exe.exe

@@ -92,7 +92,7 @@ static bool Audio_S_FillWaveBuffer(OggOpusFile* opus_file, ndspWaveBuf* wave_buf
 
 static void Audio_SoundFrameCallback(void* audio_ptr) {
     audio_t* audio = (audio_t*)audio_ptr;
-    LightEvent_Signal(&audio->event);
+    LightEvent_Signal(&audio->event); // todo))! looks like we're getting NULL here on real hardware
 }
 
 static void AudioInstance_DecodingThread(void* audio_ptr) {

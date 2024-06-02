@@ -21,6 +21,7 @@
     <mapping directory="$PROJECT_DIR$/external/SDL_image/external/libtiff" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/external/SDL_image/external/libwebp" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/external/SDL_image/external/zlib" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/external/SDL_ttf" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/imgui" vcs="Git" />
   </component>
 </project>

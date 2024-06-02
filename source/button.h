@@ -7,8 +7,6 @@
 
 #define BUTTON_INACTIVE_COLOR C2D_Color32f(0.2f, 0.2f, 0.2f, 1.f)
 
-struct button;
-
 typedef struct button_s {
     button_data_t data;
     C2D_Sprite sprite;

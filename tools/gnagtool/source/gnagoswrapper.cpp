@@ -4,8 +4,11 @@
 
 #include "gnagoswrapper.h"
 
-#include <Windows.h>
 #include <Shlwapi.h>
+#include <Windows.h>
+
+std::thread GnagOSWrapper::m_BuildinatorThread;
+std::atomic_bool GnagOSWrapper::m_IsBuildinating;
 
 std::string GnagOSWrapper::GetWorkingDirectory() {
 #if WIN32
@@ -31,10 +34,10 @@ void GnagOSWrapper::GetFilesInDirectory(std::vector<FileEntry> &filesVec, const 
     }
 
     constexpr size_t bufferSize = MAX_PATH + 20;
-    char buffer[bufferSize] = {0};
+    char buffer[bufferSize] = { 0 };
     do {
-        FileEntry entry = {};
-        entry.FileName = std::string{findData.cFileName};
+        FileEntry entry = { };
+        entry.FileName = std::string { findData.cFileName };
         entry.IsDirectory = findData.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY;
         if (entry.IsDirectory) entry.FileName += GnagOSWrapper::GetPathSeparator();
         filesVec.emplace_back(entry);
@@ -57,7 +60,7 @@ void GnagOSWrapper::GetFilesInDirectory(std::vector<FileEntry> &filesVec, const 
 
 bool GnagOSWrapper::GetGnagPath(std::string &gnagPath) {
     constexpr uint32_t envVarBufferSize = 1024;
-    CHAR envVarBuffer[envVarBufferSize] = {0};
+    CHAR envVarBuffer[envVarBufferSize] = { 0 };
     uint32_t bytesWritten = GetEnvironmentVariable("GNAG_PATH", envVarBuffer, envVarBufferSize);
     bool exists = bytesWritten > 0;
     gnagPath.clear();
@@ -79,18 +82,29 @@ std::string GnagOSWrapper::GetFileExtension(const std::string &fileName) {
 }
 
 std::string GnagOSWrapper::PathFix(const std::string &a, const std::string &b) {
-    CHAR outputCstr[MAX_PATH] = {0};
+    CHAR outputCstr[MAX_PATH] = { 0 };
     std::string prePath = a + b;
     PathCanonicalize(outputCstr, prePath.c_str());
-    return std::string{outputCstr};
+    return std::string { outputCstr };
 }
 
 std::string GnagOSWrapper::GetPathSeparator() {
-    return std::string{"\\"};
+    return std::string { "\\" };
 }
 
 void GnagOSWrapper::RunTheBuildinator() {
-    system("\"%GNAG_PATH%\\buildinator.bat\" /nopause");
+    if (!m_IsBuildinating) {
+        if (m_BuildinatorThread.joinable()) {
+            m_BuildinatorThread.join();
+        }
+        m_BuildinatorThread = std::thread(
+                []() -> void {
+                    m_IsBuildinating = true;
+                    system("\"%GNAG_PATH%\\buildinator.bat\" /nopause");
+                    m_IsBuildinating = false;
+                }
+        );
+    }
 }
 
 std::string GnagOSWrapper::GetDirectoryFromPath(const std::string &path) {
@@ -108,4 +122,14 @@ void GnagOSWrapper::RunTheAddressFinder() {
 
 void GnagOSWrapper::RunTheBuildinatorCleaner() {
     system("\"%GNAG_PATH%\\cleanbuildinator.bat\" /nopause");
+}
+
+void GnagOSWrapper::CleanUpThreads() {
+    if (m_IsBuildinating) {
+        m_BuildinatorThread.join();
+    }
+}
+
+bool GnagOSWrapper::IsTheBuildinatorBuildinating() {
+    return m_IsBuildinating;
 }

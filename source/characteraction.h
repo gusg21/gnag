@@ -1,8 +1,6 @@
 #ifndef CHARACTERACTION_H
 #define CHARACTERACTION_H
 
-#include <3ds.h>
-
 #include "character.h"
 #include "hazard.h"
 

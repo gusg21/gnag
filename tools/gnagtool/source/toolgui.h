@@ -9,16 +9,16 @@ class GnagTool;
 
 class ToolGUI {
 public:
-    explicit ToolGUI(GnagTool* gnagTool);
-    ToolGUI(ToolGUI&) = delete;
-    ToolGUI& operator=(ToolGUI&) = delete;
+    explicit ToolGUI(GnagTool *gnagTool);
+    ToolGUI(ToolGUI &) = delete;
+    ToolGUI &operator=(ToolGUI &) = delete;
 
-    virtual void Update(float deltaTime) {};
+    virtual void Update(float deltaTime) { };
     virtual void DoGUI() = 0;
 
 protected:
-    GnagTool* m_GnagTool;
+    GnagTool *m_GnagTool;
 };
 
 
-#endif //GNAGTOOL_TOOLGUI_H
+#endif // GNAGTOOL_TOOLGUI_H

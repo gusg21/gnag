@@ -7,7 +7,7 @@
 
 #define GRID_MAX_TILE_DATAS 256
 
-typedef struct {
+typedef struct grid_s {
     u32 tile_w, tile_h;
     u32 grid_w, grid_h;
     s32 center_x, center_y;

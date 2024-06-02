@@ -4,9 +4,11 @@
 
 #include "gnagtool.h"
 #include "SDL_image.h"
+#include "uilayouteditor.h"
 
 GnagTool::GnagTool(SDL_Renderer *renderer) : m_Renderer(renderer) {
     m_GUIs.push_back(new FileExplorer(this));
+    m_GUIs.push_back(new UILayoutEditor(this, renderer, "C:\\Projects\\3ds\\gnag\\jsons\\uilayout_playerturn.json"));
 
     m_EmptyTileTexture = IMG_LoadTexture(renderer, "gfx/emptytile.png");
     m_SpikesTileTexture = IMG_LoadTexture(renderer, "gfx/spikes.png");
@@ -44,12 +46,13 @@ void GnagTool::InternalGUI() {
     ImGui::SetNextWindowSize(ImVec2(viewport->Size.x, m_MenuBarHeight));
     ImGui::SetNextWindowViewport(viewport->ID);
     ImGui::Begin("All-powerful GnagTool", NULL,
-                 ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoDocking | ImGuiWindowFlags_NoCollapse
-                 | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoNavFocus |
+                 ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoDocking | ImGuiWindowFlags_NoCollapse |
+                 ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoNavFocus |
                  ImGuiWindowFlags_NoDecoration);
     {
         m_MenuBarHeight = ImGui::GetWindowHeight();
 
+        ImGui::BeginDisabled(GnagOSWrapper::IsTheBuildinatorBuildinating());
         if (ImGui::Button("Buildinator")) {
             if (m_RebuildBuildinator) {
                 GnagOSWrapper::RunTheBuildinatorCleaner();
@@ -62,6 +65,7 @@ void GnagTool::InternalGUI() {
         if (ImGui::Button("Address Finder")) {
             GnagOSWrapper::RunTheAddressFinder();
         }
+        ImGui::EndDisabled();
         ImGui::SameLine();
         ImGui::Bullet();
         ImGui::Text("FPS: %.2f", m_FPS);

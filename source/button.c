@@ -1,6 +1,7 @@
 #include "button.h"
 
 #include "_defs.h"
+#include "colorf.h"
 #include "input.h"
 #include "uiscripts.h"
 
@@ -52,12 +53,12 @@ void Button_Draw(button_t* button) {
     C2D_SetTintMode(C2D_TintSolid);
 
     if (Button_IsDown(button)) {
-        C2D_DrawRectSolid(button->data.pos.x, button->data.pos.y, 0, button->data.size.x, button->data.size.y, button->data.pressed_color);
+        C2D_DrawRectSolid(button->data.pos.x, button->data.pos.y, 0, button->data.size.x, button->data.size.y, ColorF_ToU32(button->data.pressed_color));
         C2D_SetTintMode(C2D_TintMult);
         C2D_PlainImageTint(&tint, C2D_Color32f(.5f, .5f, .5f, 1.f), 1.f);
         C2D_DrawSpriteTinted(&button->sprite, &tint);
     } else if (button->pressable) {
-        C2D_DrawRectSolid(button->data.pos.x, button->data.pos.y, 0, button->data.size.x, button->data.size.y, button->data.color);
+        C2D_DrawRectSolid(button->data.pos.x, button->data.pos.y, 0, button->data.size.x, button->data.size.y, ColorF_ToU32(button->data.color));
         C2D_DrawSprite(&button->sprite);
     } else {
         C2D_DrawRectSolid(button->data.pos.x, button->data.pos.y, 0, button->data.size.x, button->data.size.y, BUTTON_INACTIVE_COLOR);

@@ -1,6 +1,10 @@
 cmake_minimum_required(VERSION 3.21)
 project(gnagtool LANGUAGES CXX C)
 
+if (NOT DEFINED ENV{GNAG_PATH})
+    message(FATAL_ERROR "GNAG_PATH Environment variable not set!")
+endif()
+
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/build")
 
 set(SDL_STATIC ON)
@@ -25,15 +29,8 @@ set(SDL2IMAGE_XPM OFF)
 set(SDL2IMAGE_TGA OFF)
 set(SDL2IMAGE_XV OFF)
 add_subdirectory(external/SDL_image)
+add_subdirectory(external/SDL_ttf)
 
-if (WIN32)
-    set(WIN32_EXTRAS)
-else ()
-    set(WIN32_EXTRAS
-            source/mouse.cpp
-            source/mouse.h
-    )
-endif ()
 add_executable(gnagtool_exe ${WIN32_EXTRAS}
         imgui/imgui.cpp
         imgui/imgui.h
@@ -67,8 +64,15 @@ add_executable(gnagtool_exe ${WIN32_EXTRAS}
         source/scenario.h
         source/mouse.cpp
         source/cJSON.c
+        source/uilayouteditor.cpp
+        source/uilayouteditor.h
+        source/uilayout.cpp
+        source/uilayout.h
+        source/jsonserializable.cpp
+        source/jsonserializable.h
 
 )
+target_include_directories(gnagtool_exe PUBLIC $ENV{GNAG_PATH}/common)
 target_include_directories(gnagtool_exe PUBLIC imgui)
 
 target_link_libraries(gnagtool_exe PUBLIC Shlwapi)
@@ -86,10 +90,17 @@ if (WIN32)
 #            $<TARGET_FILE_DIR:gnagtool_exe>)
 endif ()
 target_link_libraries(gnagtool_exe PUBLIC SDL2_image::SDL2_image)
+target_link_libraries(gnagtool_exe PUBLIC SDL2_ttf::SDL2_ttf)
 
 
-# Copy Gnag art to output
+# Copy Gnag art to output (/gfx/)
 add_custom_command(TARGET gnagtool_exe POST_BUILD
         COMMAND ${CMAKE_COMMAND} -E copy_directory
         "$ENV{GNAG_PATH}/gfx/"
         $<TARGET_FILE_DIR:gnagtool_exe>/gfx/)
+
+# Copy GnagTool assets to output (/assets/)
+add_custom_command(TARGET gnagtool_exe POST_BUILD
+        COMMAND ${CMAKE_COMMAND} -E copy_directory
+        "${CMAKE_SOURCE_DIR}/assets/"
+        $<TARGET_FILE_DIR:gnagtool_exe>/assets/)

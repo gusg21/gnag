@@ -1,9 +1,10 @@
 #ifndef IMAGE_H
 #define IMAGE_H
 
-#include "imagedata.h"
+#include <citro2d.h>
 
-struct image;
+#include "colorf.h"
+#include "imagedata.h"
 
 typedef struct image_s {
     bool initialized;
@@ -14,7 +15,7 @@ typedef struct image_s {
     vec2_t pos;
     vec2_t size;
     C2D_Sprite sprite;
-    u32 color;
+    colorf_t color;
 
     void (*updater)(struct image_s* image);
     

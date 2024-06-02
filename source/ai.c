@@ -1,6 +1,7 @@
 #include "ai.h"
 
 #include "_defs.h"
+#include "board.h"
 
 void AI_Init(ai_t* ai) {
     UNUSED(ai); // todo)) remove once the ai param is actually used!

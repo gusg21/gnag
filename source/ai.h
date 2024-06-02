@@ -1,7 +1,7 @@
 #ifndef AI_H
 #define AI_H
 
-#include "board.h"
+typedef struct board_s board_t;
 
 typedef struct ai_s {
     // AI state goes here, any kind of persistent thoughts the system would like to hold on to.

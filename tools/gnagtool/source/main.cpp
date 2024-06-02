@@ -1,14 +1,18 @@
 #include <cstdio>
 
-#include "imgui.h"
 #include "SDL.h"
-#include "backends/imgui_impl_sdlrenderer2.h"
+#include "SDL_image.h"
+#include "SDL_ttf.h"
 #include "backends/imgui_impl_sdl2.h"
+#include "backends/imgui_impl_sdlrenderer2.h"
 #include "gnagtool.h"
+#include "imgui.h"
 #include "mouse.h"
 
 int main(int argc, char **argv) {
     SDL_Init(SDL_INIT_EVERYTHING);
+    IMG_Init(IMG_INIT_PNG);
+    TTF_Init();
 
     SDL_Window *window = SDL_CreateWindow("the glorious gnagtool", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 1600,
                                           900, SDL_WINDOW_RESIZABLE | SDL_WINDOW_ALLOW_HIGHDPI);
@@ -18,8 +22,8 @@ int main(int argc, char **argv) {
     ImGui::CreateContext();
 
     ImGuiIO &io = ImGui::GetIO();
-    io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;     // Enable Keyboard Controls
-    io.ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad;      // Enable Gamepad Controls
+    io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard; // Enable Keyboard Controls
+    io.ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad;  // Enable Gamepad Controls
     io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;
     io.ConfigFlags |= ImGuiConfigFlags_ViewportsEnable;
     io.ConfigWindowsMoveFromTitleBarOnly = true;
@@ -66,7 +70,7 @@ int main(int argc, char **argv) {
 
         SDL_RenderPresent(renderer);
 
-        deltaTime = (float)(SDL_GetPerformanceCounter() - lastPCTicks) / (float)SDL_GetPerformanceFrequency();
+        deltaTime = (float) (SDL_GetPerformanceCounter() - lastPCTicks) / (float) SDL_GetPerformanceFrequency();
         lastPCTicks = SDL_GetPerformanceCounter();
     }
 

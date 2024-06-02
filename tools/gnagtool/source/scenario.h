@@ -8,51 +8,38 @@
 
 #include <string>
 #include <vector>
+#include "jsonserializable.h"
 
-enum class HazardType {
-    NONE = 0,
-    SPIKES,
-    WATER,
-    COUNT
-};
+#include "hazarddata.h"
+#include "characterdata.h"
 
 struct HazardData {
-    HazardType HazardType;
-};
-
-enum class CharacterType {
-    NONE = 0,
-    GOOD,
-    BAD,
-    UGLY,
-    ENEMY,
-    COUNT
+    ::hazard_type_e HazardType;
 };
 
 struct CharacterData {
     int TileX;
     int TileY;
-    CharacterType Type;
+    ::character_type_e Type;
     bool IsPlayerControlled;
 };
 
-class Scenario {
+class Scenario : public JSONSerializable {
 public:
-    Scenario(int gridWidth, int gridHeight);
-
     HazardData GetHazardDataAtTile(int tileX, int tileY);
     void SetHazardDataAtTile(int tileX, int tileY, HazardData data);
     void Resize(int width, int height);
-
-    static Scenario LoadScenarioFromJSON(const std::string& jsonPath);
-    void SaveToJSON(const std::string& jsonPath);
-
-    int GridWidth = 0;
-    int GridHeight = 0;
-    std::vector<HazardData> Hazards {};
-    std::vector<CharacterData> Characters {};
-
     bool IsTileInRange(int tileX, int tileY) const;
+
+protected:
+    void FromJSON(cJSON *json) override;
+    void ToJSON(cJSON *json) override;
+
+public:
+    int GridWidth = 10;
+    int GridHeight = 10;
+    std::vector<HazardData> Hazards { };
+    std::vector<CharacterData> Characters { };
 };
 
 

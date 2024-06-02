@@ -4,6 +4,7 @@
             "name": "Win32",
             "includePath": [
                 "${workspaceFolder}/**",
+                "${workspaceFolder}/common",
                 "C:\\devkitPro\\libctru\\include",
                 "C:\\devkitPro\\devkitARM\\arm-none-eabi\\include",
                 "${workspaceFolder}/build/",
