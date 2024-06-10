@@ -192,12 +192,12 @@ endif
 jsoncopy:
 	@rm -rf $(CURDIR)/romfs/jsons/
 	@mkdir -p "$(CURDIR)/romfs/jsons/"
-	@for u in $(JSONFILES); do echo $$u; cp -f $(CURDIR)/$(JSONS)/$$u $(CURDIR)/romfs/jsons/; done
+	@for u in $(JSONFILES); do echo $$u; cp -f "$(CURDIR)/$(JSONS)/$$u" "$(CURDIR)/romfs/jsons/"; done
 
 audiocopy:
 	@rm -rf $(CURDIR)/romfs/audio/
 	@mkdir -p "$(CURDIR)/romfs/audio/"
-	@for u in $(AUDIOFILES); do echo $$u; cp -f $(CURDIR)/$(AUDIOS)/$$u $(CURDIR)/romfs/audio/; done
+	@for u in $(AUDIOFILES); do echo $$u; cp -f "$(CURDIR)/$(AUDIOS)/$$u" "$(CURDIR)/romfs/audio/"; done
 
 #---------------------------------------------------------------------------------
 clean:
