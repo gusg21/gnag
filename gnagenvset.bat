@@ -1,7 +1,7 @@
 @echo off
 
-setx GNAG_PATH=%CD%
+setx GNAG_PATH ^"%CD%^"
 
-echo Set GNAG_PATH to "%CD%"
+echo Set GNAG_PATH to %CD%
 
 pause
