@@ -17,7 +17,7 @@ if %ERRORLEVEL% equ 0 (
 
 echo.
 
-cd "%GNAG_PATH%"
+cd %GNAG_PATH%
 make
 
 if %ERRORLEVEL% equ 0 (
