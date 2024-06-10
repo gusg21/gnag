@@ -17,7 +17,7 @@ if %ERRORLEVEL% equ 0 (
 
 echo.
 
-cd %GNAG_PATH%
+cd "%GNAG_PATH%"
 make clean
 
 REM No error checking because the .3dsx file is likely open in Citra, which results in an error
