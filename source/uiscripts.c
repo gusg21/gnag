@@ -87,8 +87,8 @@ void (*UIScripts_GetTextUpdaterByType(text_updater_type_e type))(text_t*) {
 void UIScripts_CubeOfWater(button_t* button) {
     UNUSED(button);
     Game_UpdateGameState(UIScripts_S_Game, GAME_STATE_SELECTING_TILE);
-    Game_UpdateSelectionType(UIScripts_S_Game, SELECTING_TILE_LINE, 3, 3);
-    Game_UpdateSelectionHazardType(UIScripts_S_Game, HAZARD_WATER);
+    Game_UpdateSelectionType(UIScripts_S_Game, SELECTING_TILE_LINE, 3, 1);
+    Game_UpdateSelectionHazardType(UIScripts_S_Game, HAZARD_FIRE);
 }
 
 void UIScripts_LineOfSpikes(button_t* button) {
@@ -116,8 +116,8 @@ void UIScripts_Confirm(button_t* button) {
         u32 actions_queued =
             Board_EnqueueAllPlayerControlledCharacterActionsToMainActionQueue(&UIScripts_S_Game->board);
         // todo)) @gusg21 DO AI
-        Game_UpdateGameState(UIScripts_S_Game, GAME_STATE_PLAYER_ACTING);
         Board_ExecuteQueue(&UIScripts_S_Game->board);
+        Game_UpdateGameState(UIScripts_S_Game, GAME_STATE_PLAYER_ACTING);
         CTR_PRINTF("%ld actions queued\n", actions_queued);
     } else {
         CTR_PRINTF("selecting next char\n");

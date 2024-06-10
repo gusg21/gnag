@@ -27,17 +27,29 @@ void Game_Destroy(game_t* game) { C2D_SpriteSheetFree(game->sheet); }
 void Game_Update(game_t* game, float delta_secs) {
     Board_Update(&game->board, delta_secs);
 
-    if (game->state == GAME_STATE_PLAYER_TURN) {
-        Game_DoPlayerTurn(game);
-    } else if (game->state == GAME_STATE_PLAYER_ACTING) {
-        Game_DoPlayerActing(game);
-    } else if (game->state == GAME_STATE_OPPONENT_TURN) {
-        Game_DoOpponentTurn(game);
-    } else if (game->state == GAME_STATE_OPPONENT_ACTING) {
-        Game_DoOpponentActing(game);
-    } else if (game->state == GAME_STATE_SELECTING_TILE) {
-        Game_DoSelectingTile(game);
+    switch (game->state) {
+        case GAME_STATE_NONE:
+            break;
+        case GAME_STATE_PLAYER_TURN:
+            Game_DoPlayerTurn(game);
+            break;
+        case GAME_STATE_PLAYER_ACTING:
+            Game_DoPlayerActing(game);
+            break;
+        case GAME_STATE_OPPONENT_TURN:
+            Game_DoOpponentTurn(game);
+            break;
+        case GAME_STATE_OPPONENT_ACTING:
+            Game_DoOpponentActing(game);
+            break;
+        case GAME_STATE_SELECTING_TILE:
+            Game_DoSelectingTile(game);
+            break;
+
+        default:
+            break;
     }
+
     // Move camera to focused target
     game->view_pos = Vec2_Lerp(game->view_pos, game->focus_pos, 0.1f);
 }
@@ -99,8 +111,8 @@ void Game_LoadScenario(game_t* game, scenario_t* scenario) {
 
         if (character_data->initialized) {
             Game_CreateCharacter(game, character_data->type, character_data->is_player_controlled,
-                             character_data->tile_pos.x, character_data->tile_pos.y);
-        }   
+                                 character_data->tile_pos.x, character_data->tile_pos.y);
+        }
     }
 
     Board_BuildPlayerControlledCharacterIndex(&game->board);
@@ -351,6 +363,9 @@ void Game_UpdateGameState(game_t* game, game_state_e state) {
             CTR_PRINTF("STATE player turn\n");
             return;
         case GAME_STATE_PLAYER_ACTING:
+            for (u32 i = 0; i < game->board.next_player_controlled_action_index; i++) {
+                game->board.player_controlled_characters[i]->moved = false;
+            }
             CTR_PRINTF("STATE player acting\n");
             return;
         case GAME_STATE_OPPONENT_TURN:  // todo)) actually needed? enemies would most likely act instantly with no

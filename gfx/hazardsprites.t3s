@@ -1,3 +1,5 @@
 --atlas -f rgba8888 -z auto
 hazards/spikes.png
+hazards/flamingspikes.png
 hazards/water.png
+hazards/fire.png

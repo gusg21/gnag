@@ -37,9 +37,19 @@ void Hazard_Draw(hazard_t* hazard, C2D_SpriteSheet sheet, grid_t* grid) {
             C2D_SpriteSetCenter(&hazard_sprite, 0.5f, 0.75f);
             break;
         }
+        case HAZARD_FLAMING_SPIKES: {
+            C2D_SpriteFromSheet(&hazard_sprite, sheet, hazardsprites_flamingspikes_idx);
+            C2D_SpriteSetCenter(&hazard_sprite, 0.5f, 0.75f);
+            break;
+        }
         case HAZARD_WATER: {
             C2D_SpriteFromSheet(&hazard_sprite, sheet, hazardsprites_water_idx);
             C2D_SpriteSetCenter(&hazard_sprite, 0.5f, 0.6f);
+            break;
+        }
+        case HAZARD_FIRE: {
+            C2D_SpriteFromSheet(&hazard_sprite, sheet, hazardsprites_fire_idx);
+            C2D_SpriteSetCenter(&hazard_sprite, 0.5f, 0.75f);
             break;
         }
 
