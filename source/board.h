@@ -33,6 +33,7 @@ typedef struct board_s {
     u32 next_player_controlled_action_top_order;
 
     // Hazard data
+    C2D_SpriteSheet hazard_sheet;
     hazard_t hazards[BOARD_MAX_HAZARDS];
     u32 next_hazard_index;
 } board_t;

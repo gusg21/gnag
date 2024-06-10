@@ -25,6 +25,7 @@ void Board_Init(board_t* board) {
     board->next_player_controlled_action_index = 0;
     board->next_player_controlled_action_top_order = 0;
 
+    board->hazard_sheet = C2D_SpriteSheetLoad("romfs:/gfx/hazardsprites.t3x");
     board->next_hazard_index = 0;
 }
 
@@ -49,7 +50,7 @@ void Board_Draw(board_t* board, C2D_SpriteSheet sheet, grid_t* grid) {
     // Draw hazards
     for (u32 hazard_index = 0; hazard_index < BOARD_MAX_HAZARDS; hazard_index++) {
         hazard_t* hazard = &board->hazards[hazard_index];
-        if (hazard->initialized) Hazard_Draw(hazard, sheet, grid);
+        if (hazard->initialized) Hazard_Draw(hazard, board->hazard_sheet, grid);
     }
 
     // Draw characters

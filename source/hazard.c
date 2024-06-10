@@ -1,7 +1,7 @@
 #include "hazard.h"
 
 #include "grid.h"
-#include "sprites.h"
+#include "hazardsprites.h"
 #include "_defs.h"
 
 static u32 hazard_lut[] = {
@@ -33,12 +33,12 @@ void Hazard_Draw(hazard_t* hazard, C2D_SpriteSheet sheet, grid_t* grid) {
 
     switch (hazard->type) {
         case HAZARD_SPIKES: {
-            C2D_SpriteFromSheet(&hazard_sprite, sheet, sprites_spikes_idx);
+            C2D_SpriteFromSheet(&hazard_sprite, sheet, hazardsprites_spikes_idx);
             C2D_SpriteSetCenter(&hazard_sprite, 0.5f, 0.75f);
             break;
         }
         case HAZARD_WATER: {
-            C2D_SpriteFromSheet(&hazard_sprite, sheet, sprites_watertile_idx);
+            C2D_SpriteFromSheet(&hazard_sprite, sheet, hazardsprites_water_idx);
             C2D_SpriteSetCenter(&hazard_sprite, 0.5f, 0.6f);
             break;
         }
