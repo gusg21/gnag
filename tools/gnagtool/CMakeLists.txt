@@ -31,7 +31,15 @@ set(SDL2IMAGE_XV OFF)
 add_subdirectory(external/SDL_image)
 add_subdirectory(external/SDL_ttf)
 
+string(REPLACE "\\" "/" GNAG_PATH_SAFE $ENV{GNAG_PATH})
+FILE(GLOB gnagcommon_src ${GNAG_PATH_SAFE}/common/*.c)
+set(gnagcommon_inc ${GNAG_PATH_SAFE}/common/)
+message(STATUS "GnagCommon INC: ${gnagcommon_inc}")
+message(STATUS "GnagCommon SRC: ${gnagcommon_src}")
+
 add_executable(gnagtool_exe ${WIN32_EXTRAS}
+        ${gnagcommon_src}
+
         imgui/imgui.cpp
         imgui/imgui.h
         imgui/imconfig.h
@@ -66,18 +74,16 @@ add_executable(gnagtool_exe ${WIN32_EXTRAS}
         source/cJSON.c
         source/uilayouteditor.cpp
         source/uilayouteditor.h
-        source/uilayout.cpp
-        source/uilayout.h
         source/jsonserializable.cpp
         source/jsonserializable.h
 
 )
-target_include_directories(gnagtool_exe PUBLIC $ENV{GNAG_PATH}/common)
+target_include_directories(gnagtool_exe PUBLIC ${gnagcommon_inc})
 target_include_directories(gnagtool_exe PUBLIC imgui)
 
-target_link_libraries(gnagtool_exe PUBLIC Shlwapi)
 target_link_libraries(gnagtool_exe PUBLIC SDL2::SDL2)
 if (WIN32)
+    target_link_libraries(gnagtool_exe PUBLIC Shlwapi)
     target_link_libraries(gnagtool_exe PUBLIC SDL2::SDL2main)
 #    # Copies required DLLs to output :)
 #    add_custom_command(TARGET gnagtool_exe POST_BUILD

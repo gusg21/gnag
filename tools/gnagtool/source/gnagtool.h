@@ -48,6 +48,7 @@ private:
     float m_MenuBarHeight = 0.f;
     std::vector<ToolGUI *> m_GUIsToClose { };
     bool m_RebuildBuildinator = false;
+    bool m_ShowImGuiDemo = false;
     void InternalGUI();
 };
 

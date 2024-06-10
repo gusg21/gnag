@@ -7,6 +7,7 @@
 #include "gnagtool.h"
 #include "imgui.h"
 #include "scenarioeditor.h"
+#include "scenario.h"
 
 ScenarioEditor::ScenarioEditor(GnagTool *gnagTool, SDL_Renderer *renderer, const Scenario &scenario,
                                const std::string &fileName)
@@ -17,7 +18,7 @@ ScenarioEditor::ScenarioEditor(GnagTool *gnagTool, SDL_Renderer *renderer, const
 
     m_EditorTexture = SDL_CreateTexture(renderer, SDL_PIXELFORMAT_RGBA8888, SDL_TEXTUREACCESS_TARGET, 640, 480);
 
-    GetWorldPosFromTilePos(scenario.GridWidth / 2, scenario.GridHeight / 2, &m_ViewX, &m_ViewY);
+    GetWorldPosFromTilePos(scenario.GetWidth() / 2, scenario.GetHeight() / 2, &m_ViewX, &m_ViewY);
 }
 
 void ScenarioEditor::DoGUI() {
@@ -27,7 +28,7 @@ void ScenarioEditor::DoGUI() {
         // Info
         ImGui::Text("Editing file %s", m_FilePath.c_str());
         if (ImGui::BeginItemTooltip()) {
-            ImGui::Text("Grid Size %d x %d", m_Scenario.GridWidth, m_Scenario.GridHeight);
+            ImGui::Text("Grid Size %d x %d", m_Scenario.GetWidth(), m_Scenario.GetHeight());
             ImGui::Text("View Pos %f x %f", m_ViewX, m_ViewY);
             ImGui::Text("%zu tiles selected", m_Selection.size());
             ImGui::EndTooltip();
@@ -39,7 +40,7 @@ void ScenarioEditor::DoGUI() {
         }
         ImGui::SameLine();
         if (ImGui::Button("Save Scenario")) {
-            m_Scenario.SaveToJSON(m_FilePath);
+            Scenario_SaveToJSON(&m_Scenario.Scenario, m_FilePath.c_str());
         }
         ImGui::SameLine();
         if (ImGui::Button("Save Scenario As...")) {
@@ -53,19 +54,25 @@ void ScenarioEditor::DoGUI() {
         ImGui::BeginChild("Character List");
         {
             if (ImGui::Button("+ Character")) {
-                m_Scenario.Characters.push_back(CharacterData {
-                        0, 0, CHAR_GOOD });
+                character_data_t newData = character_data_t {
+                        true, {0, 0}, CHAR_GOOD };
+                m_Scenario.AddCharacterData(newData);
             }
 
-            for (uint32_t characterIndex = 0; characterIndex < m_Scenario.Characters.size(); characterIndex++) {
-                CharacterData *character = &m_Scenario.Characters[characterIndex];
+            for (uint32_t characterIndex = 0; characterIndex < SCENARIO_MAX_CHARACTERS; characterIndex++) {
+                character_data_t *characterData = &m_Scenario.Scenario.characters[characterIndex];
                 ImGui::PushID((int) characterIndex);
                 if (ImGui::CollapsingHeader("Character")) {
-                    ImGui::InputInt2("Tile Pos", &character->TileX);
-                    ImGui::InputInt("Type", reinterpret_cast<int *>(&character->Type));
-                    character->Type = static_cast<character_type_e>(
-                            SDL_clamp(static_cast<int>(character->Type), 0, static_cast<int>(CHAR_COUNT)));
-                    ImGui::Checkbox("Player Controlled", &character->IsPlayerControlled);
+                    int tilePos[2] = {(int)characterData->tile_pos.x, (int)characterData->tile_pos.y};
+                    ImGui::InputInt2("Tile Pos", tilePos);
+                    characterData->tile_pos.x = (float)tilePos[0];
+                    characterData->tile_pos.y = (float)tilePos[1];
+
+                    ImGui::InputInt("Type", reinterpret_cast<int *>(&characterData->type));
+                    characterData->type = static_cast<character_type_e>(
+                            SDL_clamp(static_cast<int>(characterData->type), 0, static_cast<int>(CHAR_COUNT)));
+
+                    ImGui::Checkbox("Player Controlled", &characterData->is_player_controlled);
                 }
                 ImGui::PopID();
             }
@@ -140,16 +147,14 @@ void ScenarioEditor::DoGUI() {
 
             // Tile Editor
             if (ImGui::BeginPopup("TileEditor")) {
-                ImGui::InputInt("Hazard Type", &m_HazardType);
-                m_HazardType = SDL_clamp(m_HazardType, 0, (int) HAZARD_COUNT - 1);
+                ImGui::InputInt("Hazard Type", (int *) &m_HazardType);
+                m_HazardType = (hazard_type_e) SDL_clamp((int) m_HazardType, 0, (int) HAZARD_COUNT - 1);
 
                 int left, right, top, bottom;
                 GetSelectionBounds(&left, &right, &top, &bottom);
                 for (int xx = left; xx <= right; ++xx) {
                     for (int yy = top; yy <= bottom; ++yy) {
-                        HazardData data = m_Scenario.GetHazardDataAtTile(xx, yy);
-                        data.HazardType = static_cast<hazard_type_e>(m_HazardType);
-                        m_Scenario.SetHazardDataAtTile(xx, yy, data);
+                        m_Scenario.SetHazardTypeAtTile(xx, yy, m_HazardType);
                     }
                 }
 
@@ -186,7 +191,7 @@ void ScenarioEditor::DoGUI() {
             wantsSave = wantsSave || ImGui::Button("Save");
 
             if (wantsSave) {
-                m_Scenario.SaveToJSON(m_SaveAsFilePath);
+                Scenario_SaveToJSON(&m_Scenario.Scenario, m_SaveAsFilePath);
                 m_FilePath = m_SaveAsFilePath;
                 ImGui::CloseCurrentPopup();
             }
@@ -216,15 +221,15 @@ void ScenarioEditor::RenderEditorToTexture(SDL_Texture **texture, ImVec2 editorS
     {
         DrawGrid();
 
-        for (uint32_t characterIndex = 0; characterIndex < m_Scenario.Characters.size(); characterIndex++) {
-            CharacterData *character = &m_Scenario.Characters[characterIndex];
+        for (uint32_t characterIndex = 0; characterIndex < SCENARIO_MAX_CHARACTERS; characterIndex++) {
+            character_data_t *character = &m_Scenario.Scenario.characters[characterIndex];
             float worldX, worldY;
-            GetWorldPosFromTilePos(character->TileX, character->TileY, &worldX, &worldY);
+            GetWorldPosFromTilePos((int)character->tile_pos.x, (int)character->tile_pos.y, &worldX, &worldY);
             float screenX, screenY;
             GetScreenPosFromWorldPos(worldX, worldY, &screenX, &screenY);
             SDL_Rect dst = {
                     static_cast<int>(screenX - 32), static_cast<int>(screenY - 86), 64, 96 };
-            SDL_RenderCopy(m_Renderer, m_GnagTool->GetCharacterTexture(character->Type), nullptr, &dst);
+            SDL_RenderCopy(m_Renderer, m_GnagTool->GetCharacterTexture(character->type), nullptr, &dst);
         }
     }
     SDL_RenderPresent(m_Renderer);
@@ -238,8 +243,8 @@ void ScenarioEditor::RenderEditorToTexture(SDL_Texture **texture, ImVec2 editorS
 }
 
 void ScenarioEditor::DrawGrid() {
-    for (int xx = m_Scenario.GridWidth - 1; xx >= 0; xx--) {
-        for (int yy = 0; yy < m_Scenario.GridHeight; yy++) {
+    for (uint32_t xx = m_Scenario.GetWidth() - 1; xx >= 0; xx--) {
+        for (uint32_t yy = 0; yy < m_Scenario.GetHeight(); yy++) {
             float worldX, worldY;
             GetWorldPosFromTilePos(xx, yy, &worldX, &worldY);
             float screenX, screenY;
@@ -247,10 +252,10 @@ void ScenarioEditor::DrawGrid() {
 
             // Render sprites
             SDL_Texture *tileTex;
-            HazardData hazard = m_Scenario.GetHazardDataAtTile(xx, yy);
-            if (hazard.HazardType == HAZARD_NONE) {
+            hazard_type_e hazard = m_Scenario.GetHazardTypeAtTile(xx, yy);
+            if (hazard == HAZARD_NONE) {
                 tileTex = m_GnagTool->GetEmptyTileTexture();
-            } else if (hazard.HazardType == HAZARD_SPIKES) {
+            } else if (hazard == HAZARD_SPIKES) {
                 tileTex = m_GnagTool->GetSpikesTileTexture();
             } else {
                 tileTex = m_GnagTool->GetQuestionTileTexture();
@@ -262,7 +267,7 @@ void ScenarioEditor::DrawGrid() {
             // Render grid
             if (IsTileInSelectionPreview(xx, yy) && m_SelectionPreviewVisible) {
                 SDL_SetRenderDrawColor(m_Renderer, 240, 150, 130, 255);
-            } else if (std::find(m_Selection.begin(), m_Selection.end(), TilePos { xx, yy }) != m_Selection.end()) {
+            } else if (std::find(m_Selection.begin(), m_Selection.end(), TilePos { (int)xx, (int)yy }) != m_Selection.end()) {
                 SDL_SetRenderDrawColor(m_Renderer, 240, 230, 100, 255);
             } else {
                 SDL_SetRenderDrawColor(m_Renderer, 230, 20, 10, 255);

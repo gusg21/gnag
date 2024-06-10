@@ -6,6 +6,10 @@
 #include "_defs.h"
 #include "panic.h"
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 cJSON* JSONHelper_LoadCJSONFromFile(const char* json_file, size_t max_file_buffer_size) {
     // Open the file
     FILE* fptr = fopen(json_file, "r");
@@ -27,8 +31,8 @@ cJSON* JSONHelper_LoadCJSONFromFile(const char* json_file, size_t max_file_buffe
         char* begin = &buffer[MAX(error_byte_offset - 50, 0)];
         size_t length = 50;
         CTR_PRINTF("Error loading JSON from %s\n", json_file);
-        CTR_PRINTF("%*.*s\n", length, length, begin);
-        CTR_PRINTF("%d bytes from start of file\n", error_byte_offset);
+        CTR_PRINTF("%*.*s\n", (int)length, (int)length, begin);
+        CTR_PRINTF("%zu bytes from start of file\n", error_byte_offset);
     }
 
     // Free the buffer
@@ -36,3 +40,7 @@ cJSON* JSONHelper_LoadCJSONFromFile(const char* json_file, size_t max_file_buffe
 
     return json;
 }
+
+#ifdef __cplusplus
+}
+#endif

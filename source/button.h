@@ -13,6 +13,7 @@ typedef struct button_s {
     bool pressable;
     bool held;
     bool initialized;
+    colorf_t pressed_color; // Computed based off the button_data_t's normal color
 
     void (*on_released)(struct button_s* button);
     void (*updater)(struct button_s* button);

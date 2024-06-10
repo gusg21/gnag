@@ -67,6 +67,8 @@ void GnagTool::InternalGUI() {
         }
         ImGui::EndDisabled();
         ImGui::SameLine();
+        ImGui::Checkbox("ImGui Demo", &m_ShowImGuiDemo);
+        ImGui::SameLine();
         ImGui::Bullet();
         ImGui::Text("FPS: %.2f", m_FPS);
         ImGui::SameLine();
@@ -85,6 +87,8 @@ void GnagTool::InternalGUI() {
 
 
     ImGui::End();
+
+    if (m_ShowImGuiDemo) ImGui::ShowDemoWindow();
 }
 
 void GnagTool::Update(float deltaTime) {

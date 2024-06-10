@@ -57,7 +57,7 @@ private:
     TilePos m_SelectionPreviewStart { };
     TilePos m_SelectionPreviewEnd { };
     bool m_SelectionPreviewVisible = false;
-    int m_HazardType = 1;
+    hazard_type_e m_HazardType = HAZARD_SPIKES;
     int m_ScenarioResizeSize[2] = { 10, 10 };
     bool m_WantOpenTileEditor = false;
     bool m_Focused = false;

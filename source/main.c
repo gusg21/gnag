@@ -116,8 +116,8 @@ int main() {
             hidScanInput();
 
             C3D_FrameBegin(C3D_FRAME_SYNCDRAW);
-            C2D_TargetClear(top_screen, C2D_Color32(223, 246, 245, 255));
-            C2D_TargetClear(bottom_screen, C2D_Color32(223, 246, 245, 255));
+            C2D_TargetClear(top_screen, C2D_Color32(CLEAR_COLOR_INTS));
+            C2D_TargetClear(bottom_screen, C2D_Color32(CLEAR_COLOR_INTS));
             C3D_FrameEnd(0);
         }
     }

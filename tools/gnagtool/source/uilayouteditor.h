@@ -27,7 +27,13 @@ private:
     TTF_Font *m_Font;
 
     std::string m_UILayoutPath;
-    UILayout m_UILayout;
+    ui_layout_t m_UILayout;
+
+    uint32_t m_HoveredButtonIndex = 0;
+    uint32_t m_HoveredTextIndex = 0;
+    bool m_ShowColors = false;
+    bool m_SimulatePressed = false;
+    bool m_UseSuperZoom3000 = false;
 };
 
 

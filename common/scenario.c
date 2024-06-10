@@ -5,11 +5,15 @@
 #include "cJSON.h"
 #include "jsonhelper.h"
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 void Scenario_LoadFromJSON(scenario_t* scenario, const char* json_path) {
     cJSON* scenario_json = JSONHelper_LoadCJSONFromFile(json_path, SCENARIO_MAX_JSON_LENGTH);
 
-    scenario->grid_width = cJSON_GetNumberValue(cJSON_GetObjectItem(scenario_json, "Grid Width"));
-    scenario->grid_height = cJSON_GetNumberValue(cJSON_GetObjectItem(scenario_json, "Grid Height"));
+    scenario->grid_width = (u32) cJSON_GetNumberValue(cJSON_GetObjectItem(scenario_json, "Grid Width"));
+    scenario->grid_height = (u32) cJSON_GetNumberValue(cJSON_GetObjectItem(scenario_json, "Grid Height"));
 
     cJSON* hazards_json = cJSON_GetObjectItem(scenario_json, "Hazards");
     cJSON* hazard_json;
@@ -19,8 +23,8 @@ void Scenario_LoadFromJSON(scenario_t* scenario, const char* json_path) {
         hazard_data->initialized = true;
 
         cJSON* hazard_tile_pos_json = cJSON_GetObjectItem(hazard_json, "Tile Pos");
-        hazard_data->tile_pos.x = cJSON_GetNumberValue(cJSON_GetArrayItem(hazard_tile_pos_json, 0));
-        hazard_data->tile_pos.y = cJSON_GetNumberValue(cJSON_GetArrayItem(hazard_tile_pos_json, 1));
+        hazard_data->tile_pos.x = (float) cJSON_GetNumberValue(cJSON_GetArrayItem(hazard_tile_pos_json, 0));
+        hazard_data->tile_pos.y = (float) cJSON_GetNumberValue(cJSON_GetArrayItem(hazard_tile_pos_json, 1));
 
         hazard_data->type = cJSON_GetNumberValue(cJSON_GetObjectItem(hazard_json, "Type"));
 
@@ -35,8 +39,8 @@ void Scenario_LoadFromJSON(scenario_t* scenario, const char* json_path) {
         character_data->initialized = true;
 
         cJSON* character_tile_pos_json = cJSON_GetObjectItem(character_json, "Tile Pos");
-        character_data->tile_pos.x = cJSON_GetNumberValue(cJSON_GetArrayItem(character_tile_pos_json, 0));
-        character_data->tile_pos.y = cJSON_GetNumberValue(cJSON_GetArrayItem(character_tile_pos_json, 1));
+        character_data->tile_pos.x = (float) cJSON_GetNumberValue(cJSON_GetArrayItem(character_tile_pos_json, 0));
+        character_data->tile_pos.y = (float) cJSON_GetNumberValue(cJSON_GetArrayItem(character_tile_pos_json, 1));
 
         character_data->type = cJSON_GetNumberValue(cJSON_GetObjectItem(character_json, "Type"));
         character_data->is_player_controlled = cJSON_IsTrue(cJSON_GetObjectItem(character_json, "Player Controlled"));
@@ -90,3 +94,7 @@ void Scenario_SaveToJSON(scenario_t* scenario, const char* json_path) {
         cJSON_AddItemToArray(characterArray, characterJson);
     }
 }
+
+#ifdef __cplusplus
+}
+#endif

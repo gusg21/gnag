@@ -8,38 +8,30 @@
 
 #include <string>
 #include <vector>
+#include <scenario.h>
 #include "jsonserializable.h"
 
 #include "hazarddata.h"
 #include "characterdata.h"
 
-struct HazardData {
-    ::hazard_type_e HazardType;
-};
-
-struct CharacterData {
-    int TileX;
-    int TileY;
-    ::character_type_e Type;
-    bool IsPlayerControlled;
-};
-
-class Scenario : public JSONSerializable {
+class Scenario {
 public:
-    HazardData GetHazardDataAtTile(int tileX, int tileY);
-    void SetHazardDataAtTile(int tileX, int tileY, HazardData data);
+    void LoadFromJSON(const std::string& jsonFile);
+
+    hazard_type_e GetHazardTypeAtTile(int tileX, int tileY);
+    void SetHazardTypeAtTile(int tileX, int tileY, hazard_type_e type);
     void Resize(int width, int height);
     bool IsTileInRange(int tileX, int tileY) const;
+    void AddCharacterData(character_data_t characterData);
 
-protected:
-    void FromJSON(cJSON *json) override;
-    void ToJSON(cJSON *json) override;
-
+    uint32_t GetWidth() const;
+    uint32_t GetHeight() const;
 public:
-    int GridWidth = 10;
-    int GridHeight = 10;
-    std::vector<HazardData> Hazards { };
-    std::vector<CharacterData> Characters { };
+    scenario_t Scenario;
+
+private:
+    uint32_t m_NextHazardIndex;
+    uint32_t m_NextCharacterIndex;
 };
 
 

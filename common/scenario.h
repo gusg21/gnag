@@ -9,6 +9,10 @@
 #include "vec2.h"
 #include "characterdata.h"
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 typedef struct {
     bool initialized;
 
@@ -33,5 +37,9 @@ typedef struct {
 
 void Scenario_LoadFromJSON(scenario_t* scenario, const char* json_path);
 void Scenario_SaveToJSON(scenario_t* scenario, const char* json_path);
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif // SCENARIO_H

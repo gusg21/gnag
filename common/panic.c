@@ -4,6 +4,10 @@
 #include <3ds.h>
 #endif
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 static bool Panic_S_is_panicked = false;
 
 void Panic_Panic() {
@@ -17,3 +21,7 @@ void Panic_Panic() {
 bool Panic_IsPanicked() {
     return Panic_S_is_panicked;
 }
+
+#ifdef __cplusplus
+}
+#endif
