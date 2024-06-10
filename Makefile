@@ -152,29 +152,29 @@ export _3DSXDEPS	:=	$(if $(NO_SMDH),,$(OUTPUT).smdh)
 ifeq ($(strip $(ICON)),)
 	icons := $(wildcard *.png)
 	ifneq (,$(findstring $(TARGET).png,$(icons)))
-		export APP_ICON := $(TOPDIR)/$(TARGET).png
+		export APP_ICON := "$(TOPDIR)/$(TARGET).png"
 	else
 		ifneq (,$(findstring icon.png,$(icons)))
-			export APP_ICON := $(TOPDIR)/icon.png
+			export APP_ICON := "$(TOPDIR)/icon.png"
 		endif
 	endif
 else
-	export APP_ICON := $(TOPDIR)/$(ICON)
+	export APP_ICON := "$(TOPDIR)/$(ICON)"
 endif
 
 ifeq ($(strip $(NO_SMDH)),)
-	export _3DSXFLAGS += --smdh=$(CURDIR)/$(TARGET).smdh
+	export _3DSXFLAGS += --smdh="$(CURDIR)/$(TARGET).smdh"
 endif
 
 ifneq ($(ROMFS),)
-	export _3DSXFLAGS += --romfs=$(CURDIR)/$(ROMFS)
+	export _3DSXFLAGS += --romfs="$(CURDIR)/$(ROMFS)"
 endif
 
 .PHONY: all clean
 
 #---------------------------------------------------------------------------------
 all: $(BUILD)  $(GFXBUILD) $(DEPSDIR) jsoncopy audiocopy $(ROMFS_T3XFILES) $(T3XHFILES)
-	@$(MAKE) --no-print-directory -C $(BUILD) -f $(CURDIR)/Makefile
+	@$(MAKE) --no-print-directory -C $(BUILD) -f "$(CURDIR)/Makefile"
 
 $(BUILD):
 	@mkdir -p $@
@@ -190,12 +190,12 @@ $(DEPSDIR):
 endif
 
 jsoncopy:
-	@rm -rf $(CURDIR)/romfs/jsons/
+	@rm -rf "$(CURDIR)/romfs/jsons/"
 	@mkdir -p "$(CURDIR)/romfs/jsons/"
 	@for u in $(JSONFILES); do echo $$u; cp -f "$(CURDIR)/$(JSONS)/$$u" "$(CURDIR)/romfs/jsons/"; done
 
 audiocopy:
-	@rm -rf $(CURDIR)/romfs/audio/
+	@rm -rf "$(CURDIR)/romfs/audio/"
 	@mkdir -p "$(CURDIR)/romfs/audio/"
 	@for u in $(AUDIOFILES); do echo $$u; cp -f "$(CURDIR)/$(AUDIOS)/$$u" "$(CURDIR)/romfs/audio/"; done
 
@@ -208,7 +208,7 @@ clean:
 $(GFXBUILD)/%.t3x	$(BUILD)/%.h	:	%.t3s
 #---------------------------------------------------------------------------------
 	@echo $(notdir $<)
-	@tex3ds -i $< -H $(BUILD)/$*.h -d $(DEPSDIR)/$*.d -o $(GFXBUILD)/$*.t3x
+	@tex3ds -i $< -H $(BUILD)/$*.h -d "$(DEPSDIR)/$*.d" -o "$(GFXBUILD)/$*.t3x"
 
 #---------------------------------------------------------------------------------
 else
@@ -244,7 +244,7 @@ $(OUTPUT).elf	:	$(OFILES)
 	$(SILENTMSG) $(notdir $<)
 	$(bin2o)
 
--include $(DEPSDIR)/*.d
+-include "$(DEPSDIR)/*.d"
 
 #---------------------------------------------------------------------------------------
 endif
