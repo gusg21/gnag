@@ -9,6 +9,7 @@
 
 #include "gnagoswrapper.h"
 #include "SDL_image.h"
+#include "SDL.h"
 
 SDLT3S::SDLT3S(SDL_Renderer* renderer, const std::string &t3sPath) {
     std::string t3sBaseDir = GnagOSWrapper::GetDirectoryFromPath(GnagOSWrapper::LocalizePath(t3sPath));
