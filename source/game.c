@@ -363,9 +363,6 @@ void Game_UpdateGameState(game_t* game, game_state_e state) {
             CTR_PRINTF("STATE player turn\n");
             return;
         case GAME_STATE_PLAYER_ACTING:
-            for (u32 i = 0; i < game->board.next_player_controlled_action_index; i++) {
-                game->board.player_controlled_characters[i]->moved = false;
-            }
             CTR_PRINTF("STATE player acting\n");
             return;
         case GAME_STATE_OPPONENT_TURN:  // todo)) actually needed? enemies would most likely act instantly with no

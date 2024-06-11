@@ -40,7 +40,7 @@ void CharacterAction_Run(character_action_t* action, board_t* board) {
                                 break;
                             }
                         }
-                        if (!combined) {
+                        if (!combined && action->hazard_type != HAZARD_NONE && action->hazard_type != HAZARD_LIGHTNING && action->hazard_type != HAZARD_GUST) {
                             hazard_t* new_hazard = Board_NewHazard(board);
                             Hazard_Init(new_hazard, action->tile_selections[i].x, action->tile_selections[i].y,
                                         action->hazard_type);

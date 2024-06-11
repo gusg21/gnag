@@ -19,10 +19,14 @@ void (*UIScripts_GetButtonCallbackByType(button_callback_type_e type))(button_t*
             return UIScripts_PrevPlayerCharacter;
         case BUTTON_CALLBACK_NEXT_CHARACTER:
             return UIScripts_NextPlayerCharacter;
-        case BUTTON_CALLBACK_CUBEOFWATER:
-            return UIScripts_CubeOfWater;
-        case BUTTON_CALLBACK_LINEOFSPIKES:
-            return UIScripts_LineOfSpikes;
+        case BUTTON_CALLBACK_LINEOFFIRE:
+            return UIScripts_LineOfFire;
+        case BUTTON_CALLBACK_LINEOFWATER:
+            return UIScripts_LineOfWater;
+        case BUTTON_CALLBACK_LINEOFLIGHTNING:
+            return UIScripts_LineOfLightning;
+        case BUTTON_CALLBACK_GUST:
+            return UIScripts_Gust;
 
         default:
             return NULL;
@@ -84,18 +88,32 @@ void (*UIScripts_GetTextUpdaterByType(text_updater_type_e type))(text_t*) {
     }
 }
 
-void UIScripts_CubeOfWater(button_t* button) {
-    UNUSED(button);
-    Game_UpdateGameState(UIScripts_S_Game, GAME_STATE_SELECTING_TILE);
-    Game_UpdateSelectionType(UIScripts_S_Game, SELECTING_TILE_LINE, 3, 1);
-    Game_UpdateSelectionHazardType(UIScripts_S_Game, HAZARD_FIRE);
-}
-
-void UIScripts_LineOfSpikes(button_t* button) {
+void UIScripts_LineOfFire(button_t* button) {
     UNUSED(button);
     Game_UpdateGameState(UIScripts_S_Game, GAME_STATE_SELECTING_TILE);
     Game_UpdateSelectionType(UIScripts_S_Game, SELECTING_TILE_LINE, 4, 1);
-    Game_UpdateSelectionHazardType(UIScripts_S_Game, HAZARD_SPIKES);
+    Game_UpdateSelectionHazardType(UIScripts_S_Game, HAZARD_FIRE);
+}
+
+void UIScripts_LineOfWater(button_t* button) {
+    UNUSED(button);
+    Game_UpdateGameState(UIScripts_S_Game, GAME_STATE_SELECTING_TILE);
+    Game_UpdateSelectionType(UIScripts_S_Game, SELECTING_TILE_LINE, 4, 1);
+    Game_UpdateSelectionHazardType(UIScripts_S_Game, HAZARD_WATER);
+}
+
+void UIScripts_LineOfLightning(button_t* button) {
+    UNUSED(button);
+    Game_UpdateGameState(UIScripts_S_Game, GAME_STATE_SELECTING_TILE);
+    Game_UpdateSelectionType(UIScripts_S_Game, SELECTING_TILE_LINE, 4, 1);
+    Game_UpdateSelectionHazardType(UIScripts_S_Game, HAZARD_LIGHTNING);
+}
+
+void UIScripts_Gust(button_t* button) {
+    UNUSED(button);
+    Game_UpdateGameState(UIScripts_S_Game, GAME_STATE_SELECTING_TILE);
+    Game_UpdateSelectionType(UIScripts_S_Game, SELECTING_TILE_LINE, 3, 3);
+    Game_UpdateSelectionHazardType(UIScripts_S_Game, HAZARD_GUST);
 }
 
 void UIScripts_Move(button_t* button) {
@@ -166,8 +184,9 @@ void UIScripts_FillBarHealthUpdater(fill_bar_t* fill_bar) {
 }
 
 void UIScripts_FillBarMovementUpdater(fill_bar_t* fill_bar) {
-    FillBar_SetValue(fill_bar, Board_GetCurrentSelectedPlayerControlledCharacter(&UIScripts_S_Game->board)->move_speed -
-                                   UIScripts_S_Game->current_tile_index);
+    FillBar_SetValue(
+        fill_bar, 1 - (UIScripts_S_Game->current_tile_index *
+                       (1 / Board_GetCurrentSelectedPlayerControlledCharacter(&UIScripts_S_Game->board)->move_speed)));
 }
 
 void UIScripts_TextSelectedCharacterNameUpdater(text_t* text) {
