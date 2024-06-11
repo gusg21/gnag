@@ -6,6 +6,7 @@
 
 #include <Shlwapi.h>
 #include <Windows.h>
+#include <algorithm>
 
 std::thread GnagOSWrapper::m_BuildinatorThread;
 std::atomic_bool GnagOSWrapper::m_IsBuildinating;
@@ -66,7 +67,7 @@ bool GnagOSWrapper::GetGnagPath(std::string &gnagPath) {
     gnagPath.clear();
     if (exists) {
         gnagPath.append(envVarBuffer, bytesWritten);
-        gnagPath.append(GnagOSWrapper::GetPathSeparator());
+        gnagPath.append({GnagOSWrapper::GetPathSeparator()});
     }
     return exists;
 }
@@ -88,8 +89,12 @@ std::string GnagOSWrapper::PathFix(const std::string &a, const std::string &b) {
     return std::string { outputCstr };
 }
 
-std::string GnagOSWrapper::GetPathSeparator() {
-    return std::string { "\\" };
+char GnagOSWrapper::GetPathSeparator() {
+    return '\\';
+}
+
+char GnagOSWrapper::GetOtherPathSeparator() {
+    return '/';
 }
 
 void GnagOSWrapper::RunTheBuildinator() {
@@ -132,4 +137,25 @@ void GnagOSWrapper::CleanUpThreads() {
 
 bool GnagOSWrapper::IsTheBuildinatorBuildinating() {
     return m_IsBuildinating;
+}
+
+std::string GnagOSWrapper::CombinePaths(const std::string &base, const std::string &fileName) {
+    CHAR combined[MAX_PATH] = { 0 };
+    PathCombine(combined, base.c_str(), fileName.c_str());
+    return std::string { combined };
+}
+bool GnagOSWrapper::DoesFileExist(const std::string &fileName) {
+    return PathFileExists(fileName.c_str());
+}
+std::string GnagOSWrapper::MakePathAbsolute(const std::string &maybeAbsolutePath) {
+    if (PathIsRelative(maybeAbsolutePath.c_str())) {
+        return CombinePaths(GetWorkingDirectory(), maybeAbsolutePath);
+    }
+    return maybeAbsolutePath;
+}
+
+std::string GnagOSWrapper::LocalizePath(const std::string &path) {
+    std::string newPath {path};
+    std::replace(newPath.begin(), newPath.end(), GetOtherPathSeparator(), GetPathSeparator());
+    return newPath;
 }

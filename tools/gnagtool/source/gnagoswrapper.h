@@ -26,8 +26,13 @@ public:
     static void ShowMessageBox(const std::string &message);
     static std::string GetFileExtension(const std::string &fileName);
     static std::string PathFix(const std::string &a, const std::string &b);
-    static std::string GetPathSeparator();
+    static char GetPathSeparator();
+    static char GetOtherPathSeparator();
     static std::string GetDirectoryFromPath(const std::string &path);
+    static std::string CombinePaths(const std::string &base, const std::string &fileName);
+    static std::string MakePathAbsolute(const std::string& maybeAbsolutePath);
+    static std::string LocalizePath(const std::string& path);
+    static bool DoesFileExist(const std::string& fileName);
     static void RunTheBuildinator();
     static void RunTheBuildinatorCleaner();
     static void RunTheAddressFinder();

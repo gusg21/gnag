@@ -7,7 +7,8 @@
 
 typedef enum {
     IMAGE_UPDATER_NONE,
-    IMAGE_UPDATER_INFO
+    IMAGE_UPDATER_INFO,
+    IMAGE_UPDATER_COUNT
 } image_updater_type_e;
 
 typedef struct {

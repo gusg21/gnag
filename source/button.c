@@ -52,7 +52,7 @@ void Button_Draw(button_t* button) {
 
     if (Button_IsDown(button)) {
         C2D_DrawRectSolid(button->data.pos.x, button->data.pos.y, 0, button->data.size.x, button->data.size.y,
-                          ColorF_ToU32(button->data.pressed_color));
+                          ColorF_ToU32(button->pressed_color));
         C2D_SetTintMode(C2D_TintMult);
         C2D_PlainImageTint(&tint, C2D_Color32f(.5f, .5f, .5f, 1.f), 1.f);
         C2D_DrawSpriteTinted(&button->sprite, &tint);

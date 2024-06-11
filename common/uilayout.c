@@ -191,6 +191,8 @@ void UILayout_LoadImagesFromJSON(ui_layout_t* layout, cJSON* json) {
 
         // Mark Image Data as initialized
         layout->image_datas[image_index].initialized = true;
+
+        image_index++;
     }
 }
 
@@ -233,6 +235,10 @@ void UILayout_LoadTextsFromJSON(ui_layout_t* layout, cJSON* json) {
 
         text_index++;
     }
+}
+
+void UILayout_SaveToFile(ui_layout_t *layout, const char *filename) {
+
 }
 
 #ifdef __cplusplus

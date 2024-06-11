@@ -55,7 +55,7 @@ void ScenarioEditor::DoGUI() {
         {
             if (ImGui::Button("+ Character")) {
                 character_data_t newData = character_data_t {
-                        true, {0, 0}, CHAR_GOOD };
+                        true, { 0, 0 }, CHAR_GOOD };
                 m_Scenario.AddCharacterData(newData);
             }
 
@@ -63,10 +63,10 @@ void ScenarioEditor::DoGUI() {
                 character_data_t *characterData = &m_Scenario.Scenario.characters[characterIndex];
                 ImGui::PushID((int) characterIndex);
                 if (ImGui::CollapsingHeader("Character")) {
-                    int tilePos[2] = {(int)characterData->tile_pos.x, (int)characterData->tile_pos.y};
+                    int tilePos[2] = { (int) characterData->tile_pos.x, (int) characterData->tile_pos.y };
                     ImGui::InputInt2("Tile Pos", tilePos);
-                    characterData->tile_pos.x = (float)tilePos[0];
-                    characterData->tile_pos.y = (float)tilePos[1];
+                    characterData->tile_pos.x = (float) tilePos[0];
+                    characterData->tile_pos.y = (float) tilePos[1];
 
                     ImGui::InputInt("Type", reinterpret_cast<int *>(&characterData->type));
                     characterData->type = static_cast<character_type_e>(
@@ -224,12 +224,17 @@ void ScenarioEditor::RenderEditorToTexture(SDL_Texture **texture, ImVec2 editorS
         for (uint32_t characterIndex = 0; characterIndex < SCENARIO_MAX_CHARACTERS; characterIndex++) {
             character_data_t *character = &m_Scenario.Scenario.characters[characterIndex];
             float worldX, worldY;
-            GetWorldPosFromTilePos((int)character->tile_pos.x, (int)character->tile_pos.y, &worldX, &worldY);
+            GetWorldPosFromTilePos((int) character->tile_pos.x, (int) character->tile_pos.y, &worldX, &worldY);
             float screenX, screenY;
             GetScreenPosFromWorldPos(worldX, worldY, &screenX, &screenY);
             SDL_Rect dst = {
                     static_cast<int>(screenX - 32), static_cast<int>(screenY - 86), 64, 96 };
-            SDL_RenderCopy(m_Renderer, m_GnagTool->GetCharacterTexture(character->type), nullptr, &dst);
+            SDL_RenderCopy(
+                    m_Renderer,
+                    m_GnagTool->GetSprites()->GetTextureByIndex(
+                            CharacterData_GetSpriteIndexForCharacterType(character->type)),
+                    nullptr,
+                    &dst);
         }
     }
     SDL_RenderPresent(m_Renderer);
@@ -243,7 +248,7 @@ void ScenarioEditor::RenderEditorToTexture(SDL_Texture **texture, ImVec2 editorS
 }
 
 void ScenarioEditor::DrawGrid() {
-    for (uint32_t xx = m_Scenario.GetWidth() - 1; xx >= 0; xx--) {
+    for (int32_t xx = m_Scenario.GetWidth() - 1; xx >= 0; xx--) {
         for (uint32_t yy = 0; yy < m_Scenario.GetHeight(); yy++) {
             float worldX, worldY;
             GetWorldPosFromTilePos(xx, yy, &worldX, &worldY);
@@ -251,15 +256,8 @@ void ScenarioEditor::DrawGrid() {
             GetScreenPosFromWorldPos(worldX, worldY, &screenX, &screenY);
 
             // Render sprites
-            SDL_Texture *tileTex;
             hazard_type_e hazard = m_Scenario.GetHazardTypeAtTile(xx, yy);
-            if (hazard == HAZARD_NONE) {
-                tileTex = m_GnagTool->GetEmptyTileTexture();
-            } else if (hazard == HAZARD_SPIKES) {
-                tileTex = m_GnagTool->GetSpikesTileTexture();
-            } else {
-                tileTex = m_GnagTool->GetQuestionTileTexture();
-            }
+            SDL_Texture *tileTex = m_GnagTool->GetSprites()->GetTextureByIndex(HazardData_GetSpriteIndexForHazardType(hazard));
             SDL_Rect dest = {
                     static_cast<int>(screenX - 32), static_cast<int>(screenY - 48), 64, 64 };
             SDL_RenderCopy(m_Renderer, tileTex, nullptr, &dest);
@@ -267,7 +265,8 @@ void ScenarioEditor::DrawGrid() {
             // Render grid
             if (IsTileInSelectionPreview(xx, yy) && m_SelectionPreviewVisible) {
                 SDL_SetRenderDrawColor(m_Renderer, 240, 150, 130, 255);
-            } else if (std::find(m_Selection.begin(), m_Selection.end(), TilePos { (int)xx, (int)yy }) != m_Selection.end()) {
+            } else if (std::find(m_Selection.begin(), m_Selection.end(), TilePos { (int) xx, (int) yy }) !=
+                       m_Selection.end()) {
                 SDL_SetRenderDrawColor(m_Renderer, 240, 230, 100, 255);
             } else {
                 SDL_SetRenderDrawColor(m_Renderer, 230, 20, 10, 255);

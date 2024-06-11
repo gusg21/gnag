@@ -19,15 +19,16 @@ void Hazard_Init(hazard_t* hazard, float tile_x, float tile_y, hazard_type_e typ
 
 void Hazard_Draw(hazard_t* hazard, C2D_SpriteSheet sheet, grid_t* grid) {
     C2D_Sprite hazard_sprite;
+    u32 hazard_sprite_index = HazardData_GetSpriteIndexForHazardType(hazard->type);
+    C2D_SpriteFromSheet(&hazard_sprite, sheet, hazard_sprite_index);
 
+    // TODO)) @gusg21 move the pivots to a vec2_t HazardData_GetPivotForHazardType() or smth
     switch (hazard->type) {
         case HAZARD_SPIKES: {
-            C2D_SpriteFromSheet(&hazard_sprite, sheet, sprites_spikes_idx);
             C2D_SpriteSetCenter(&hazard_sprite, 0.5f, 0.75f);
             break;
         }
         case HAZARD_WATER: {
-            C2D_SpriteFromSheet(&hazard_sprite, sheet, sprites_watertile_idx);
             C2D_SpriteSetCenter(&hazard_sprite, 0.5f, 0.6f);
             break;
         }

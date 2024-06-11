@@ -32,4 +32,5 @@ typedef int32_t s32;
 #define GAME_WORLD_CENTER_X 500
 #define GAME_WORLD_CENTER_Y 500
 
+
 #endif // DEFS_H

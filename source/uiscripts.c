@@ -172,5 +172,5 @@ void UIScripts_FillBarMovementUpdater(fill_bar_t* fill_bar) {
 
 void UIScripts_TextSelectedCharacterNameUpdater(text_t* text) {
     // todo)) @gusg21 this is expensive to do every frame
-    Text_SetText(text, Character_GetName(Board_GetCurrentSelectedPlayerControlledCharacter(&UIScripts_S_Game->board)));
+    Text_SetText(text, CharacterData_GetName(Board_GetCurrentSelectedPlayerControlledCharacter(&UIScripts_S_Game->board)->type));
 }

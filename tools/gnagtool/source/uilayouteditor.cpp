@@ -3,9 +3,13 @@
 //
 
 #include "uilayouteditor.h"
-#include "imgui.h"
-#include "uilayout.h"
+
 #include <cstdio>
+
+#include "imgui.h"
+
+#include "gnagtool.h"
+#include "uilayout.h"
 
 UILayoutEditor::UILayoutEditor(GnagTool *gnagTool, SDL_Renderer *renderer, const std::string &uiLayoutPath) : ToolGUI(
         gnagTool) {
@@ -29,6 +33,10 @@ void UILayoutEditor::DoGUI() {
     ImGui::SetNextWindowSize({ BOTTOM_SCREEN_WIDTH + 100, BOTTOM_SCREEN_HEIGHT + 100 }, ImGuiCond_FirstUseEver);
     ImGui::Begin("UI Layout Editor");
     {
+        if (ImGui::Button("Save UI Layout")) {
+            UILa
+        }
+
         ImGui::Checkbox("Show Colors", &m_ShowColors);
         ImGui::SameLine();
         ImGui::Button("Simulate Button Pressed");
@@ -63,13 +71,38 @@ void UILayoutEditor::DoGUI() {
                                                          BUTTON_UPDATER_COUNT);
                         ImGui::InputInt("Callback ID", (int *) &buttonData->callback_type);
                         buttonData->callback_type = CLAMP(buttonData->callback_type,
-                                                         static_cast<button_callback_type_e>(0),
-                                                         BUTTON_CALLBACK_COUNT);
+                                                          static_cast<button_callback_type_e>(0),
+                                                          BUTTON_CALLBACK_COUNT);
                     }
                     ImGui::PopID();
                 }
             }
             ImGui::SeparatorText("Images");
+            for (int imageIndex = 0; imageIndex < UILAYOUT_MAX_IMAGE_COUNT; imageIndex++) {
+                image_data_t *imageData = &m_UILayout.image_datas[imageIndex];
+                if (imageData->initialized) {
+                    ImGui::PushID(imageIndex);
+                    if (m_HoveredImageIndex == imageIndex) {
+                        ImGui::Text("*");
+                        ImGui::SameLine();
+                    }
+                    if (ImGui::CollapsingHeader("Image")) {
+                        ImGui::InputFloat2("Position", &imageData->pos.x);
+                        ImGui::InputFloat2("Size", &imageData->size.x);
+                        ImGui::InputInt("Sprite", (int *) &imageData->sprite_idx);
+                        imageData->sprite_idx = CLAMP(imageData->sprite_idx, 0,
+                                                      m_GnagTool->GetUISprites()->GetCount() - 1);
+                        ImGui::InputInt("Updater ID", (int *) &imageData->updater_type);
+                        imageData->updater_type = CLAMP(imageData->updater_type,
+                                                        static_cast<image_updater_type_e>(0),
+                                                        IMAGE_UPDATER_COUNT);
+                        ImGui::ColorEdit4("Color", &imageData->color.r);
+                        ImGui::Checkbox("Render On Top", &imageData->render_on_top);
+                        ImGui::TextDisabled("Render On Top doesn't affect editor preview");
+                    }
+                    ImGui::PopID();
+                }
+            }
             ImGui::SeparatorText("Texts");
             for (int textIndex = 0; textIndex < UILAYOUT_MAX_BUTTON_COUNT; textIndex++) {
                 text_data_t *textData = &m_UILayout.text_datas[textIndex];
@@ -85,18 +118,32 @@ void UILayoutEditor::DoGUI() {
                         ImGui::InputText("Initial Text", textData->initial_text, TEXT_DATA_MAX_TEXT_LENGTH);
                         ImGui::InputInt("Updater ID", (int *) &textData->updater_type);
                         textData->updater_type = CLAMP(textData->updater_type,
-                                                         static_cast<text_updater_type_e>(0),
-                                                         TEXT_UPDATER_COUNT);
+                                                       static_cast<text_updater_type_e>(0),
+                                                       TEXT_UPDATER_COUNT);
                     }
                     ImGui::PopID();
                 }
             }
             ImGui::SeparatorText("Fill Bars");
+            for (int fillBarIndex = 0; fillBarIndex < UILAYOUT_MAX_FILL_BAR_COUNT; fillBarIndex++) {
+                fill_bar_data_t *fillBarData = &m_UILayout.fill_bar_datas[fillBarIndex];
+                if (fillBarData->initialized) {
+                    ImGui::PushID(fillBarIndex);
+                    if (m_HoveredFillBarIndex == fillBarIndex) {
+                        ImGui::Text("*");
+                        ImGui::SameLine();
+                    }
+                    if (ImGui::CollapsingHeader("Fill Bar")) {
+
+                    }
+                    ImGui::PopID();
+                }
+            }
 
         }
         ImGui::EndChild();
         ImGui::TableNextColumn();
-        ImGui::BeginChild("UI Layout Editor Viewport", {0.f, 0.f}, 0, ImGuiWindowFlags_HorizontalScrollbar);
+        ImGui::BeginChild("UI Layout Editor Viewport", { 0.f, 0.f }, 0, ImGuiWindowFlags_HorizontalScrollbar);
         {
             RenderEditorToTexture(m_EditorTexture);
             ImVec2 imagePos = ImGui::GetCursorPos();
@@ -153,6 +200,58 @@ void UILayoutEditor::RenderEditorToTexture(SDL_Texture *texture) {
     }
     SDL_RenderClear(m_Renderer);
     {
+        for (uint32_t imageIndex = 0; imageIndex < UILAYOUT_MAX_IMAGE_COUNT; imageIndex++) {
+            image_data_t *imageData = &m_UILayout.image_datas[imageIndex];
+            if (imageData->initialized) {
+                SDL_Rect imageRect = {
+                        static_cast<int>(imageData->pos.x), static_cast<int>(imageData->pos.y),
+                        static_cast<int>(imageData->size.x), static_cast<int>(imageData->size.y)
+                };
+                if (m_ShowColors) {
+                    SDL_Texture *imageTexture = m_GnagTool->GetUISprites()->GetTextureByIndex(imageData->sprite_idx);
+                    SDL_SetTextureColorMod(imageTexture, static_cast<uint8_t>(imageData->color.r * 255.f),
+                                           static_cast<uint8_t>(imageData->color.g * 255.f),
+                                           static_cast<uint8_t>(imageData->color.b * 255.f));
+                    SDL_RenderCopy(m_Renderer, imageTexture, nullptr, &imageRect);
+                    SDL_SetTextureColorMod(imageTexture, 255, 255, 255);
+                } else {
+                    SDL_SetRenderDrawColor(m_Renderer, 0, 230, 0, 255);
+                    SDL_RenderDrawRect(m_Renderer, &imageRect);
+                }
+            }
+        }
+
+        for (uint32_t fillBarIndex = 0; fillBarIndex < UILAYOUT_MAX_FILL_BAR_COUNT; fillBarIndex++) {
+            fill_bar_data_t *fillBarData = &m_UILayout.fill_bar_datas[fillBarIndex];
+            if (fillBarData->initialized) {
+                SDL_Rect bgRect = {
+                        static_cast<int>(fillBarData->pos.x), static_cast<int>(fillBarData->pos.y),
+                        static_cast<int>(fillBarData->size.x), static_cast<int>(fillBarData->size.y)
+                };
+                SDL_Rect fillRect = {
+                        static_cast<int>(fillBarData->pos.x), static_cast<int>(fillBarData->pos.y),
+                        static_cast<int>(fillBarData->size.x / 2.f), static_cast<int>(fillBarData->size.y)
+                };
+                if (m_ShowColors) {
+                    SDL_SetRenderDrawColor(m_Renderer, static_cast<int>(fillBarData->bg_color.r * 255.f),
+                                           static_cast<int>(fillBarData->bg_color.g * 255.f),
+                                           static_cast<int>(fillBarData->bg_color.b * 255.f),
+                                           static_cast<int>(fillBarData->bg_color.a * 255.f));
+                    SDL_RenderFillRect(m_Renderer, &bgRect);
+                    SDL_SetRenderDrawColor(m_Renderer, static_cast<int>(fillBarData->fill_color.r * 255.f),
+                                           static_cast<int>(fillBarData->fill_color.g * 255.f),
+                                           static_cast<int>(fillBarData->fill_color.b * 255.f),
+                                           static_cast<int>(fillBarData->fill_color.a * 255.f));
+                    SDL_RenderFillRect(m_Renderer, &fillRect);
+                }
+                else {
+                    SDL_SetRenderDrawColor(m_Renderer, 0, 230, 0, 255);
+                    SDL_RenderDrawRect(m_Renderer, &bgRect);
+                    SDL_RenderFillRect(m_Renderer, &fillRect);
+                }
+            }
+        }
+
         for (uint32_t buttonIndex = 0; buttonIndex < UILAYOUT_MAX_BUTTON_COUNT; buttonIndex++) {
             button_data_t *buttonData = &m_UILayout.button_datas[buttonIndex];
             if (buttonData->initialized) {

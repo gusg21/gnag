@@ -9,6 +9,7 @@
 #include "fileexplorer.h"
 #include "scenarioeditor.h"
 #include "toolgui.h"
+#include "sdlt3s.h"
 
 class GnagTool {
 public:
@@ -21,26 +22,13 @@ public:
     float GetDeltaTime() const { return m_DeltaTime; }
 
     SDL_Renderer *GetRenderer() { return m_Renderer; }
-    SDL_Texture *GetEmptyTileTexture() { return m_EmptyTileTexture; }
-    SDL_Texture *GetSpikesTileTexture() { return m_SpikesTileTexture; }
-    SDL_Texture *GetQuestionTileTexture() { return m_SpikesTileTexture; }
-    SDL_Texture *GetCharacterTexture(character_type_e type) {
-        int index = static_cast<int>(type);
-        if (index >= m_CharacterTextures.size()) return m_QuestionCharacterTexture;
-        return m_CharacterTextures[index];
-    }
+    SDLT3S *GetSprites() { return m_Sprites; }
+    SDLT3S *GetUISprites() { return m_UISprites; }
 
 private:
     // Refs
     std::vector<ToolGUI *> m_GUIs { };
     SDL_Renderer *m_Renderer;
-
-    // Assets
-    SDL_Texture *m_EmptyTileTexture;
-    SDL_Texture *m_SpikesTileTexture;
-    SDL_Texture *m_QuestionTileTexture;
-    SDL_Texture *m_QuestionCharacterTexture;
-    std::vector<SDL_Texture *> m_CharacterTextures { };
 
     // Internals
     float m_FPS = 0.f;
@@ -49,6 +37,8 @@ private:
     std::vector<ToolGUI *> m_GUIsToClose { };
     bool m_RebuildBuildinator = false;
     bool m_ShowImGuiDemo = false;
+    SDLT3S *m_Sprites;
+    SDLT3S *m_UISprites;
     void InternalGUI();
 };
 

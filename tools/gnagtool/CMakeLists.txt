@@ -58,6 +58,8 @@ add_executable(gnagtool_exe ${WIN32_EXTRAS}
         imgui/backends/imgui_impl_sdl2.cpp
         imgui/backends/imgui_impl_sdl2.h
 
+        source/sdlt3s.cpp
+
         source/main.cpp
         source/fileexplorer.cpp
         source/fileexplorer.h
@@ -76,6 +78,8 @@ add_executable(gnagtool_exe ${WIN32_EXTRAS}
         source/uilayouteditor.h
         source/jsonserializable.cpp
         source/jsonserializable.h
+        source/sdlt3s.cpp
+        source/sdlt3s.h
 
 )
 target_include_directories(gnagtool_exe PUBLIC ${gnagcommon_inc})

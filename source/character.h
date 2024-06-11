@@ -27,7 +27,6 @@ typedef struct {
 void Character_Init(character_t* character, character_type_e type, bool is_player_controlled, u32 start_x, u32 start_y);
 void Character_Draw(character_t* character, C2D_SpriteSheet sheet, grid_t* grid);
 
-const char* Character_GetName(character_t* character);
 vec2_t Character_GetCenterPosition(character_t* character, grid_t* grid);
 
 #endif // CHARACTER_H

@@ -8,20 +8,10 @@
 
 GnagTool::GnagTool(SDL_Renderer *renderer) : m_Renderer(renderer) {
     m_GUIs.push_back(new FileExplorer(this));
-    m_GUIs.push_back(new UILayoutEditor(this, renderer, "C:\\Projects\\3ds\\gnag\\jsons\\uilayout_playerturn.json"));
+    m_GUIs.push_back(new UILayoutEditor(this, renderer, R"(C:\Projects\3ds\gnag\jsons\uilayout_playerturn.json)"));
 
-    m_EmptyTileTexture = IMG_LoadTexture(renderer, "gfx/emptytile.png");
-    m_SpikesTileTexture = IMG_LoadTexture(renderer, "gfx/spikes.png");
-    m_QuestionTileTexture = IMG_LoadTexture(renderer, "gfx/questiontile.png");
-
-    m_QuestionCharacterTexture = IMG_LoadTexture(renderer, "gfx/questioncharacter.png");
-    m_CharacterTextures = {
-            IMG_LoadTexture(renderer, "gfx/questioncharacter.png"),
-            IMG_LoadTexture(renderer, "gfx/good.png"),
-            IMG_LoadTexture(renderer, "gfx/bad.png"),
-            IMG_LoadTexture(renderer, "gfx/ugly.png"),
-            IMG_LoadTexture(renderer, "gfx/enemy.png"),
-    };
+    m_Sprites = new SDLT3S(renderer, "gfx/sprites.t3s");
+    m_UISprites = new SDLT3S(renderer, "gfx/uisprites.t3s");
 }
 
 void GnagTool::DoGUI() {
