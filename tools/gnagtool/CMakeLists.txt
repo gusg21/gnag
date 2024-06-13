@@ -7,7 +7,9 @@ endif()
 
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/build")
 
+
 set(SDL_STATIC ON)
+set(BUILD_SHARED_LIBS OFF)
 add_subdirectory(external/SDL)
 # Who needs like any of these lmao
 set(SDL2IMAGE_AVIF OFF)
@@ -85,7 +87,7 @@ add_executable(gnagtool_exe ${WIN32_EXTRAS}
 target_include_directories(gnagtool_exe PUBLIC ${gnagcommon_inc})
 target_include_directories(gnagtool_exe PUBLIC imgui)
 
-target_link_libraries(gnagtool_exe PUBLIC SDL2::SDL2)
+target_link_libraries(gnagtool_exe PUBLIC SDL2::SDL2-static)
 if (WIN32)
     target_link_libraries(gnagtool_exe PUBLIC Shlwapi)
     target_link_libraries(gnagtool_exe PUBLIC SDL2::SDL2main)
@@ -99,9 +101,16 @@ if (WIN32)
 #            "${PROJECT_BINARY_DIR}/external/SDL_image/SDL2_imaged.dll"
 #            $<TARGET_FILE_DIR:gnagtool_exe>)
 endif ()
-target_link_libraries(gnagtool_exe PUBLIC SDL2_image::SDL2_image)
-target_link_libraries(gnagtool_exe PUBLIC SDL2_ttf::SDL2_ttf)
+target_link_libraries(gnagtool_exe PUBLIC SDL2_image::SDL2_image-static)
+target_link_libraries(gnagtool_exe PUBLIC SDL2_ttf::SDL2_ttf-static)
 
+# Make sure to put the runtime in the build/ folder, not a build config-related subfolder
+if ( MSVC )
+    set_target_properties( gnagtool_exe PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${CMAKE_RUNTIME_OUTPUT_DIRECTORY} )
+    set_target_properties( gnagtool_exe PROPERTIES RUNTIME_OUTPUT_DIRECTORY_DEBUG ${CMAKE_RUNTIME_OUTPUT_DIRECTORY} )
+    set_target_properties( gnagtool_exe PROPERTIES RUNTIME_OUTPUT_DIRECTORY_RELEASE ${CMAKE_RUNTIME_OUTPUT_DIRECTORY} )
+    # etc for the other available configuration types (MinSizeRel, RelWithDebInfo)
+endif ( MSVC )
 
 # Copy Gnag art to output (/gfx/)
 add_custom_command(TARGET gnagtool_exe POST_BUILD
@@ -114,3 +123,8 @@ add_custom_command(TARGET gnagtool_exe POST_BUILD
         COMMAND ${CMAKE_COMMAND} -E copy_directory
         "${CMAKE_SOURCE_DIR}/assets/"
         $<TARGET_FILE_DIR:gnagtool_exe>/assets/)
+
+set_target_properties(
+    gnagtool_exe PROPERTIES
+    VS_DEBUGGER_WORKING_DIRECTORY "${CMAKE_RUNTIME_OUTPUT_DIRECTORY}")
+
