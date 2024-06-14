@@ -4,6 +4,7 @@
 
 #include "toolgui.h"
 
-ToolGUI::ToolGUI(GnagTool *gnagTool) {
+ToolGUI::ToolGUI(GnagTool *gnagTool, int guiID) {
     m_GnagTool = gnagTool;
+    m_GUIID = guiID;
 }

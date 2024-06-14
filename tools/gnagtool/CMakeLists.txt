@@ -1,12 +1,15 @@
 cmake_minimum_required(VERSION 3.21)
 project(gnagtool LANGUAGES CXX C)
 
+set(gnagtool_major 1)
+set(gnagtool_minor 1)
+set(gnagtool_patch 0)
+
 if (NOT DEFINED ENV{GNAG_PATH})
     message(FATAL_ERROR "GNAG_PATH Environment variable not set!")
 endif()
 
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/build")
-
 
 set(SDL_STATIC ON)
 set(BUILD_SHARED_LIBS OFF)
@@ -33,6 +36,7 @@ set(SDL2IMAGE_XV OFF)
 add_subdirectory(external/SDL_image)
 add_subdirectory(external/SDL_ttf)
 
+# GnagCommon
 string(REPLACE "\\" "/" GNAG_PATH_SAFE $ENV{GNAG_PATH})
 FILE(GLOB gnagcommon_src ${GNAG_PATH_SAFE}/common/*.c)
 set(gnagcommon_inc ${GNAG_PATH_SAFE}/common/)
@@ -84,6 +88,14 @@ add_executable(gnagtool_exe ${WIN32_EXTRAS}
         source/sdlt3s.h
 
 )
+if (WIN32)
+    target_sources(gnagtool_exe PUBLIC source/Resource.rc)
+endif()
+
+target_compile_definitions(gnagtool_exe PUBLIC GNAGTOOL_VERSION_MAJOR=${gnagtool_major})
+target_compile_definitions(gnagtool_exe PUBLIC GNAGTOOL_VERSION_MINOR=${gnagtool_minor})
+target_compile_definitions(gnagtool_exe PUBLIC GNAGTOOL_VERSION_PATCH=${gnagtool_patch})
+
 target_include_directories(gnagtool_exe PUBLIC ${gnagcommon_inc})
 target_include_directories(gnagtool_exe PUBLIC imgui)
 
@@ -112,12 +124,6 @@ if ( MSVC )
     # etc for the other available configuration types (MinSizeRel, RelWithDebInfo)
 endif ( MSVC )
 
-# Copy Gnag art to output (/gfx/)
-add_custom_command(TARGET gnagtool_exe POST_BUILD
-        COMMAND ${CMAKE_COMMAND} -E copy_directory
-        "$ENV{GNAG_PATH}/gfx/"
-        $<TARGET_FILE_DIR:gnagtool_exe>/gfx/)
-
 # Copy GnagTool assets to output (/assets/)
 add_custom_command(TARGET gnagtool_exe POST_BUILD
         COMMAND ${CMAKE_COMMAND} -E copy_directory
@@ -128,3 +134,34 @@ set_target_properties(
     gnagtool_exe PROPERTIES
     VS_DEBUGGER_WORKING_DIRECTORY "${CMAKE_RUNTIME_OUTPUT_DIRECTORY}")
 
+# CPack Packaging info
+install(TARGETS gnagtool_exe 
+    RUNTIME 
+    DESTINATION "."
+    COMPONENT comp_executable)
+install(DIRECTORY "${CMAKE_SOURCE_DIR}/assets/" 
+    DESTINATION "assets" 
+    COMPONENT comp_assets)
+cpack_add_component(comp_executable DISPLAY_NAME "GnagTool Executable")
+cpack_add_component(comp_assets DISPLAY_NAME "GnagTool Assets")
+set(CPACK_GENERATOR NSIS)
+set(CPACK_PACKAGE_NAME "GnagTool")
+set(CPACK_PACKAGE_VENDOR "Gnag Team")
+set(CPACK_PACKAGE_EXECUTABLES gnagtool_exe;GnagTool)
+set(CPACK_CREATE_DESKTOP_LINKS gnagtool_exe)
+set(CPACK_PACKAGE_VERSION_MAJOR ${gnagtool_major})
+set(CPACK_PACKAGE_VERSION_MINOR ${gnagtool_minor})
+set(CPACK_PACKAGE_VERSION_PATCH ${gnagtool_patch})
+set(CPACK_PACKAGE_INSTALL_DIRECTORY "gnagtool")
+set(CPACK_PACKAGE_DESCRIPTION "Gnag Game Editor. Ping Gus for help")
+set(CPACK_PACKAGE_HOMEPAGE_URL "http://serverdoesnt.works/")
+set(CPACK_NSIS_INSTALLED_ICON_NAME gnagtool_exe.exe)
+set(CPACK_NSIS_DISPLAY_NAME "GnagTool")
+set(CPACK_NSIS_MUI_ICON "${CMAKE_SOURCE_DIR}/assets/icon.ico")
+set(CPACK_NSIS_MUI_UNIICON "${CMAKE_SOURCE_DIR}/assets/iconinv.ico")
+set(CPACK_NSIS_PACKAGE_NAME "GnagTool v${gnagtool_major}.${gnagtool_minor}.${gnagtool_patch}")
+set(CPACK_NSIS_MODIFY_PATH "ON")
+set(CPACK_NSIS_CREATE_ICONS_EXTRA
+ "CreateShortCut '$USERDESKTOP\\\\GnagTool.lnk' '$INSTDIR\\\\gnagtool_exe.exe' "
+ )
+include(CPack)

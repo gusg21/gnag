@@ -14,16 +14,19 @@ extern "C" {
 #endif
 
 void UILayout_InitFromFile(ui_layout_t* layout, const char* filename) {
+    UILayout_InitEmpty(layout);
+    UILayout_LoadNewLayoutFromFile(layout, filename);
+}
+
+void UILayout_InitEmpty(ui_layout_t* layout) {
     memset(layout->button_datas, 0, sizeof(button_data_t) * UILAYOUT_MAX_BUTTON_COUNT);
     memset(layout->fill_bar_datas, 0, sizeof(fill_bar_data_t) * UILAYOUT_MAX_FILL_BAR_COUNT);
     memset(layout->text_datas, 0, sizeof(text_data_t) * UILAYOUT_MAX_TEXT_COUNT);
     memset(layout->image_datas, 0, sizeof(image_data_t) * UILAYOUT_MAX_IMAGE_COUNT);
-
-    UILayout_LoadNewLayoutFromFile(layout, filename);
 }
 
 void UILayout_LoadNewLayoutFromFile(ui_layout_t* layout, const char* filename) {
-    cJSON* json = JSONHelper_LoadCJSONFromFile(filename, UILAYOUT_MAX_FILE_SIZE);
+    cJSON* json = JSONHelper_LoadCJSONFromFile(filename);
 
     UILayout_LoadButtonsFromJSON(layout, json);
     UILayout_LoadFillBarsFromJSON(layout, json);
@@ -171,7 +174,8 @@ void UILayout_LoadImagesFromJSON(ui_layout_t* layout, cJSON* json) {
         cJSON* g = cJSON_GetArrayItem(color, 1);
         cJSON* b = cJSON_GetArrayItem(color, 2);
         cJSON* a = cJSON_GetArrayItem(color, 3);
-        layout->image_datas[image_index].color = (colorf_t){(float)r->valuedouble, (float)g->valuedouble, (float)b->valuedouble, (float)a->valuedouble};
+        layout->image_datas[image_index].color =
+            (colorf_t){(float)r->valuedouble, (float)g->valuedouble, (float)b->valuedouble, (float)a->valuedouble};
 
         cJSON* top = cJSON_GetObjectItem(image, "Render On Top");
         if (cJSON_IsBool(top)) {
@@ -237,8 +241,101 @@ void UILayout_LoadTextsFromJSON(ui_layout_t* layout, cJSON* json) {
     }
 }
 
-void UILayout_SaveToFile(ui_layout_t *layout, const char *filename) {
+void UILayout_SaveToFile(ui_layout_t* layout, const char* filename) {
+    cJSON* ui_layout_json = cJSON_CreateObject();
 
+    // Texts
+    cJSON* texts_json = cJSON_CreateArray();
+    for (uint32_t text_index = 0; text_index < UILAYOUT_MAX_TEXT_COUNT; text_index++) {
+        if (!layout->text_datas[text_index].initialized) continue;
+
+        text_data_t* text_data = &layout->text_datas[text_index];
+        cJSON* text_json = cJSON_CreateObject();
+
+        cJSON_AddItemToObject(text_json, "Initial Text", cJSON_CreateString(text_data->initial_text));
+
+        cJSON_AddItemToObject(text_json, "Pos", cJSON_CreateFloatArray(&text_data->pos.x, 2));
+
+        cJSON_AddItemToObject(text_json, "Centered", cJSON_CreateBool(text_data->centered));
+
+        cJSON_AddItemToObject(text_json, "Updater", cJSON_CreateNumber(text_data->updater_type));
+
+        cJSON_AddItemToArray(texts_json, text_json);
+    }
+    cJSON_AddItemToObject(ui_layout_json, "Texts", texts_json);
+
+    // Images
+    cJSON* images_json = cJSON_CreateArray();
+    for (uint32_t image_index = 0; image_index < UILAYOUT_MAX_IMAGE_COUNT; image_index++) {
+        if (!layout->image_datas[image_index].initialized) continue;
+
+        image_data_t* image_data = &layout->image_datas[image_index];
+        cJSON* image_json = cJSON_CreateObject();
+
+        cJSON_AddItemToObject(image_json, "Pos", cJSON_CreateFloatArray(&image_data->pos.x, 2));
+
+        cJSON_AddItemToObject(image_json, "Size", cJSON_CreateFloatArray(&image_data->size.x, 2));
+
+        cJSON_AddItemToObject(image_json, "Sprite Index", cJSON_CreateNumber(image_data->sprite_idx));
+
+        cJSON_AddItemToObject(image_json, "Color", cJSON_CreateFloatArray(&image_data->color.r, 4));
+
+        cJSON_AddItemToObject(image_json, "Render On Top", cJSON_CreateBool(image_data->render_on_top));
+
+        cJSON_AddItemToObject(image_json, "Updater", cJSON_CreateNumber(image_data->updater_type));
+
+        cJSON_AddItemToArray(images_json, image_json);
+    }
+    cJSON_AddItemToObject(ui_layout_json, "Images", images_json);
+
+    // Fillbars
+    cJSON* fill_bars_json = cJSON_CreateArray();
+    for (uint32_t fill_bar_index = 0; fill_bar_index < UILAYOUT_MAX_FILL_BAR_COUNT; fill_bar_index++) {
+        if (!layout->fill_bar_datas[fill_bar_index].initialized) continue;
+
+        fill_bar_data_t* fill_bar_data = &layout->fill_bar_datas[fill_bar_index];
+        cJSON* fill_bar_json = cJSON_CreateObject();
+
+        cJSON_AddItemToObject(fill_bar_json, "Pos", cJSON_CreateFloatArray(&fill_bar_data->pos.x, 2));
+
+        cJSON_AddItemToObject(fill_bar_json, "Size", cJSON_CreateFloatArray(&fill_bar_data->size.x, 2));
+
+        cJSON_AddItemToObject(fill_bar_json, "Background Color", cJSON_CreateFloatArray(&fill_bar_data->bg_color.r, 4));
+
+        cJSON_AddItemToObject(fill_bar_json, "Fill Color", cJSON_CreateFloatArray(&fill_bar_data->fill_color.r, 4));
+
+        cJSON_AddItemToObject(fill_bar_json, "Updater", cJSON_CreateNumber(fill_bar_data->updater_type));
+
+        cJSON_AddItemToArray(fill_bars_json, fill_bar_json);
+    }
+    cJSON_AddItemToObject(ui_layout_json, "Fillbars", fill_bars_json);
+
+    // Buttons
+    cJSON* buttons_json = cJSON_CreateArray();
+    for (uint32_t button_index = 0; button_index < UILAYOUT_MAX_BUTTON_COUNT; button_index++) {
+        if (!layout->button_datas[button_index].initialized) continue;
+
+        button_data_t* button_data = &layout->button_datas[button_index];
+        cJSON* button_json = cJSON_CreateObject();
+
+        cJSON_AddItemToObject(button_json, "Pos", cJSON_CreateFloatArray(&button_data->pos.x, 2));
+
+        cJSON_AddItemToObject(button_json, "Size", cJSON_CreateFloatArray(&button_data->size.x, 2));
+
+        cJSON_AddItemToObject(button_json, "Sprite Index", cJSON_CreateNumber(button_data->sprite_idx));
+
+        cJSON_AddItemToObject(button_json, "Color", cJSON_CreateFloatArray(&button_data->color.r, 4));
+
+        cJSON_AddItemToObject(button_json, "Callback", cJSON_CreateNumber(button_data->callback_type));
+
+        cJSON_AddItemToObject(button_json, "Updater", cJSON_CreateNumber(button_data->updater_type));
+
+        cJSON_AddItemToArray(buttons_json, button_json);
+    }
+    cJSON_AddItemToObject(ui_layout_json, "Buttons", buttons_json);
+
+    // Serialize
+    JSONHelper_WriteCJSONToFile(ui_layout_json, filename);
 }
 
 #ifdef __cplusplus

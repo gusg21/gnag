@@ -13,32 +13,49 @@
 
 class GnagTool {
 public:
-    explicit GnagTool(SDL_Renderer *renderer);
+    explicit GnagTool(SDL_Renderer* renderer);
 
     void Update(float deltaTime);
     void DoGUI();
-    void AddGUI(ToolGUI *gui);
-    void CloseGUI(ToolGUI *gui);
-    float GetDeltaTime() const { return m_DeltaTime; }
+    void AddGUI(ToolGUI* gui);
+    void CloseGUI(ToolGUI* gui);
 
-    SDL_Renderer *GetRenderer() { return m_Renderer; }
-    SDLT3S *GetSprites() { return m_Sprites; }
-    SDLT3S *GetUISprites() { return m_UISprites; }
+    float GetDeltaTime() const {
+        return m_DeltaTime;
+    }
+
+    SDL_Renderer* GetRenderer() {
+        return m_Renderer;
+    }
+
+    SDLT3S* GetSprites() {
+        return m_Sprites;
+    }
+
+    SDLT3S* GetUISprites() {
+        return m_UISprites;
+    }
+
+    int GetNextGUIID() {
+        return m_NextGUIID++;
+    }
 
 private:
     // Refs
-    std::vector<ToolGUI *> m_GUIs { };
-    SDL_Renderer *m_Renderer;
+    std::vector<ToolGUI*> m_GUIs { };
+    int m_NextGUIID = 0;
+
+    SDL_Renderer* m_Renderer;
 
     // Internals
     float m_FPS = 0.f;
     float m_DeltaTime = 0.f;
     float m_MenuBarHeight = 0.f;
-    std::vector<ToolGUI *> m_GUIsToClose { };
+    std::vector<ToolGUI*> m_GUIsToClose { };
     bool m_RebuildBuildinator = false;
     bool m_ShowImGuiDemo = false;
-    SDLT3S *m_Sprites;
-    SDLT3S *m_UISprites;
+    SDLT3S* m_Sprites;
+    SDLT3S* m_UISprites;
     void InternalGUI();
 };
 

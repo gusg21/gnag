@@ -23,28 +23,28 @@
 	"Images":	[{
 			"Pos":	[164, 44],
 			"Size":	[152, 156],
-			"Sprite Index":	11,
+			"Sprite Index":	0,
 			"Color":	[0.5, 0.699999988079071, 1, 1],
 			"Render On Top":	false,
 			"Updater":	0
 		}, {
 			"Pos":	[4, 188],
 			"Size":	[152, 48],
-			"Sprite Index":	11,
+			"Sprite Index":	0,
 			"Color":	[0.5, 0.699999988079071, 1, 1],
 			"Render On Top":	false,
 			"Updater":	0
 		}, {
 			"Pos":	[32, 4],
 			"Size":	[256, 32],
-			"Sprite Index":	11,
+			"Sprite Index":	0,
 			"Color":	[0.5, 0.699999988079071, 1, 1],
 			"Render On Top":	false,
 			"Updater":	0
 		}, {
 			"Pos":	[35, 27],
 			"Size":	[250, 6],
-			"Sprite Index":	11,
+			"Sprite Index":	0,
 			"Color":	[0.10000000149011612, 0.10000000149011612, 0.10000000149011612, 1],
 			"Render On Top":	false,
 			"Updater":	0

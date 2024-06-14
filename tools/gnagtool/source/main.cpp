@@ -1,27 +1,35 @@
 #include <cstdio>
 
-#include "SDL.h"
-#include "SDL_image.h"
-#include "SDL_ttf.h"
+#include <SDL.h>
+#include <SDL_image.h>
+#include <SDL_ttf.h>
 #include "backends/imgui_impl_sdl2.h"
 #include "backends/imgui_impl_sdlrenderer2.h"
 #include "gnagtool.h"
 #include "imgui.h"
 #include "mouse.h"
+#include "version.h"
 
-int main(int argc, char **argv) {
+bool EnsureGnagPath();
+
+int main(int argc, char** argv) {
+    if (!EnsureGnagPath())
+        return 1;
+
     SDL_Init(SDL_INIT_EVERYTHING);
     IMG_Init(IMG_INIT_PNG);
     TTF_Init();
 
-    SDL_Window *window = SDL_CreateWindow("the glorious gnagtool", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 1600,
-                                          900, SDL_WINDOW_RESIZABLE | SDL_WINDOW_ALLOW_HIGHDPI);
-    SDL_Renderer *renderer = SDL_CreateRenderer(window, 0, SDL_RENDERER_ACCELERATED | SDL_RENDERER_TARGETTEXTURE);
+    SDL_Window* window =
+        SDL_CreateWindow("the glorious gnagtool v" GNAGTOOL_VERSION, SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED,
+                         1600, 900,
+                         SDL_WINDOW_RESIZABLE | SDL_WINDOW_ALLOW_HIGHDPI);
+    SDL_Renderer* renderer = SDL_CreateRenderer(window, 0, SDL_RENDERER_ACCELERATED | SDL_RENDERER_TARGETTEXTURE);
 
     IMGUI_CHECKVERSION();
     ImGui::CreateContext();
 
-    ImGuiIO &io = ImGui::GetIO();
+    ImGuiIO& io = ImGui::GetIO();
     io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard; // Enable Keyboard Controls
     io.ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad;  // Enable Gamepad Controls
     io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;
@@ -32,7 +40,7 @@ int main(int argc, char **argv) {
     ImGui_ImplSDL2_InitForSDLRenderer(window, renderer);
     ImGui_ImplSDLRenderer2_Init(renderer);
 
-    auto *gnagTool = new GnagTool(renderer);
+    auto* gnagTool = new GnagTool(renderer);
 
     SDL_Event event;
     bool running = true;
@@ -70,11 +78,20 @@ int main(int argc, char **argv) {
 
         SDL_RenderPresent(renderer);
 
-        deltaTime = (float) (SDL_GetPerformanceCounter() - lastPCTicks) / (float) SDL_GetPerformanceFrequency();
+        deltaTime = (float)(SDL_GetPerformanceCounter() - lastPCTicks) / (float)SDL_GetPerformanceFrequency();
         lastPCTicks = SDL_GetPerformanceCounter();
     }
 
     ImGui_ImplSDLRenderer2_Shutdown();
     SDL_Quit();
     return 0;
+}
+
+bool EnsureGnagPath() {
+    std::string path;
+    bool exists = GnagOSWrapper::GetGnagPath(path);
+    if (!exists) {
+        GnagOSWrapper::ShowMessageBox("ERROR: GNAG_PATH environment variable not set! Run gnagenvset.bat to set it.");
+    }
+    return exists;
 }

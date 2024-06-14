@@ -7,11 +7,14 @@
 #include "gnagtool.h"
 #include "imgui.h"
 #include "scenarioeditor.h"
+
+#include <SDL.h>
+
 #include "scenario.h"
 
-ScenarioEditor::ScenarioEditor(GnagTool *gnagTool, SDL_Renderer *renderer, const Scenario &scenario,
+ScenarioEditor::ScenarioEditor(GnagTool *gnagTool, int guiID, SDL_Renderer *renderer, const Scenario &scenario,
                                const std::string &fileName)
-        : ToolGUI(gnagTool), m_Scenario(scenario) {
+        : ToolGUI(gnagTool, guiID), m_Scenario(scenario) {
     m_GnagTool = gnagTool;
     m_Renderer = renderer;
     m_FilePath = fileName;

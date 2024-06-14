@@ -32,6 +32,7 @@ public:
     static std::string CombinePaths(const std::string &base, const std::string &fileName);
     static std::string MakePathAbsolute(const std::string& maybeAbsolutePath);
     static std::string LocalizePath(const std::string& path);
+    static void DeletePath(const std::string& path);
     static bool DoesFileExist(const std::string& fileName);
     static void RunTheBuildinator();
     static void RunTheBuildinatorCleaner();

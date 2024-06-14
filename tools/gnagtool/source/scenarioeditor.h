@@ -23,7 +23,7 @@ public:
 
 class ScenarioEditor : public ToolGUI {
 public:
-    explicit ScenarioEditor(GnagTool *gnagTool, SDL_Renderer *renderer, const Scenario &scenario,
+    explicit ScenarioEditor(GnagTool *gnagTool, int guiID, SDL_Renderer *renderer, const Scenario &scenario,
                             const std::string &fileName);
 
     void DoGUI() override;

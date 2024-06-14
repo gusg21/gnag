@@ -26,6 +26,7 @@ typedef struct {
 } ui_layout_t;
 
 void UILayout_InitFromFile(ui_layout_t* layout, const char* filename);
+void UILayout_InitEmpty(ui_layout_t* layout);
 void UILayout_LoadNewLayoutFromFile(ui_layout_t* layout, const char* filename);
 void UILayout_LoadButtonsFromJSON(ui_layout_t* layout, cJSON* json);
 void UILayout_LoadFillBarsFromJSON(ui_layout_t* layout, cJSON* json);

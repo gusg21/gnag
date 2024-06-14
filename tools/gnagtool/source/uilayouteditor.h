@@ -14,7 +14,7 @@
 
 class UILayoutEditor : public ToolGUI {
 public:
-    UILayoutEditor(GnagTool *gnagTool, SDL_Renderer *renderer, const std::string &uiLayoutPath);
+    UILayoutEditor(GnagTool *gnagTool, int guiID, SDL_Renderer *renderer, const std::string &uiLayoutPath);
 
     void Update(float deltaTime) override;
     void DoGUI() override;
@@ -28,6 +28,8 @@ private:
 
     std::string m_UILayoutPath;
     ui_layout_t m_UILayout;
+
+    std::string m_SaveAsPath;
 
     uint32_t m_HoveredButtonIndex = UINT32_MAX;
     uint32_t m_HoveredTextIndex = UINT32_MAX;

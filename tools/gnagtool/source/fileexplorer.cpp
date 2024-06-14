@@ -10,6 +10,9 @@
 #include "misc/cpp/imgui_stdlib.h"
 #include "scenario.h"
 #include "scenarioeditor.h"
+#include "jsonhelper.h"
+#include "uilayout.h"
+#include "uilayouteditor.h"
 
 #if WIN32
 
@@ -17,8 +20,8 @@
 
 #endif
 
-FileExplorer::FileExplorer(GnagTool *gnagTool)
-        : ToolGUI(gnagTool) {
+FileExplorer::FileExplorer(GnagTool* gnagTool, int guiID)
+    : ToolGUI(gnagTool, guiID) {
     m_GnagTool = gnagTool;
 
     std::string gnagPath { };
@@ -28,7 +31,7 @@ FileExplorer::FileExplorer(GnagTool *gnagTool)
     } else {
         m_CurrentPath = GnagOSWrapper::GetWorkingDirectory();
         GnagOSWrapper::ShowMessageBox(
-                "GNAG_PATH not set: make sure to double-click & run the gnagenvset.bat file in the repository folder!");
+            "GNAG_PATH not set: make sure to double-click & run the gnagenvset.bat file in the repository folder!");
     }
 }
 
@@ -39,7 +42,7 @@ void FileExplorer::DoGUI() {
         m_SelectedFileIndex = -1;
     }
 
-    ImGui::SetNextWindowSize({ 500, 500 }, ImGuiCond_FirstUseEver);
+    ImGui::SetNextWindowSize({500, 500}, ImGuiCond_FirstUseEver);
     ImGui::Begin("File Explorer", nullptr);
     {
         if (!ImGui::IsWindowFocused(ImGuiFocusedFlags_RootAndChildWindows)) {
@@ -59,7 +62,7 @@ void FileExplorer::DoGUI() {
             } else {
                 for (uint32_t fileIndex = 0; fileIndex < m_FilesVec.size(); fileIndex++) {
                     bool selected = m_SelectedFileIndex == fileIndex;
-                    FileEntry *entry = &m_FilesVec[fileIndex];
+                    FileEntry* entry = &m_FilesVec[fileIndex];
                     if (ImGui::Selectable(entry->FileName.c_str(), &selected,
                                           ImGuiSelectableFlags_AllowDoubleClick)) {
                         if (ImGui::IsMouseDoubleClicked(0)) {
@@ -69,20 +72,14 @@ void FileExplorer::DoGUI() {
                         }
                     }
                     if (selected) {
-                        m_SelectedFileIndex = (int32_t) fileIndex;
+                        m_SelectedFileIndex = (int32_t)fileIndex;
                     }
                 }
             }
             ImGui::EndChild();
-            ImGui::BeginDisabled(!m_IsCurrentPathValid);
-            {
-                ImGui::Button("New Scenario...");
-                ImGui::SameLine();
-                ImGui::BeginDisabled(!HasFileSelected());
-                { ImGui::Button("Delete File..."); }
-                ImGui::EndDisabled();
+            if (ImGui::Button("New File...")) {
+                ImGui::OpenPopup("FileExplorerNewFile");
             }
-            ImGui::EndDisabled();
         }
         ImGui::EndGroup();
         ImGui::NextColumn();
@@ -91,7 +88,7 @@ void FileExplorer::DoGUI() {
             // File options
             ImGui::SeparatorText("File Options");
             if (HasFileSelected()) {
-                FileEntry *entry = &m_FilesVec[m_SelectedFileIndex];
+                FileEntry* entry = &m_FilesVec[m_SelectedFileIndex];
                 ImGui::Text("Selected File: %s %s", entry->FileName.c_str(), entry->IsDirectory ? "(directory)" : "");
 
                 if (GetSelectedFileExtension() == ".json") {
@@ -100,7 +97,20 @@ void FileExplorer::DoGUI() {
                         Scenario scenario;
                         scenario.LoadFromJSON(absolutePath);
                         m_GnagTool->AddGUI(
-                                new ScenarioEditor(m_GnagTool, m_GnagTool->GetRenderer(), scenario, absolutePath));
+                            new ScenarioEditor(m_GnagTool, m_GnagTool->GetNextGUIID(), m_GnagTool->GetRenderer(),
+                                               scenario, absolutePath));
+                    }
+                    ImGui::SameLine();
+                    if (ImGui::Button("Open as UI Layout")) {
+                        std::string absolutePath = m_CurrentPath + entry->FileName;
+                        m_GnagTool->AddGUI(new UILayoutEditor(m_GnagTool, m_GnagTool->GetNextGUIID(),
+                                                              m_GnagTool->GetRenderer(), absolutePath));
+                    }
+                }
+
+                if (!entry->IsDirectory) {
+                    if (ImGui::Button("Delete File")) {
+                        GnagOSWrapper::DeletePath(m_CurrentPath + entry->FileName);
                     }
                 }
             } else {
@@ -108,8 +118,52 @@ void FileExplorer::DoGUI() {
             }
         }
         ImGui::EndGroup();
+
+        if (ImGui::BeginPopup("FileExplorerNewFile")) {
+            ImGui::SeparatorText("New File");
+
+            ImGui::BeginChild("NewFileDialog", {ImGui::GetContentRegionAvail().x, 30.f});
+            {
+                ImGui::RadioButton("Scenario", &m_NewFileType, 0);
+                ImGui::SameLine();
+                ImGui::RadioButton("UI Layout", &m_NewFileType, 1);
+            }
+            ImGui::EndChild();
+
+            ImGui::InputText("File Name", &m_NewFileEntryText);
+            if (ImGui::Button("Create")) {
+                std::string createdPath = m_CurrentPath + m_NewFileEntryText;
+
+                switch (m_NewFileType) {
+                    case 0: {
+                        scenario_t new_scenario;
+                        // No Init() function
+                        Scenario_SaveToJSON(&new_scenario, createdPath.c_str());
+                        break;
+                    }
+                    case 1: {
+                        ui_layout_t new_layout;
+                        UILayout_InitEmpty(&new_layout);
+                        UILayout_SaveToFile(&new_layout, createdPath.c_str());
+                        break;
+                    }
+
+                    default:
+                        break;
+                }
+
+                ImGui::CloseCurrentPopup();
+            }
+            ImGui::SameLine();
+            if (ImGui::Button("Cancel")) {
+                ImGui::CloseCurrentPopup();
+            }
+
+            ImGui::EndPopup();
+        }
     }
     ImGui::End();
+
 }
 
 bool FileExplorer::HasFileSelected() const {
@@ -117,6 +171,7 @@ bool FileExplorer::HasFileSelected() const {
 }
 
 std::string FileExplorer::GetSelectedFileExtension() {
-    if (!HasFileSelected()) return "";
+    if (!HasFileSelected())
+        return "";
     return GnagOSWrapper::GetFileExtension(m_FilesVec[m_SelectedFileIndex].FileName);
 }

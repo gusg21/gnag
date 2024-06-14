@@ -10,7 +10,7 @@ extern "C" {
 #endif
 
 void Scenario_LoadFromJSON(scenario_t* scenario, const char* json_path) {
-    cJSON* scenario_json = JSONHelper_LoadCJSONFromFile(json_path, SCENARIO_MAX_JSON_LENGTH);
+    cJSON* scenario_json = JSONHelper_LoadCJSONFromFile(json_path);
 
     scenario->grid_width = (u32) cJSON_GetNumberValue(cJSON_GetObjectItem(scenario_json, "Grid Width"));
     scenario->grid_height = (u32) cJSON_GetNumberValue(cJSON_GetObjectItem(scenario_json, "Grid Height"));
@@ -52,7 +52,7 @@ void Scenario_LoadFromJSON(scenario_t* scenario, const char* json_path) {
 }
 
 void Scenario_SaveToJSON(scenario_t* scenario, const char* json_path) {
-    cJSON* scenario_json = JSONHelper_LoadCJSONFromFile(json_path, SCENARIO_MAX_JSON_LENGTH);
+    cJSON* scenario_json = JSONHelper_LoadCJSONFromFile(json_path);
 
     cJSON_AddNumberToObject(scenario_json, "Grid Width", scenario->grid_width);
     cJSON_AddNumberToObject(scenario_json, "Grid Height", scenario->grid_height);

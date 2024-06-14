@@ -3,15 +3,20 @@
 //
 
 #include "gnagtool.h"
-#include "SDL_image.h"
+
+#include <SDL.h>
+#include <SDL_image.h>
+
 #include "uilayouteditor.h"
 
-GnagTool::GnagTool(SDL_Renderer *renderer) : m_Renderer(renderer) {
-    m_GUIs.push_back(new FileExplorer(this));
-    m_GUIs.push_back(new UILayoutEditor(this, renderer, R"(C:\Projects\3ds\gnag\jsons\uilayout_playerturn.json)"));
+GnagTool::GnagTool(SDL_Renderer* renderer)
+    : m_Renderer(renderer) {
+    m_GUIs.push_back(new FileExplorer(this, GetNextGUIID()));
 
-    m_Sprites = new SDLT3S(renderer, "gfx/sprites.t3s");
-    m_UISprites = new SDLT3S(renderer, "gfx/uisprites.t3s");
+    std::string gnagPath;
+    GnagOSWrapper::GetGnagPath(gnagPath);
+    m_Sprites = new SDLT3S(renderer, gnagPath + "gfx/sprites.t3s");
+    m_UISprites = new SDLT3S(renderer, gnagPath + "gfx/uisprites.t3s");
 }
 
 void GnagTool::DoGUI() {
@@ -30,8 +35,7 @@ void GnagTool::DoGUI() {
 }
 
 void GnagTool::InternalGUI() {
-
-    ImGuiViewport *viewport = ImGui::GetMainViewport();
+    ImGuiViewport* viewport = ImGui::GetMainViewport();
     ImGui::SetNextWindowPos(ImVec2(viewport->Pos.x, viewport->Pos.y));
     ImGui::SetNextWindowSize(ImVec2(viewport->Size.x, m_MenuBarHeight));
     ImGui::SetNextWindowViewport(viewport->ID);
@@ -75,10 +79,10 @@ void GnagTool::InternalGUI() {
         }
     }
 
-
     ImGui::End();
 
-    if (m_ShowImGuiDemo) ImGui::ShowDemoWindow();
+    if (m_ShowImGuiDemo)
+        ImGui::ShowDemoWindow();
 }
 
 void GnagTool::Update(float deltaTime) {
@@ -90,10 +94,10 @@ void GnagTool::Update(float deltaTime) {
     m_DeltaTime = deltaTime;
 }
 
-void GnagTool::AddGUI(ToolGUI *gui) {
+void GnagTool::AddGUI(ToolGUI* gui) {
     m_GUIs.push_back(gui);
 }
 
-void GnagTool::CloseGUI(ToolGUI *gui) {
+void GnagTool::CloseGUI(ToolGUI* gui) {
     m_GUIsToClose.push_back(gui);
 }
