@@ -43,7 +43,7 @@ void ScenarioEditor::DoGUI() {
         }
         ImGui::SameLine();
         if (ImGui::Button("Save Scenario")) {
-            Scenario_SaveToJSON(&m_Scenario.Scenario, m_FilePath.c_str());
+            Scenario_SaveToJSON(&m_Scenario.RawScenario, m_FilePath.c_str());
         }
         ImGui::SameLine();
         if (ImGui::Button("Save Scenario As...")) {
@@ -63,21 +63,27 @@ void ScenarioEditor::DoGUI() {
             }
 
             for (uint32_t characterIndex = 0; characterIndex < SCENARIO_MAX_CHARACTERS; characterIndex++) {
-                character_data_t *characterData = &m_Scenario.Scenario.characters[characterIndex];
-                ImGui::PushID((int) characterIndex);
-                if (ImGui::CollapsingHeader("Character")) {
-                    int tilePos[2] = { (int) characterData->tile_pos.x, (int) characterData->tile_pos.y };
-                    ImGui::InputInt2("Tile Pos", tilePos);
-                    characterData->tile_pos.x = (float) tilePos[0];
-                    characterData->tile_pos.y = (float) tilePos[1];
+                character_data_t* characterData = &m_Scenario.RawScenario.characters[characterIndex];
+                if (characterData->initialized) {
+                    ImGui::PushID((int)characterIndex);
+                    if (ImGui::CollapsingHeader("Character")) {
+                        if (ImGui::Button("Delete")) {
+                            characterData->initialized = false;
+                        }
 
-                    ImGui::InputInt("Type", reinterpret_cast<int *>(&characterData->type));
-                    characterData->type = static_cast<character_type_e>(
+                        int tilePos[2] = {(int)characterData->tile_pos.x, (int)characterData->tile_pos.y};
+                        ImGui::DragInt2("Tile Pos", tilePos);
+                        characterData->tile_pos.x = (float)tilePos[0];
+                        characterData->tile_pos.y = (float)tilePos[1];
+
+                        ImGui::InputInt("Type", reinterpret_cast<int*>(&characterData->type));
+                        characterData->type = static_cast<character_type_e>(
                             SDL_clamp(static_cast<int>(characterData->type), 0, static_cast<int>(CHAR_COUNT)));
 
-                    ImGui::Checkbox("Player Controlled", &characterData->is_player_controlled);
+                        ImGui::Checkbox("Player Controlled", &characterData->is_player_controlled);
+                    }
+                    ImGui::PopID();
                 }
-                ImGui::PopID();
             }
         }
         ImGui::EndChild();
@@ -194,7 +200,7 @@ void ScenarioEditor::DoGUI() {
             wantsSave = wantsSave || ImGui::Button("Save");
 
             if (wantsSave) {
-                Scenario_SaveToJSON(&m_Scenario.Scenario, m_SaveAsFilePath);
+                Scenario_SaveToJSON(&m_Scenario.RawScenario, m_SaveAsFilePath);
                 m_FilePath = m_SaveAsFilePath;
                 ImGui::CloseCurrentPopup();
             }
@@ -225,19 +231,18 @@ void ScenarioEditor::RenderEditorToTexture(SDL_Texture **texture, ImVec2 editorS
         DrawGrid();
 
         for (uint32_t characterIndex = 0; characterIndex < SCENARIO_MAX_CHARACTERS; characterIndex++) {
-            character_data_t *character = &m_Scenario.Scenario.characters[characterIndex];
-            float worldX, worldY;
-            GetWorldPosFromTilePos((int) character->tile_pos.x, (int) character->tile_pos.y, &worldX, &worldY);
-            float screenX, screenY;
-            GetScreenPosFromWorldPos(worldX, worldY, &screenX, &screenY);
-            SDL_Rect dst = {
-                    static_cast<int>(screenX - 32), static_cast<int>(screenY - 86), 64, 96 };
-            SDL_RenderCopy(
-                    m_Renderer,
-                    m_GnagTool->GetSprites()->GetTextureByIndex(
-                            CharacterData_GetSpriteIndexForCharacterType(character->type)),
-                    nullptr,
-                    &dst);
+            character_data_t* character = &m_Scenario.RawScenario.characters[characterIndex];
+            if (character->initialized) {
+                float worldX, worldY;
+                GetWorldPosFromTilePos((int)character->tile_pos.x, (int)character->tile_pos.y, &worldX, &worldY);
+                float screenX, screenY;
+                GetScreenPosFromWorldPos(worldX, worldY, &screenX, &screenY);
+                SDL_Rect dst = {static_cast<int>(screenX - 32), static_cast<int>(screenY - 86), 64, 96};
+                SDL_RenderCopy(m_Renderer,
+                               m_GnagTool->GetSprites()->GetTextureByIndex(
+                                   CharacterData_GetSpriteIndexForCharacterType(character->type)),
+                               nullptr, &dst);
+            }
         }
     }
     SDL_RenderPresent(m_Renderer);

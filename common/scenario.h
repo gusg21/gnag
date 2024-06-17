@@ -5,9 +5,9 @@
 #define SCENARIO_MAX_CHARACTERS 64
 #define SCENARIO_MAX_HAZARDS 64
 
+#include "characterdata.h"
 #include "hazarddata.h"
 #include "vec2.h"
-#include "characterdata.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -35,6 +35,7 @@ typedef struct {
     u32 grid_width, grid_height;
 } scenario_t;
 
+void Scenario_Init(scenario_t* scenario);
 void Scenario_LoadFromJSON(scenario_t* scenario, const char* json_path);
 void Scenario_SaveToJSON(scenario_t* scenario, const char* json_path);
 
@@ -42,4 +43,4 @@ void Scenario_SaveToJSON(scenario_t* scenario, const char* json_path);
 }
 #endif
 
-#endif // SCENARIO_H
+#endif  // SCENARIO_H

@@ -2,8 +2,8 @@ cmake_minimum_required(VERSION 3.21)
 project(gnagtool LANGUAGES CXX C)
 
 set(gnagtool_major 1)
-set(gnagtool_minor 1)
-set(gnagtool_patch 0)
+set(gnagtool_minor 2)
+set(gnagtool_patch 1)
 
 if (NOT DEFINED ENV{GNAG_PATH})
     message(FATAL_ERROR "GNAG_PATH Environment variable not set!")
@@ -137,10 +137,10 @@ set_target_properties(
 # CPack Packaging info
 install(TARGETS gnagtool_exe 
     RUNTIME 
-    DESTINATION "."
+    DESTINATION "bin"
     COMPONENT comp_executable)
 install(DIRECTORY "${CMAKE_SOURCE_DIR}/assets/" 
-    DESTINATION "assets" 
+    DESTINATION "bin/assets" 
     COMPONENT comp_assets)
 cpack_add_component(comp_executable DISPLAY_NAME "GnagTool Executable")
 cpack_add_component(comp_assets DISPLAY_NAME "GnagTool Assets")
@@ -164,4 +164,6 @@ set(CPACK_NSIS_MODIFY_PATH "ON")
 set(CPACK_NSIS_CREATE_ICONS_EXTRA
  "CreateShortCut '$USERDESKTOP\\\\GnagTool.lnk' '$INSTDIR\\\\gnagtool_exe.exe' "
  )
+set(CMAKE_INSTALL_PREFIX "${CMAKE_CURRENT_BINARY_DIR}")
+include(InstallRequiredSystemLibraries)
 include(CPack)

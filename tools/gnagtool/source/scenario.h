@@ -27,7 +27,7 @@ public:
     uint32_t GetWidth() const;
     uint32_t GetHeight() const;
 public:
-    scenario_t Scenario;
+    scenario_t RawScenario;
 
 private:
     uint32_t m_NextHazardIndex;

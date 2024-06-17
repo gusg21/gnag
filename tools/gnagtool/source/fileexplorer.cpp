@@ -137,7 +137,7 @@ void FileExplorer::DoGUI() {
                 switch (m_NewFileType) {
                     case 0: {
                         scenario_t new_scenario;
-                        // No Init() function
+                        Scenario_Init(&new_scenario);
                         Scenario_SaveToJSON(&new_scenario, createdPath.c_str());
                         break;
                     }
