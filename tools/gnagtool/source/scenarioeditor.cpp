@@ -92,6 +92,7 @@ void ScenarioEditor::DoGUI() {
         {
             // Mouse
             ImVec2 availSize = ImGui::GetContentRegionAvail();
+            availSize.y -= 18.f; // Bottom info row
             ImVec2 screenPos = ImGui::GetCursorScreenPos();
             ImVec2 mousePos = ImGui::GetMousePos();
             m_MousePosX = mousePos.x - screenPos.x;
@@ -153,6 +154,9 @@ void ScenarioEditor::DoGUI() {
             // Render
             RenderEditorToTexture(&m_EditorTexture, availSize);
             ImGui::Image(m_EditorTexture, availSize, ImVec2 { 0, 0 }, ImVec2 { 1, 1 });
+
+            // Bottom Info Bar
+            ImGui::Text("Hazards: %d / %d | Characters: %d / %d", m_Scenario.GetHazardCount(), m_Scenario.GetMaxHazardCount(), m_Scenario.GetCharacterCount(), m_Scenario.GetMaxCharacterCount());
 
             // Tile Editor
             if (ImGui::BeginPopup("TileEditor")) {

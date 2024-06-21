@@ -3,7 +3,7 @@ project(gnagtool LANGUAGES CXX C)
 
 set(gnagtool_major 1)
 set(gnagtool_minor 2)
-set(gnagtool_patch 1)
+set(gnagtool_patch 4)
 
 if (NOT DEFINED ENV{GNAG_PATH})
     message(FATAL_ERROR "GNAG_PATH Environment variable not set!")

@@ -2,8 +2,8 @@
 #define SCENARIO_H
 
 #define SCENARIO_MAX_JSON_LENGTH 65536
-#define SCENARIO_MAX_CHARACTERS 64
-#define SCENARIO_MAX_HAZARDS 64
+#define SCENARIO_MAX_CHARACTERS 16
+#define SCENARIO_MAX_HAZARDS 256
 
 #include "characterdata.h"
 #include "hazarddata.h"

@@ -23,6 +23,10 @@ public:
     void Resize(int width, int height);
     bool IsTileInRange(int tileX, int tileY) const;
     void AddCharacterData(character_data_t characterData);
+    uint32_t GetHazardCount();
+    uint32_t GetMaxHazardCount();
+    uint32_t GetCharacterCount();
+    uint32_t GetMaxCharacterCount();
 
     uint32_t GetWidth() const;
     uint32_t GetHeight() const;
