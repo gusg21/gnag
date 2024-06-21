@@ -1,0 +1,10 @@
+{
+	"Grid Width":	15,
+	"Grid Height":	15,
+	"Hazards":	[],
+	"Characters":	[{
+			"Type":	4,
+			"Player Controlled":	false,
+			"Tile Pos":	[11, 7]
+		}]
+}
