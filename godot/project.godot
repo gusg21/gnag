@@ -11,9 +11,16 @@ config_version=5
 [application]
 
 config/name="Gnag"
-config/features=PackedStringArray("4.2", "Forward Plus")
-config/icon="res://icon.svg"
+run/main_scene="res://game/game.tscn"
+config/features=PackedStringArray("4.2", "C#", "Forward Plus")
+config/icon="res://gnag.png"
 
 [dotnet]
 
 project/assembly_name="Gnag"
+
+[rendering]
+
+textures/canvas_textures/default_texture_filter=0
+textures/canvas_textures/default_texture_repeat=1
+environment/defaults/default_clear_color=Color(0.87451, 0.964706, 0.960784, 1)
