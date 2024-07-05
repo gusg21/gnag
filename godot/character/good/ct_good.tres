@@ -1,0 +1,10 @@
+[gd_resource type="Resource" script_class="CharacterType" load_steps=3 format=3 uid="uid://c4dumdjnh5gmu"]
+
+[ext_resource type="SpriteFrames" uid="uid://cnvhesg17o60r" path="res://character/good/sf_good.tres" id="1_doq8r"]
+[ext_resource type="Script" path="res://character/CharacterType.cs" id="2_i7tvm"]
+
+[resource]
+script = ExtResource("2_i7tvm")
+Name = "Good"
+Frames = ExtResource("1_doq8r")
+PlayerControlled = true

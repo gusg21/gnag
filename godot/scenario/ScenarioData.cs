@@ -1,4 +1,3 @@
-using System;
 using Godot;
 
 [GlobalClass]
@@ -7,11 +6,12 @@ public partial class ScenarioData : Resource {
     public int GridWidth;
     [Export(PropertyHint.Range, "1,100")]
     public int GridHeight;
+    [Export]
+    public Godot.Collections.Array<ScenarioCharacterInstanceData> CharacterInstances;
 
-    public ScenarioData() : this(10, 10) {}
-
-    public ScenarioData(int gridWidth, int gridHeight) {
-        GridWidth = gridWidth;
-        GridHeight = gridHeight;
+    public ScenarioData() {
+        GridWidth = 10;
+        GridHeight = 10;
+        CharacterInstances = new();
     }
 }

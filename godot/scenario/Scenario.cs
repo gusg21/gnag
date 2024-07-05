@@ -5,6 +5,8 @@ public partial class Scenario : Node2D
 {
     [Export(PropertyHint.File, "*.tscn")]
     public PackedScene TileScene;
+    [Export(PropertyHint.File, "*.tscn")]
+    public PackedScene CharacterScene;
     [Export]
     public int TileWidth;
     [Export]
@@ -33,19 +35,23 @@ public partial class Scenario : Node2D
                     xx,
                     yy
                 ));
-                tile.Position = new Vector2(
-                    tile.Position.X * TileWidth / 2f,
-                    tile.Position.Y * TileHeight / 2f
-                );
                 AddChild(tile);
             }
+        }
+
+        foreach (var instance in InitialData.CharacterInstances) 
+        {
+            Character character = CharacterScene.Instantiate<Character>();
+            character.Type = instance.CharacterType;
+            character.Position = IsoTilePosToWorldPos(instance.TilePos);
+            AddChild(character);
         }
     }
 
     private Vector2 IsoTilePosToWorldPos(Vector2 isoTilePos) {
         return new Vector2(
-            isoTilePos.X - isoTilePos.Y,
-            isoTilePos.X + isoTilePos.Y
+            (isoTilePos.X - isoTilePos.Y) * TileWidth / 2f,
+            (isoTilePos.X + isoTilePos.Y) * TileHeight / 2f
         );
     }
 }

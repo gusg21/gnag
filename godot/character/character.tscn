@@ -1,0 +1,36 @@
+[gd_scene load_steps=4 format=3 uid="uid://p45gaawutaky"]
+
+[ext_resource type="Script" path="res://character/Character.cs" id="1_lowkn"]
+[ext_resource type="SpriteFrames" uid="uid://cnvhesg17o60r" path="res://character/good/sf_good.tres" id="3_3lyri"]
+[ext_resource type="Theme" uid="uid://bjsbisn8b4j2l" path="res://ui/themes/primary.tres" id="4_p830a"]
+
+[node name="Character" type="Node2D"]
+script = ExtResource("1_lowkn")
+
+[node name="Graphics" type="AnimatedSprite2D" parent="."]
+position = Vector2(0, -33)
+sprite_frames = ExtResource("3_3lyri")
+animation = &"idle_back"
+autoplay = "idle-front"
+
+[node name="NamePanel" type="Panel" parent="Graphics"]
+custom_minimum_size = Vector2(80, 30)
+anchors_preset = 10
+anchor_right = 1.0
+offset_left = -32.0
+offset_top = -48.0
+offset_right = -32.0
+offset_bottom = -48.0
+grow_horizontal = 2
+theme = ExtResource("4_p830a")
+
+[node name="Name" type="Label" parent="Graphics/NamePanel"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+text = "Character"
+horizontal_alignment = 1
+vertical_alignment = 1

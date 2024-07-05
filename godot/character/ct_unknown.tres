@@ -1,0 +1,10 @@
+[gd_resource type="Resource" script_class="CharacterType" load_steps=3 format=3 uid="uid://6lxhkanerx5p"]
+
+[ext_resource type="SpriteFrames" uid="uid://bkf0tq7ruorw" path="res://character/sf_unknown.tres" id="1_chym7"]
+[ext_resource type="Script" path="res://character/CharacterType.cs" id="1_t2sqg"]
+
+[resource]
+script = ExtResource("1_t2sqg")
+Name = "Unnamed Character"
+Frames = ExtResource("1_chym7")
+PlayerControlled = false

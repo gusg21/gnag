@@ -6,3 +6,5 @@
 [node name="Scenario" type="Node2D"]
 script = ExtResource("1_crgfu")
 TileScene = ExtResource("2_ql663")
+TileWidth = 64
+TileHeight = 32
