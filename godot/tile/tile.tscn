@@ -1,7 +1,8 @@
-[gd_scene load_steps=3 format=3 uid="uid://6yx66wmdp85"]
+[gd_scene load_steps=4 format=3 uid="uid://6yx66wmdp85"]
 
 [ext_resource type="Script" path="res://tile/Tile.cs" id="1_4jx5m"]
 [ext_resource type="Texture2D" uid="uid://rq828pw0kpt7" path="res://tile/emptytile.png" id="1_n3fue"]
+[ext_resource type="Texture2D" uid="uid://hhujt0sv88p7" path="res://tile/selected-tile.png" id="3_f7he8"]
 
 [node name="Tile" type="Node2D"]
 script = ExtResource("1_4jx5m")
@@ -9,3 +10,12 @@ script = ExtResource("1_4jx5m")
 [node name="Graphics" type="Sprite2D" parent="."]
 position = Vector2(0, -16)
 texture = ExtResource("1_n3fue")
+
+[node name="SelectedGraphics" type="Sprite2D" parent="."]
+visible = false
+texture = ExtResource("3_f7he8")
+
+[node name="Hitbox" type="Area2D" parent="."]
+
+[node name="CollisionShape2D" type="CollisionPolygon2D" parent="Hitbox"]
+polygon = PackedVector2Array(-30, 0, 0, -15, 30, 0, 0, 15)

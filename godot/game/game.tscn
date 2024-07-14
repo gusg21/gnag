@@ -1,13 +1,21 @@
-[gd_scene load_steps=13 format=3 uid="uid://civyu43wsnhx1"]
+[gd_scene load_steps=21 format=3 uid="uid://civyu43wsnhx1"]
 
 [ext_resource type="PackedScene" uid="uid://cg0vpv5cjr66m" path="res://scenario/scenario.tscn" id="1_qtwwo"]
 [ext_resource type="PackedScene" uid="uid://p45gaawutaky" path="res://character/character.tscn" id="2_bycsl"]
 [ext_resource type="Script" path="res://scenario/ScenarioData.cs" id="2_hjuhy"]
 [ext_resource type="Resource" uid="uid://c4dumdjnh5gmu" path="res://character/good/ct_good.tres" id="2_umkgs"]
+[ext_resource type="Theme" uid="uid://bjsbisn8b4j2l" path="res://ui/themes/primary.tres" id="3_d5x80"]
 [ext_resource type="Script" path="res://scenario/ScenarioCharacterInstanceData.cs" id="3_rsdox"]
+[ext_resource type="Texture2D" uid="uid://dkuvxoem38hdd" path="res://ui/debug_panel/debug_header.png" id="4_aklmw"]
+[ext_resource type="Script" path="res://ui/debug_panel/DebugInfoText.cs" id="5_b2p8q"]
 [ext_resource type="Resource" uid="uid://ck8moagarbqr3" path="res://character/bad/ct_bad.tres" id="5_kv0ur"]
+[ext_resource type="Script" path="res://ui/helper_panel/HelperPanel.cs" id="6_fb0qi"]
+[ext_resource type="Script" path="res://ui/debug_panel/DebugPanelButtons.cs" id="6_nddc2"]
 [ext_resource type="Resource" uid="uid://dpny8yvy4sd6r" path="res://character/ugly/ct_ugly.tres" id="6_uea8n"]
 [ext_resource type="PackedScene" uid="uid://yjie62mjl72e" path="res://ui/control_panel/control_panel.tscn" id="8_0vxnt"]
+[ext_resource type="Script" path="res://utils/CanvasLayerInGameVisibility.cs" id="8_23qpa"]
+[ext_resource type="Script" path="res://board/BoardCamera.cs" id="10_8e0lk"]
+[ext_resource type="Script" path="res://board/BoardState.cs" id="11_i1y1g"]
 
 [sub_resource type="Resource" id="Resource_y0mb0"]
 script = ExtResource("3_rsdox")
@@ -32,13 +40,95 @@ CharacterInstances = Array[Object]([SubResource("Resource_y0mb0"), SubResource("
 
 [node name="Game" type="Node2D"]
 
-[node name="Scenario" parent="." instance=ExtResource("1_qtwwo")]
-position = Vector2(325, 35)
+[node name="UI" type="CanvasLayer" parent="."]
+layer = 2
+script = ExtResource("8_23qpa")
+
+[node name="ControlPanel" parent="UI" node_paths=PackedStringArray("BoardState") instance=ExtResource("8_0vxnt")]
+BoardState = NodePath("../../Board/BoardState")
+
+[node name="DebugPanel" type="Control" parent="UI"]
+layout_mode = 3
+anchors_preset = 0
+offset_right = 40.0
+offset_bottom = 40.0
+theme = ExtResource("3_d5x80")
+
+[node name="PanelContainer" type="PanelContainer" parent="UI/DebugPanel"]
+custom_minimum_size = Vector2(200, 200)
+layout_mode = 0
+offset_right = 4.0
+offset_bottom = 4.0
+
+[node name="MarginContainer" type="MarginContainer" parent="UI/DebugPanel/PanelContainer"]
+layout_mode = 2
+
+[node name="VBoxContainer" type="VBoxContainer" parent="UI/DebugPanel/PanelContainer/MarginContainer"]
+layout_mode = 2
+
+[node name="TextureRect" type="NinePatchRect" parent="UI/DebugPanel/PanelContainer/MarginContainer/VBoxContainer"]
+custom_minimum_size = Vector2(0, 16)
+layout_mode = 2
+texture = ExtResource("4_aklmw")
+patch_margin_left = 32
+patch_margin_right = 4
+
+[node name="Info" type="RichTextLabel" parent="UI/DebugPanel/PanelContainer/MarginContainer/VBoxContainer"]
+layout_mode = 2
+theme_override_font_sizes/normal_font_size = 12
+bbcode_enabled = true
+text = "[wave]Hello World!"
+fit_content = true
+script = ExtResource("5_b2p8q")
+
+[node name="DebugPanelButtons" type="Control" parent="UI/DebugPanel/PanelContainer/MarginContainer/VBoxContainer"]
+layout_mode = 2
+script = ExtResource("6_nddc2")
+
+[node name="HelperPanel" type="Control" parent="UI"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("6_fb0qi")
+
+[node name="VBoxContainer" type="VBoxContainer" parent="UI/HelperPanel"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+alignment = 2
+
+[node name="PanelContainer" type="PanelContainer" parent="UI/HelperPanel/VBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 4
+
+[node name="MarginContainer" type="MarginContainer" parent="UI/HelperPanel/VBoxContainer/PanelContainer"]
+layout_mode = 2
+
+[node name="RichTextLabel" type="RichTextLabel" parent="UI/HelperPanel/VBoxContainer/PanelContainer/MarginContainer"]
+custom_minimum_size = Vector2(400, 0)
+layout_mode = 2
+bbcode_enabled = true
+text = "Hello World!"
+fit_content = true
+
+[node name="Board" type="CanvasLayer" parent="."]
+follow_viewport_enabled = true
+
+[node name="Scenario" parent="Board" instance=ExtResource("1_qtwwo")]
+position = Vector2(-1, -216)
 CharacterScene = ExtResource("2_bycsl")
 InitialData = SubResource("Resource_gmr6c")
 
-[node name="UI" type="CanvasLayer" parent="."]
-follow_viewport_enabled = true
+[node name="Camera2D" type="Camera2D" parent="Board"]
+script = ExtResource("10_8e0lk")
+CenterXRatio = 0.25
 
-[node name="ControlPanel" parent="UI" instance=ExtResource("8_0vxnt")]
-anchor_left = 0.7
+[node name="BoardState" type="Node2D" parent="Board"]
+script = ExtResource("11_i1y1g")
+ScenarioNodePath = NodePath("../Scenario")
